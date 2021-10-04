@@ -47,6 +47,7 @@ export default function App() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                placeholder={"Phone number"}
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -68,6 +69,7 @@ export default function App() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                placeholder={"Password"}
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={onChange}
