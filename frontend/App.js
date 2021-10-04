@@ -1,12 +1,10 @@
 import { StatusBar } from "expo-status-bar"
 import React from "react"
 import { StyleSheet, Text, View, Button } from "react-native"
-import HeaderWithSearchBar from './components/HeaderWithSearchBar';
-
+import HeaderWithSearchBar from "./components/HeaderWithSearchBar"
+import Login from "./screen/Login"
 export default function App() {
-  return (
-    <HeaderWithSearchBar apiPath='Hello'></HeaderWithSearchBar>
-  )
+  return <HeaderWithSearchBar></HeaderWithSearchBar>
 }
 const styles = StyleSheet.create({
   container: {

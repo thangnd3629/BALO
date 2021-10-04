@@ -1,16 +1,12 @@
 import React, { useState, useRef } from "react";
 import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon } from "react-native-elements";
-import { EXCEPTION_MESSAGE } from "../constants/ExceptionMessage";
+import { ERROR_MESSAGE } from "../constants/ErrorMessage";
 
 const HeaderWithSearchBar = ( props ) => {
 
-    if ( !props.apiPath ) {
-        throw EXCEPTION_MESSAGE.MISS_API_PATH_IN_PROPS
-    }
-
     if ( props.rightComponent && !React.isValidElement( props.rightComponent ) ) {
-        throw EXCEPTION_MESSAGE.INVALID_RIGHT_COMPONENT_ELEMENT
+        throw ERROR_MESSAGE.INVALID_RIGHT_COMPONENT_ELEMENT
     }
 
     const refCenterComponent = useRef( null );
