@@ -1,4 +1,4 @@
-CREATE DATABASE "zaloclone"
+CREATE DATABASE "zalo-clone"
     WITH OWNER "postgres"
     ENCODING 'UTF8'
     LC_COLLATE = 'en_US.UTF-8'

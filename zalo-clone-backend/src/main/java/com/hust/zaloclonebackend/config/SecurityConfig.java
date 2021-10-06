@@ -1,7 +1,6 @@
 package com.hust.zaloclonebackend.config;
 
 import com.hust.zaloclonebackend.rest.entity.UserLogin;
-import com.hust.zaloclonebackend.rest.exception.CustomAccessDeniedHandler;
 import com.hust.zaloclonebackend.rest.service.ZaloCloneBackendUserDetailService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(basicAuthenticationEndPoint)
                 .and()
                 .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler())
                 .and()
                 .csrf()
                 .disable()
@@ -77,10 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Bean
-    public CustomAccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
-    }
 
     @Bean
     @SuppressWarnings("unchecked")
