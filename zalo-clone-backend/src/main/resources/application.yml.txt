@@ -4,16 +4,17 @@ SQL_DB_HOST: localhost
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
 SQL_DB_PASS: 123456
-POSTGRES_DB: zalo-clone
+POSTGRES_DB: zaloclone
+
+server.servlet.context-path: '/api'
 
 spring:
+    jpa:
+        hibernate:
+            ddl-auto: update
     redis:
         host: localhost
         port: 6379
-    servlet:
-        multipart:
-            max-file-size: 100MB
-            max-request-size: 100MB
     mvc:
         throw-exception-if-no-handler-found: true
     datasource:
@@ -21,21 +22,17 @@ spring:
         url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
         username: ${SQL_DB_USER}
         password: ${SQL_DB_PASS}
-    jpa:
-        properties:
-            hibernate:
-                format_sql: true # not recommended for production
-                order_inserts: true
-                jdbc:
-                    batch_size: 50
+
+
     data:
         redis:
             repositories:
                 enabled: false
         rest:
-            #base-path: /rest
             detection-strategy: ANNOTATED
-    jackson:
-        serialization:
-            FAIL_ON_EMPTY_BEANS: false
+
+
+
+
+
 

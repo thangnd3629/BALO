@@ -1,8 +1,6 @@
-package com.hust.zaloclonebackend.rest.service;
+package com.hust.zaloclonebackend.service;
 
-import com.hust.zaloclonebackend.rest.entity.SecurityGroup;
-import com.hust.zaloclonebackend.rest.entity.UserLogin;
-import com.hust.zaloclonebackend.rest.repo.UserLoginRepo;
+import com.hust.zaloclonebackend.repo.UserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -16,15 +14,16 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ZaloCloneBackendUserDetailService implements UserDetailsService {
 
-    private UserLoginRepo userLoginRepo;
+    private UserRepo userRepo;
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
 
-        UserLogin user = userLoginRepo.findByUserLoginId(s);
-        if (user != null && user.isEnabled()) {
-            return new User(user.getUserLoginId(), user.getPassword(), AuthorityUtils.createAuthorityList(
-                    user.getRoles().stream().map(SecurityGroup::getGroupId).toArray(String[]::new)));
+        com.hust.zaloclonebackend.entity.User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        String[] roles = {"ADMIN"};
+        if (user != null) {
+            return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList(
+                    roles));
         } else {
             throw new UsernameNotFoundException("Username Not Found");
         }

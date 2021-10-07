@@ -1,7 +1,7 @@
 package com.hust.zaloclonebackend.config;
 
-import com.hust.zaloclonebackend.rest.entity.UserLogin;
-import com.hust.zaloclonebackend.rest.service.ZaloCloneBackendUserDetailService;
+import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.service.ZaloCloneBackendUserDetailService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.userDetailsService(this.userDetailsService).passwordEncoder(UserLogin.PASSWORD_ENCODER);
+//        auth.userDetailsService(this.userDetailsService).passwordEncoder(User.PASSWORD_ENCODER);
     }
 
     @Override

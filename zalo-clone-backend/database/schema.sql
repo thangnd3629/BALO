@@ -1,4 +1,4 @@
-CREATE DATABASE "zalo-clone"
+CREATE DATABASE "test"
     WITH OWNER "postgres"
     ENCODING 'UTF8'
     LC_COLLATE = 'en_US.UTF-8'
@@ -24,6 +24,12 @@ create TABLE status_type
     CONSTRAINT status_type_parent FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
 );
 
+create table user (
+  user_id   UUID      NOT NULL default uuid_generate_v1(),
+  phone_number varchar(10),
+
+);
+
 create TABLE status
 (
     status_id          VARCHAR(60) NOT NULL,
@@ -36,6 +42,7 @@ create TABLE status
     CONSTRAINT pk_status PRIMARY KEY (status_id),
     CONSTRAINT status_to_type FOREIGN KEY (status_type_id) REFERENCES status_type (status_type_id)
 );
+
 
 create TABLE party_type
 (
