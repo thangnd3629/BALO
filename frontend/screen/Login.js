@@ -13,7 +13,7 @@ import {
 import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 
-export default function App() {
+export default function Login({ navigation }) {
   const {
     control,
     handleSubmit,
@@ -106,7 +106,13 @@ export default function App() {
         </View>
       </View>
       <TouchableOpacity>
-        <Text>Chưa có tài khoản? Đăng ký ngay</Text>
+        <Text
+          onPress={() => {
+            navigation.navigate("Signup")
+          }}
+        >
+          Chưa có tài khoản? Đăng ký ngay
+        </Text>
       </TouchableOpacity>
     </View>
   )
@@ -115,7 +121,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 30,
     textAlign: "center",
     alignItems: "center",
   },

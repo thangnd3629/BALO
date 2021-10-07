@@ -10,7 +10,7 @@ import {
 import { AntDesign } from "@expo/vector-icons"
 import { Entypo } from "@expo/vector-icons"
 import { Feather } from "@expo/vector-icons"
-export default function Signup() {
+export default function Signup({ navigation }) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
   const onSubmit = (data) => console.log(data)
