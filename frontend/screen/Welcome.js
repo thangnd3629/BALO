@@ -2,14 +2,16 @@ import React from "react"
 import { Image, StyleSheet, Text, View } from "react-native"
 import PrimaryButton from "../components/PrimaryButton"
 import SecondaryButton from "../components/SecondaryButton"
-export default function Welcome() {
+import { NavigationContainer } from "@react-navigation/native"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+export default function Welcome({ navigation }) {
+  const Stack = createNativeStackNavigator()
   return (
     <View style={styles.container}>
       <Image
         style={styles.background}
         source={require("../assets/background-blue-pattern-geometric-style-blue-geometric-pattern-135451784.jpg")}
       ></Image>
-
       <Image
         style={styles.logo}
         source={require("../assets/pngaaa.com-5985640.png")}
@@ -22,8 +24,12 @@ export default function Welcome() {
         <Text style={{ fontWeight: "bold" }}>Gọi video ổn định</Text>
         <Text>Trò chuyện thật đã với chất lượng video ổn định</Text>
       </View>
-      <PrimaryButton text="Đăng nhập" onPress={(e) => {}}></PrimaryButton>
-
+      <PrimaryButton
+        text="Đăng nhập"
+        onPress={(e) => {
+          navigation.navigate("Login")
+        }}
+      ></PrimaryButton>
       <SecondaryButton text="Đăng ký" onPress={(e) => {}}></SecondaryButton>
     </View>
   )
