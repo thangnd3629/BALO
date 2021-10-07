@@ -1,6 +1,5 @@
 import React from "react"
 import { Image, StyleSheet, Text, View } from "react-native"
-import { TouchableOpacity } from "react-native-gesture-handler"
 import PrimaryButton from "../components/PrimaryButton"
 import SecondaryButton from "../components/SecondaryButton"
 export default function Welcome() {
@@ -17,25 +16,15 @@ export default function Welcome() {
       ></Image>
       <Image
         style={styles.icon}
-        source={require("../assets/—Pngtree—video call with friends on_5509845.png")}
+        source={require("../assets/video-call.png")}
       ></Image>
       <View style={styles.slogan}>
         <Text style={{ fontWeight: "bold" }}>Gọi video ổn định</Text>
         <Text>Trò chuyện thật đã với chất lượng video ổn định</Text>
       </View>
-      <PrimaryButton
-        text="Đăng nhập"
-        onPress={(e) => {
-          console.log(e)
-        }}
-      ></PrimaryButton>
+      <PrimaryButton text="Đăng nhập" onPress={(e) => {}}></PrimaryButton>
 
-      <SecondaryButton
-        text="Đăng ký"
-        onPress={(e) => {
-          console.log(e)
-        }}
-      ></SecondaryButton>
+      <SecondaryButton text="Đăng ký" onPress={(e) => {}}></SecondaryButton>
     </View>
   )
 }

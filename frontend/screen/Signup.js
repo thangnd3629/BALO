@@ -1,24 +1,18 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Text,
   View,
   TextInput,
-  Button,
-  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
-  Pressable,
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
-import { useForm, Controller } from "react-hook-form"
-
+import { Entypo } from "@expo/vector-icons"
+import { Feather } from "@expo/vector-icons"
 export default function Signup() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
+  const [selectedRegion, setRegion] = useState("VN")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const onSubmit = (data) => console.log(data)
 
   return (
@@ -27,97 +21,62 @@ export default function Signup() {
         style={styles.background}
         source={require("../assets/background-blue-pattern-geometric-style-blue-geometric-pattern-135451784.jpg")}
       ></Image>
-      <View style={styles.logo}>
-        <Image
-          source={require("../assets/zalo-1-logo-png-transparent.png")}
-          style={{ width: 100, height: 100 }}
+
+      <View style={styles.groupInput}>
+        <AntDesign name="phone" size={24} color="black" />
+
+        <TextInput
+          placeholder={"Phone number"}
+          onChangeText={(input) => {
+            setPhoneNumber(input)
+          }}
+          value={phoneNumber}
+          style={styles.input}
         />
-      </View>
-      <Text style={styles.welcome}>
-        {"Đăng nhập tài khoản Zalo \n để kết nối với ứng dụng Zalo Chat"}
-      </Text>
-
-      <View style={styles.form}>
-        <View style={styles.groupInput}>
-          <AntDesign name="phone" size={24} color="black" />
-          <Controller
-            control={control}
-            rules={{
-              required: true,
+        <View>
+          <Entypo
+            name="cross"
+            size={24}
+            color="black"
+            onPress={() => {
+              setPhoneNumber("")
             }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder={"Phone number"}
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="firstName"
-            defaultValue=""
           />
-          {errors.firstName && <Text>This is required.</Text>}
-        </View>
-
-        <View style={styles.groupInput}>
-          <AntDesign name="lock" size={24} color="black" />
-          <Controller
-            control={control}
-            rules={{
-              maxLength: 100,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder={"Password"}
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="lastName"
-            defaultValue=""
-          />
-        </View>
-        <TouchableOpacity style={styles.submit}>
-          <Button
-            title="Đăng nhập với mật khẩu"
-            onPress={handleSubmit(onSubmit)}
-          />
-        </TouchableOpacity>
-        <View style={styles.more}>
-          <TouchableOpacity>
-            <Pressable
-              style={styles.clearButton}
-              onPress={handleSubmit(onSubmit)}
-            >
-              <Text
-                style={{ color: "lightblue", padding: 10, textAlign: "center" }}
-              >
-                Gửi yêu cầu đăng nhập
-              </Text>
-            </Pressable>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Text>Quên mật khẩu?</Text>
-          </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity>
-        <Text>Chưa có tài khoản? Đăng ký ngay</Text>
+      <TouchableOpacity style={styles.submit}>
+        <View>
+          <View style={styles.circle}>
+            <AntDesign
+              style={styles.arrow}
+              name="arrowright"
+              size={24}
+              color="black"
+            />
+          </View>
+        </View>
       </TouchableOpacity>
     </View>
   )
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 30,
-    textAlign: "center",
     alignItems: "center",
+  },
+  arrow: {
+    color: "white",
+  },
+  circle: {
+    width: 44,
+    height: 44,
+    borderRadius: 44 / 2,
+    backgroundColor: "#0099ff",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 0,
+    right: 0,
   },
   background: {
     width: "100%",
@@ -125,23 +84,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     zIndex: -1,
-  },
-  form: {
-    backgroundColor: "white",
-    width: "80%",
-    padding: 20,
-    margin: 20,
-    borderRadius: 3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 11,
-    },
-    shadowOpacity: 0.55,
-    shadowRadius: 14.78,
-
-    elevation: 22,
-    alignItems: "center",
   },
   input: {
     color: "black",
@@ -152,6 +94,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   groupInput: {
+    marginTop: 20,
+
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
@@ -164,9 +108,9 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   submit: {
-    width: "80%",
-    borderRadius: 100,
-    borderColor: "green",
+    position: "absolute",
+    bottom: 50,
+    right: 50,
   },
   welcome: {
     fontWeight: "700",
