@@ -34,6 +34,7 @@ public class PostController {
 
     @PostMapping("/post/add")
     public ResponseEntity<?> addPost(@RequestBody ModelPost modelPost) throws ParseException {
+        //get User from Session
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Post post = new Post();
