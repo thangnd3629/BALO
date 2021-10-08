@@ -46,7 +46,7 @@ public class PostController {
         postService.save(post);
 
         HashMap<String, String> response = new HashMap<>();
-        String baseUrl = "unkown"; // ?
+        String baseUrl = "unkown"; // ? How to get URL :)
         String postId = post.getPostId().toString();
         String url = baseUrl + "/" + username + "/posts" + postId;
         response.put("url", url);
