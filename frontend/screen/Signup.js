@@ -9,7 +9,6 @@ import {
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
 import { Entypo } from "@expo/vector-icons"
-import { Feather } from "@expo/vector-icons"
 export default function Signup({ navigation }) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
@@ -24,7 +23,6 @@ export default function Signup({ navigation }) {
 
       <View style={styles.groupInput}>
         <AntDesign name="phone" size={24} color="black" />
-
         <TextInput
           placeholder={"Phone number"}
           onChangeText={(input) => {
