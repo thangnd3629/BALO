@@ -22,7 +22,7 @@ public class RegisterController {
         User user = new User();
         user.setPhoneNumber(modelUserRegister.getPhoneNumber());
         user.setName(modelUserRegister.getName());
-        user.setPassword(modelUserRegister.getPassword());
+        user.setPassword(User.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()));
         User u = userRepo.save(user);
         System.out.println("u: "+u.toString());
         return ResponseEntity.ok("ok");

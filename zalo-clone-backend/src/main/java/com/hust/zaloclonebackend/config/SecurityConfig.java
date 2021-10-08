@@ -26,8 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-//        auth.userDetailsService(this.userDetailsService).passwordEncoder(User.PASSWORD_ENCODER);
+        auth.userDetailsService(this.userDetailsService).passwordEncoder(User.PASSWORD_ENCODER);
     }
 
     @Override
@@ -35,22 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/roles")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/videos/videos/*").permitAll()
-
                 //permission to access all static resources
                 .antMatchers("/resources/**").permitAll()
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/image/**").permitAll()
                 .antMatchers("/js/**").permitAll()
-
-                .antMatchers("/edu/assignment/*/submissions")
-                .permitAll()
-                .antMatchers("/edu/class/**")
-                .hasAnyRole("EDUCATION_TEACHING_MANAGEMENT_TEACHER", "EDUCATION_LEARNING_MANAGEMENT_STUDENT")
-                .antMatchers("/edu/assignment/**")
-                .hasAnyRole("EDUCATION_TEACHING_MANAGEMENT_TEACHER", "EDUCATION_LEARNING_MANAGEMENT_STUDENT")
                 .regexMatchers("/v2/api-docs")
                 .permitAll()
                 .regexMatchers("/.*swagger.*")

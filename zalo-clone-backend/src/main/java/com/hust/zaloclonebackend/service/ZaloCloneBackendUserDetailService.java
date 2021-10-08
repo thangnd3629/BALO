@@ -18,14 +18,14 @@ public class ZaloCloneBackendUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-
         com.hust.zaloclonebackend.entity.User user = userRepo.findUserByPhoneNumber(phoneNumber);
         String[] roles = {"ADMIN"};
         if (user != null) {
-            return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList(
-                    roles));
+            return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList());
         } else {
+            System.out.println("22222");
             throw new UsernameNotFoundException("Username Not Found");
         }
+//        System.out.println("1111111");
     }
 }

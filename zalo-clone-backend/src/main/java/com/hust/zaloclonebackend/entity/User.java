@@ -2,6 +2,7 @@ package com.hust.zaloclonebackend.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@ToString
 public class User {
 
     @Id
@@ -34,6 +36,6 @@ public class User {
     private String phoneNumber;
 
 
-
+    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
 }
