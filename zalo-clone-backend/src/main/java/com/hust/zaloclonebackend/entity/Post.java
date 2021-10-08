@@ -1,6 +1,5 @@
 package com.hust.zaloclonebackend.entity;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -42,8 +41,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     List<Comment> comments;
 
-    @ManyToMany(mappedBy = "likedPost")
-    @JsonIgnore
+    @ManyToMany
     List<User> likers;
 
 }

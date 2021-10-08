@@ -65,6 +65,6 @@ public class User {
     @OneToMany(mappedBy = "commentOwner")
     List<Comment> comments;
 
-    @ManyToMany(mappedBy = "likers")
-    List<Post> likedPost;
+    @ManyToMany
+    List<Post> likedPosts;
 }

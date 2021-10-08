@@ -1,6 +1,5 @@
 package com.hust.zaloclonebackend.repo;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import com.hust.zaloclonebackend.entity.Post;
