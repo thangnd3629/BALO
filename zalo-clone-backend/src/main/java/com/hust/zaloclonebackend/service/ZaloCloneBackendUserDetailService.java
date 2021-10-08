@@ -23,7 +23,6 @@ public class ZaloCloneBackendUserDetailService implements UserDetailsService {
         if (user != null) {
             return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList());
         } else {
-            System.out.println("22222");
             throw new UsernameNotFoundException("Username Not Found");
         }
 //        System.out.println("1111111");

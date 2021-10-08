@@ -18,11 +18,13 @@ public class RegisterController {
     UserRepo userRepo;
     @PostMapping("/user/register")
     public ResponseEntity<?> register(@RequestBody ModelUserRegister modelUserRegister){
-        System.out.println("hello");
+        if(userRepo.findUserByPhoneNumber(modelUserRegister.getPhoneNumber()) != null){
+            ResponseEntity.ok("phone number allready exist");
+        }
         User user = new User();
         user.setPhoneNumber(modelUserRegister.getPhoneNumber());
         user.setName(modelUserRegister.getName());
-        user.setPassword(User.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()));
+        user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
         User u = userRepo.save(user);
         System.out.println("u: "+u.toString());
         return ResponseEntity.ok("ok");

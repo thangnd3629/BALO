@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 public class LoginController {
-    @GetMapping("/")
+    @GetMapping("/login")
     public ResponseEntity<Map> home(@CurrentSecurityContext(expression = "authentication.name") String name) {
         Map<String, String> response = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
