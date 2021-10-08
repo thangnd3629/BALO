@@ -41,16 +41,17 @@ public class User {
     //Duc anh
     String avatarLink;
 
-    @OneToMany(mappedBy = "poster")
+    @OneToMany(mappedBy = "poster") // User possess many Posts
     List<Post> post;
-
-    @OneToMany(mappedBy = "userA")
+    
+    // List of relationship of user B adding this user as a friend, there'll be a better solution for this but idk
+    @OneToMany(mappedBy = "userA")  
     List<Relationship> friends;
 
-    @OneToMany(mappedBy = "userB")
-    List<Relationship> beFriendWith;
+    @OneToMany(mappedBy = "userB") 
+    List<Relationship> beFriendWith; 
 
-    @OneToMany(mappedBy = "sender")
+    @OneToMany(mappedBy = "sender") 
     List<Message> sentMess;
     
     @OneToMany(mappedBy = "receiver")
