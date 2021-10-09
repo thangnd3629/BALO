@@ -20,13 +20,13 @@ public class RegisterController {
     @PostMapping("/user/register")
     public ResponseEntity<?> register(@RequestBody ModelUserRegister modelUserRegister){
         if(userService.findByPhoneNumber(modelUserRegister.getPhoneNumber()) != null){
-            ResponseEntity.status(9996).body("phone number already exist");
+            ResponseEntity.status(200).body("phone number already exist");
         }
         User user = new User();
         user.setPhoneNumber(modelUserRegister.getPhoneNumber());
         user.setName(modelUserRegister.getName());
-        user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
+        user.setPassword(user.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()));
         User u = userService.save(user);
-        return ResponseEntity.status(1000).body("Register Successful");
+        return ResponseEntity.status(200).body("Register Successful");
     }
 }
