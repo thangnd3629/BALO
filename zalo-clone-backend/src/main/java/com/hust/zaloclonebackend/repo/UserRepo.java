@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface UserRepo extends CrudRepository<User, UUID> {
     User findUserByUserId(UUID id);
-
+    User findUserByName(String username);
     User findUserByPhoneNumber(String phoneNumber);
+    
 }
