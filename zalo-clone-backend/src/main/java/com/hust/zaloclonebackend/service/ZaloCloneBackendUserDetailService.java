@@ -14,17 +14,16 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ZaloCloneBackendUserDetailService implements UserDetailsService {
 
-    private UserRepo userRepo;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        com.hust.zaloclonebackend.entity.User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        com.hust.zaloclonebackend.entity.User user = userService.findByPhoneNumber(phoneNumber);
         String[] roles = {"ADMIN"};
         if (user != null) {
-            return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList());
+            return new User(user.getPhoneNumber(), user.getPassword(), AuthorityUtils.createAuthorityList(roles));
         } else {
             throw new UsernameNotFoundException("Username Not Found");
         }
-//        System.out.println("1111111");
     }
 }

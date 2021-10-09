@@ -11,4 +11,14 @@ public class UserServiceImpl implements UserService{
     public User findById(UUID id) {
         return userRepo.findUserByUserId(id);
     }
+
+    @Override
+    public User findByPhoneNumber(String phoneNumber) {
+        return userRepo.findUserByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepo.save(user);
+    }
 }

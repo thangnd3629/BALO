@@ -3,6 +3,7 @@ package com.hust.zaloclonebackend.controller;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.model.ModelUserRegister;
 import com.hust.zaloclonebackend.repo.UserRepo;
+import com.hust.zaloclonebackend.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RegisterController {
-    UserRepo userRepo;
+    UserService userService;
     @PostMapping("/user/register")
     public ResponseEntity<?> register(@RequestBody ModelUserRegister modelUserRegister){
-        if(userRepo.findUserByPhoneNumber(modelUserRegister.getPhoneNumber()) != null){
+        if(userService.findByPhoneNumber(modelUserRegister.getPhoneNumber()) != null){
             ResponseEntity.ok("phone number allready exist");
         }
         User user = new User();
         user.setPhoneNumber(modelUserRegister.getPhoneNumber());
         user.setName(modelUserRegister.getName());
         user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
-        User u = userRepo.save(user);
-        System.out.println("u: "+u.toString());
+        User u = userService.save(user);
         return ResponseEntity.ok("ok");
     }
 }
