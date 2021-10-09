@@ -6,6 +6,6 @@ import com.hust.zaloclonebackend.entity.Post;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface PostRepo extends CrudRepository<Post, UUID> {
-    
+public interface PostRepo extends CrudRepository<Post, String> {
+    Post deletePostById(String id);
 }

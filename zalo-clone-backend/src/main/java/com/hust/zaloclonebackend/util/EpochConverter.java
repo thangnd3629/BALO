@@ -7,7 +7,7 @@ public class EpochConverter {
     
     public static String getCurrentEpoch() throws ParseException
     {
-        Long epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse("01/01/1970 01:00:00").getTime() / 1000;
+        Long epoch = System.currentTimeMillis()/1000;
         return epoch.toString();
     }
     public static String fromEpochToDate(String epoch)
@@ -15,5 +15,9 @@ public class EpochConverter {
         String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (Long.parseLong(epoch)*1000));
         return date;
     }
-    
+    public static String fromDateToEpoch(String date) throws ParseException
+    {
+        Long epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(date).getTime() / 1000;
+        return epoch.toString();
+    }    
 }

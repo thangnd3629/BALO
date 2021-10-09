@@ -8,14 +8,12 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 
-import java.util.UUID;
-
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService{
     UserRepo userRepo;
     @Override
-    public User findById(UUID id) {
+    public User findById(String id) {
         return userRepo.findUserByUserId(id);
     }
 

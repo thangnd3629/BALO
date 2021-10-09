@@ -22,23 +22,24 @@ public class PostServiceImpl implements PostService {
         return postRepo.save(post);
     }
     @Override
-    public Post findById(UUID id) throws Exception {
+    public Post findById(String id) throws Exception {
         if (postRepo.existsById(id)) return postRepo.findById(id).get();
         else throw new Exception("No user found"); //custom for handler later
     }
     @Override
-    public List<User> findAllLikers(UUID id) throws Exception {
+    public List<User> findAllLikers(String id) throws Exception {
         if (!postRepo.existsById(id)) throw new Exception("No user found"); //custom for handler later
         Post post = postRepo.findById(id).get();
         return post.getLikers();        
     }
     @Override
-    public List<Comment> findAllComments(UUID id) throws Exception {
+    public List<Comment> findAllComments(String id) throws Exception {
         if (!postRepo.existsById(id)) throw new Exception("No user found"); //custom for handler later
         Post post = postRepo.findById(id).get();
         return post.getComments();   
     }
-   
-
-
+    @Override
+    public Post deletePostById(String id) {
+        return postRepo.deletePostById(id);
+    }
 }
