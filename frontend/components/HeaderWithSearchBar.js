@@ -4,6 +4,7 @@ import { Header, Icon } from "react-native-elements";
 import { ERROR_MESSAGE } from "../constants/ErrorMessage";
 import { SIZE } from "../constants/Style";
 
+
 const HeaderWithSearchBar = ( props ) => {
 
     if ( props.rightComponent && !React.isValidElement( props.rightComponent ) ) {
@@ -27,8 +28,8 @@ const HeaderWithSearchBar = ( props ) => {
         }
     }
 
-    const centerComponent = <TextInput 
-                            style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput } 
+    const centerComponent = <TextInput
+                            style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput }
                             placeholder='Type here...'
                             placeholderTextColor='white'
                             onFocus={ () => setIsFocused( true ) }

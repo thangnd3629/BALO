@@ -47,9 +47,9 @@ export default function App() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                placeholder={"Phone number"}
                 style={styles.input}
                 onBlur={onBlur}
-                placeholder="Số điện thoại"
                 onChangeText={onChange}
                 value={value}
               />
@@ -69,8 +69,8 @@ export default function App() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                placeholder={"Password"}
                 style={styles.input}
-                placeholder="Mật khẩu"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -92,7 +92,9 @@ export default function App() {
               style={styles.clearButton}
               onPress={handleSubmit(onSubmit)}
             >
-              <Text style={{ color: "lightblue", padding: 10 }}>
+              <Text
+                style={{ color: "lightblue", padding: 10, textAlign: "center" }}
+              >
                 Gửi yêu cầu đăng nhập
               </Text>
             </Pressable>
@@ -113,6 +115,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 30,
     textAlign: "center",
     alignItems: "center",
   },
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
   },
   form: {
     backgroundColor: "white",
-    width: "40%",
+    width: "80%",
     padding: 20,
     margin: 20,
     borderRadius: 3,
@@ -141,11 +144,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
+    color: "black",
     margin: 15,
-    height: 40,
-    width: "100%",
-    padding: 20,
+    padding: 10,
     borderWidth: 0,
+    borderLeftWidth: 1,
+    flex: 1,
   },
   groupInput: {
     flexDirection: "row",
@@ -153,29 +157,32 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "grey",
     marginBottom: 10,
+    width: "80%",
   },
 
   logo: {
     padding: 30,
   },
   submit: {
-    width: "50%",
+    width: "80%",
     borderRadius: 100,
     borderColor: "green",
   },
   welcome: {
     fontWeight: "700",
+    textAlign: "center",
   },
   more: {
     margin: 10,
-    width: "50%",
-    padding: 20,
+    width: "80%",
+    textAlign: "center",
+    alignItems: "center",
   },
   clearButton: {
     borderWidth: 1,
     borderColor: "grey",
     borderRadius: 3,
-    width: "100%",
     marginBottom: 20,
+    minWidth: "100%",
   },
 })

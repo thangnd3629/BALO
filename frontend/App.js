@@ -7,13 +7,8 @@ import Main from "./screen/Main"
 import { NavigationContainer } from "@react-navigation/native"
 
 export default function App() {
-  
-  return (
-    <NavigationContainer>
-      <Main></Main>
-    </NavigationContainer>
-  )}
-
+  return <Login></Login>
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
