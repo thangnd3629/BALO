@@ -1,88 +1,91 @@
-// import React, { useState, useRef } from "react";
-// import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
-// import { Header, Icon } from "react-native-elements";
-// import { ERROR_MESSAGE } from "../constants/ErrorMessage";
+import React, { useState, useRef } from "react";
+import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { Header, Icon } from "react-native-elements";
+import { ERROR_MESSAGE } from "../constants/ErrorMessage";
+import { SIZE } from "../constants/Style";
 
-// const HeaderWithSearchBar = ( props ) => {
 
-//     if ( props.rightComponent && !React.isValidElement( props.rightComponent ) ) {
-//         throw ERROR_MESSAGE.INVALID_RIGHT_COMPONENT_ELEMENT
-//     }
+const HeaderWithSearchBar = ( props ) => {
 
-//     const refCenterComponent = useRef( null );
-//     const API_PATH = props.apiPath;
-//     const [isFocused, setIsFocused] = useState( false );
-//     const [searchInput, setSearchInput] = useState( '' );
+    if ( props.rightComponent && !React.isValidElement( props.rightComponent ) ) {
+        throw ERROR_MESSAGE.INVALID_RIGHT_COMPONENT_ELEMENT
+    }
 
-//     submitSearch = async () => {
-//         // TODO: implement submit search
-//     }
+    const refCenterComponent = useRef( null );
+    const API_PATH = props.apiPath;
+    const [isFocused, setIsFocused] = useState( false );
+    const [searchInput, setSearchInput] = useState( '' );
 
-//     clickSearchButton = () => {
-//         if ( refCenterComponent.current?.isFocused() ) {
-//             refCenterComponent.current?.blur();
-//         } else {
-//             refCenterComponent.current?.focus();
-//         }
-//     }
+    submitSearch = async () => {
+        // TODO: implement submit search
+    }
 
-//     const centerComponent = <TextInput
-//                             style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput }
-//                             placeholder='Type here...'
-//                             placeholderTextColor='white'
-//                             onFocus={ () => setIsFocused( true ) }
-//                             onBlur={ () => setIsFocused( false ) }
-//                             ref={ refCenterComponent } ></TextInput>;
+    clickSearchButton = () => {
+        if ( refCenterComponent.current?.isFocused() ) {
+            refCenterComponent.current?.blur();
+        } else {
+            refCenterComponent.current?.focus();
+        }
+    }
 
-//     const leftComponent =  <TouchableOpacity onPress={ clickSearchButton }>
-//                                 <Icon name={ refCenterComponent.current?.isFocused() ? 'chevron-left' : 'search' } color='white' />
-//                             </TouchableOpacity>;
+    const centerComponent = <TextInput
+                            style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput }
+                            placeholder='Type here...'
+                            placeholderTextColor='white'
+                            onFocus={ () => setIsFocused( true ) }
+                            onBlur={ () => setIsFocused( false ) }
+                            ref={ refCenterComponent } ></TextInput>;
 
-//     if ( !props.rightComponent ) {
-//         return (
-//             <Header
-//                 containerStyle={ styles.headerWrapper }
-//                 placement='left'
-//                 leftComponent={ leftComponent }
-//                 centerComponent={ centerComponent }
-//             >
-//             </Header>
-//         );
-//     } else {
-//         return (
-//             <Header
-//                 containerStyle={ styles.headerWrapper }
-//                 placement='left'
-//                 leftComponent={ leftComponent }
-//                 centerComponent={ centerComponent }
-//                 leftComponent={ props.rightComponent }
-//             >
-//             </Header>
-//         );
-//     }
-// }
+    const leftComponent =  <TouchableOpacity onPress={ clickSearchButton }>
+                                <Icon name={ refCenterComponent.current?.isFocused() ? 'chevron-left' : 'search'  } size={ SIZE.MEDIUM_ICON } color='white' />
+                            </TouchableOpacity>;
 
-// const styles = StyleSheet.create({
+    if ( !props.rightComponent ) {
+        return (
+            <Header 
+                containerStyle={ styles.headerWrapper }
+                placement='left'
+                leftComponent={ leftComponent }
+                centerComponent={ centerComponent }
+            >
+            </Header>
+        );
+    } else {
+        return (
+            <Header 
+                containerStyle={ styles.headerWrapper }
+                placement='left'
+                leftComponent={ leftComponent }
+                centerComponent={ centerComponent }
+                rightComponent={ props.rightComponent }
+            >
+            </Header>
+        );
+    }
+}
 
-//     headerWrapper: {
-//         paddingTop: 30,
-//         paddingBottom: 15
-//     },
+const styles = StyleSheet.create({
 
-//     textInput: {
-//         flex: 1,
-//         width: '90%',
-//         borderRadius: 5,
-//         paddingHorizontal: 5,
-//         paddingVertical: 5,
-//         color: 'white',
-//     },
+    headerWrapper: {
+        paddingTop: 30,
+        paddingBottom: 10,
+    },
 
-//     focusedTextInput: {
-//         color: 'black',
-//         backgroundColor: 'white',
-//     },
+    textInput: {
+        flex: 1,
+        width: '100%',
+        borderRadius: SIZE.MEDIUM_BORDER_RADIUS,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
+        color: 'white',
+        fontSize: SIZE.MEDIUM_FONT,
+    },
 
-// });
+    focusedTextInput: {
+        color: 'black',
+        backgroundColor: 'white',
+    },
 
-// export default HeaderWithSearchBar;
+});
+
+export default HeaderWithSearchBar;
