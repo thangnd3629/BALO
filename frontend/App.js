@@ -3,9 +3,17 @@ import React from "react"
 import { StyleSheet, Text, View, Button } from "react-native"
 import HeaderWithSearchBar from "./components/HeaderWithSearchBar"
 import Login from "./screen/Login"
+import Main from "./screen/Main"
+import { NavigationContainer } from "@react-navigation/native"
+
 export default function App() {
-  return <HeaderWithSearchBar></HeaderWithSearchBar>
-}
+  
+  return (
+    <NavigationContainer>
+      <Main></Main>
+    </NavigationContainer>
+  )}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

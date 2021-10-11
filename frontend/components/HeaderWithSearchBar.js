@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon } from "react-native-elements";
 import { ERROR_MESSAGE } from "../constants/ErrorMessage";
+import { SIZE } from "../constants/Style";
 
 const HeaderWithSearchBar = ( props ) => {
 
@@ -35,7 +36,7 @@ const HeaderWithSearchBar = ( props ) => {
                             ref={ refCenterComponent } ></TextInput>;
 
     const leftComponent =  <TouchableOpacity onPress={ clickSearchButton }>
-                                <Icon name={ refCenterComponent.current?.isFocused() ? 'chevron-left' : 'search' } color='white' />
+                                <Icon name={ refCenterComponent.current?.isFocused() ? 'chevron-left' : 'search'  } size={ SIZE.MEDIUM_ICON } color='white' />
                             </TouchableOpacity>;
 
     if ( !props.rightComponent ) {
@@ -55,7 +56,7 @@ const HeaderWithSearchBar = ( props ) => {
                 placement='left'
                 leftComponent={ leftComponent }
                 centerComponent={ centerComponent }
-                leftComponent={ props.rightComponent }
+                rightComponent={ props.rightComponent }
             >
             </Header>
         );
@@ -66,16 +67,17 @@ const styles = StyleSheet.create({
 
     headerWrapper: {
         paddingTop: 30,
-        paddingBottom: 15
+        paddingBottom: 10,
     },
 
     textInput: {
         flex: 1,
-        width: '90%',
-        borderRadius: 5,
+        width: '100%',
+        borderRadius: SIZE.MEDIUM_BORDER_RADIUS,
         paddingHorizontal: 5,
         paddingVertical: 5,
         color: 'white',
+        fontSize: SIZE.MEDIUM_FONT,
     },
 
     focusedTextInput: {
