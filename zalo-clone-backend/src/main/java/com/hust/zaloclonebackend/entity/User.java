@@ -3,6 +3,8 @@ package com.hust.zaloclonebackend.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,8 +28,12 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "uuid2"
+    )
+    private String userId;
 
 //    @Column(name = "name")
 //    @NotNull
@@ -74,4 +81,14 @@ public class User {
 
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
+    public ArrayList<User> getBlockList()
+    {
+        ArrayList<User> result = new ArrayList<>();
+        for (Block block : this.blockedUsers) {
+            result.add(block.getBlockedUser()); 
+        }
+
+        return result;
+    }
 }
