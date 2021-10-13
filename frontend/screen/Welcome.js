@@ -30,7 +30,12 @@ export default function Welcome({ navigation }) {
           navigation.navigate("Login")
         }}
       ></PrimaryButton>
-      <SecondaryButton text="Đăng ký" onPress={(e) => {}}></SecondaryButton>
+      <SecondaryButton
+        text="Đăng ký"
+        onPress={(e) => {
+          navigation.navigate("Signup")
+        }}
+      ></SecondaryButton>
     </View>
   )
 }
