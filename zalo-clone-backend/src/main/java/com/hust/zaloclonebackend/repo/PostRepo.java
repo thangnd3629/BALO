@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PostRepo extends CrudRepository<Post, String> {
     Post findPostByPostId(UUID uuid);
-    void deletePostById(String id);
+    void deletePostByPostId(String id);
 }
