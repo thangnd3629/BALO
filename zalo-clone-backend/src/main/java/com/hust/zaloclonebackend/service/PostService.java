@@ -13,5 +13,5 @@ public interface PostService {
     Post findById(String id) throws Exception;
     List<User> findAllLikers (String id) throws Exception;
     List<Comment> findAllComments (String id) throws Exception;
-    Post deletePostById(String id);
+    void deletePostById(String id);
 }

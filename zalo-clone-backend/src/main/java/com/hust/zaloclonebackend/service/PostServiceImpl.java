@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
         return post.getComments();   
     }
     @Override
-    public Post deletePostById(String id) {
-        return postRepo.deletePostById(id);
+    public void deletePostById(String id) {
+        postRepo.deletePostById(id);
     }
 }
