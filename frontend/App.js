@@ -5,9 +5,10 @@ import HeaderWithSearchBar from "./components/HeaderWithSearchBar"
 import Login from "./screen/Login"
 import Main from "./screen/Main"
 import { NavigationContainer } from "@react-navigation/native"
+import MultiFunctionItem from "./components/MultiFunctionList"
 
 export default function App() {
-  return <Login></Login>
+  return <Main></Main>
 }
 const styles = StyleSheet.create({
   container: {

@@ -42,7 +42,6 @@ const MultiFunctionItem = ({ modalVisible, onSetModalVisible }) => {
         } else {
             itemStyle = { ...styles.item };
         }
-        console.log( "item wrapper item is: " + itemStyle );
 
         return (
             <View style={ styles.itemWrapper }>
@@ -71,6 +70,7 @@ const styles = StyleSheet.create({
         flex: 1,
         direction: "rtl", // only work for iOS
         flexDirection: "row-reverse", 
+        backgroundColor: COLORS.WHITE,
     },
     
     item: {

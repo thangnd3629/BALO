@@ -3,6 +3,7 @@ import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon } from "react-native-elements";
 import { ERROR_MESSAGE } from "../constants/ErrorMessage";
 import { SIZE } from "../constants/Style";
+import { TEXT_MESSAGE } from "../constants/Message";
 
 
 const HeaderWithSearchBar = ( props ) => {
@@ -30,7 +31,7 @@ const HeaderWithSearchBar = ( props ) => {
 
     const centerComponent = <TextInput
                             style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput }
-                            placeholder='Type here...'
+                            placeholder={ TEXT_MESSAGE.SEARCH_BAR_PLACE_HOLDER }
                             placeholderTextColor='white'
                             onFocus={ () => setIsFocused( true ) }
                             onBlur={ () => setIsFocused( false ) }
