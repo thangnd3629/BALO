@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "@react-native-picker/picker": "1.16.1",
+<<<<<<< HEAD
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/material-bottom-tabs": "^6.0.9",
+=======
+>>>>>>> f2f96134da87ab37e86a14a728362d872625e514
     "@react-navigation/native": "^6.0.4",
     "@react-navigation/native-stack": "^6.2.2",
     "expo": "~42.0.1",
@@ -21,8 +24,11 @@
     "react-hook-form": "^7.17.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-elements": "^3.4.2",
+<<<<<<< HEAD
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-crop-picker": "^0.36.4",
+=======
+>>>>>>> f2f96134da87ab37e86a14a728362d872625e514
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-vector-icons": "^8.1.0",

@@ -1,6 +1,6 @@
 import { AUTH_SUCCESS, AUTH_FAILED, AUTH_LOGOUT } from "../action/types"
 const initialState = {
-  user: {},
+  user: null,
   error: null,
 }
 
