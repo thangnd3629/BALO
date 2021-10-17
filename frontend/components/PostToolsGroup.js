@@ -10,10 +10,9 @@ class GroupPostTool extends Component {
   onPhotoUploaderPressHandler() {}
   onCheckInPressHandler() {}
   onFullPostToolPressHandler() {
-    const { groupDetail } = this.props
+    this.props.navigation.navigate("AddPost")
   }
   render() {
-    const { user } = this.props
     return (
       <View style={styles.container}>
         <View style={styles.postToolWrapper}>

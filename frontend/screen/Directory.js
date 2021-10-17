@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native"
 export default function Directory() {
   return (
     <View>
-      <Text></Text>
+      <Text>Directory</Text>
     </View>
   )
 }
