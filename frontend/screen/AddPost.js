@@ -9,6 +9,7 @@ import {
 } from "react-native"
 import ImageGrid from "../components/ImageGrid"
 import { NewStatusInput } from "../components/NewStatusInput"
+import FluidGrid from "../components/FluidGrid"
 import * as ImagePicker from "expo-image-picker"
 
 export default function AddPost({ navigation }) {
@@ -35,7 +36,11 @@ export default function AddPost({ navigation }) {
   return (
     <View style={styles.container}>
       <NewStatusInput placeholder="Bạn đang nghĩ gì"></NewStatusInput>
-      <ImageGrid imgList={chosenImgs} removePhotoHandler={removePhotoHandler} />
+      <FluidGrid
+        images={chosenImgs}
+        onPress={() => console.log("img pressed")}
+        onRemove={removePhotoHandler}
+      />
       <TouchableOpacity style={styles.optionTitle} onPress={addPhotoHandler}>
         <Text style={{ fontSize: 16 }}>Add to your post</Text>
         <View style={styles.optionImagesWrapper}>
