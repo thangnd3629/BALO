@@ -9,7 +9,7 @@ import {
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
 import { Entypo } from "@expo/vector-icons"
-export default function Signup({ navigation }) {
+export default function Signup({}) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
   const onSubmit = (data) => console.log(data)

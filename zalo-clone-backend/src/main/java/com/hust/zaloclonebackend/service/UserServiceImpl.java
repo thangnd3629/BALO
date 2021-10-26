@@ -3,12 +3,17 @@ package com.hust.zaloclonebackend.service;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.repo.UserRepo;
 
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService{
     UserRepo userRepo;
     @Override
-    public User findById(UUID id) {
+    public User findById(String id) {
         return userRepo.findUserByUserId(id);
     }
 
@@ -20,5 +25,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public User save(User user) {
         return userRepo.save(user);
+    }
+    @Override
+    public User findByUsername(String name) {
+        return userRepo.findUserByName(name);
     }
 }

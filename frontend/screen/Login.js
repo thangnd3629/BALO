@@ -12,15 +12,22 @@ import {
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
-
-export default function Login({ navigation }) {
+import { useDispatch, useSelector } from "react-redux"
+import { AUTH_SUCCESS } from "../action/types"
+import * as navigation from "../RouteNavigation"
+export default function Login({}) {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm()
-  const onSubmit = (data) => console.log(data)
-
+  const dispatch = useDispatch()
+  const onSubmit = (data) => {
+    dispatch({
+      type: AUTH_SUCCESS,
+      payload: { username: "Thangvjp" },
+    })
+  }
   return (
     <View style={styles.container}>
       <Image
