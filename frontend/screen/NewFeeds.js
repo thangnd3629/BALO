@@ -24,6 +24,7 @@ export default function NewFeeds({ navigation }) {
           return (
             <Feed
               navigation={navigation}
+              author={item.author}
               key={item.id + "1"}
               can_edit={item.can_edit}
               like={item.like}

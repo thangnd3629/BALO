@@ -4,6 +4,7 @@ import { View } from "react-native"
 import styled from "styled-components/native"
 import OptionsMenu from "react-native-option-menu"
 
+import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
 import Avatar from "./Avatar"
 
 const Container = styled.View`
