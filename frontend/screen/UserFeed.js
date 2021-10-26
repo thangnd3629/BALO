@@ -6,7 +6,7 @@ export default function UserFeed() {
       <View style={styles.background}>
         <Image
           style={styles.backgroundImg}
-          source={require("../assets/fuji-mountain-in-autumn-822273028-5a6a8a9c3418c600363958d3.png")}
+          source={require("../assets/story2.jpg")}
         ></Image>
       </View>
       <View style={styles.feed_container}></View>
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backgroundImg: {
-    height: "30%",
+    height: "100%",
     width: "100%",
   },
   feed_container: {

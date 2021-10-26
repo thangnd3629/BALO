@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native"
 import { connect } from "react-redux"
 import FontAweSome5 from "react-native-vector-icons/FontAwesome5"
+import * as navigation from "../RouteNavigation"
 class GroupPostTool extends Component {
   constructor(props) {
     super(props)
@@ -10,7 +11,7 @@ class GroupPostTool extends Component {
   onPhotoUploaderPressHandler() {}
   onCheckInPressHandler() {}
   onFullPostToolPressHandler() {
-    this.props.navigation.navigate("AddPost")
+    navigation.navigate("AddPost")
   }
   render() {
     return (

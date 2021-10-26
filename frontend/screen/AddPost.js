@@ -11,8 +11,8 @@ import ImageGrid from "../components/ImageGrid"
 import { NewStatusInput } from "../components/NewStatusInput"
 import FluidGrid from "../components/FluidGrid"
 import * as ImagePicker from "expo-image-picker"
-
-export default function AddPost({ navigation }) {
+import * as navigation from "../RouteNavigation"
+export default function AddPost({}) {
   const [chosenImgs, setChosenImgs] = useState([])
   const addPhotoHandler = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

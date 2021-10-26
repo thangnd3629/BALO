@@ -1,21 +1,46 @@
-import React from "react"
-import { StyleSheet, Text, View } from "react-native"
+import React, { useState } from "react"
+import { StyleSheet, Text, View, FlatList } from "react-native"
 import Feed from "../components/Feed"
 import PostToolsGroup from "../components/PostToolsGroup"
 export default function NewFeeds({ navigation }) {
+  const [feeds, setFeeds] = useState([
+    {
+      id: 3,
+      author: { name: "Thang" },
+      like: 5,
+      comment: 6,
+      described: "hello my friend",
+      created: "5m",
+      can_edit: true,
+      image: [{ uri: "" }],
+    },
+  ])
   return (
-    <View>
-      <Text>NewFeed</Text>
-      <Feed
-        username="Thang"
-        numLikes={5}
-        numComments={6}
-        post_content={"hello my friend"}
-        time_stamp={"5m"}
+    <View style={styles.container}>
+      <PostToolsGroup />
+      <FlatList
+        data={feeds}
+        renderItem={({ item }) => {
+          return (
+            <Feed
+              navigation={navigation}
+              key={item.id + "1"}
+              can_edit={item.can_edit}
+              like={item.like}
+              comment={item.comment}
+              image={item.image}
+              id={item.id}
+              created={item.created}
+            />
+          )
+        }}
       />
-      <PostToolsGroup navigation={navigation} />
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})

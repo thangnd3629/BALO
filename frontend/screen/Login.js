@@ -14,7 +14,8 @@ import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { AUTH_SUCCESS } from "../action/types"
-export default function Login({ navigation }) {
+import * as navigation from "../RouteNavigation"
+export default function Login({}) {
   const {
     control,
     handleSubmit,

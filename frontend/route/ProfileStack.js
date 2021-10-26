@@ -2,10 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import React from "react"
 import Profile from "../screen/Profile"
 export default function ProfileStack() {
-  const DirStack = createNativeStackNavigator()
+  const ProfileStack = createNativeStackNavigator()
   return (
-    <DirStack.Navigator>
-      <DirStack.Screen name="Profile" component={Profile} />
-    </DirStack.Navigator>
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen name="Profile" component={Profile} />
+    </ProfileStack.Navigator>
   )
 }

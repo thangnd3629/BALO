@@ -1,9 +1,8 @@
 import React from "react"
 
 import { View } from "react-native"
-
 import styled from "styled-components/native"
-import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
+import OptionsMenu from "react-native-option-menu"
 
 import Avatar from "./Avatar"
 
@@ -70,11 +69,12 @@ const Separator = styled.View`
 `
 const FooterMenu = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 9px 0;
 `
 const Button = styled.TouchableOpacity`
   flex-direction: row;
+  margin-right: 20px;
 `
 const Icon = styled.View`
   margin-right: 6px;
@@ -88,16 +88,32 @@ const BottomDivider = styled.View`
   height: 9px;
   background: #f0f2f5;
 `
-
+import * as navigation from "../RouteNavigation"
 const Feed = ({
-  username,
-  time_stamp,
-  post_content,
-  imgs_uri,
+  id,
+  described,
+  created,
+  modified,
+  like,
+  comment,
   is_liked,
-  numComments,
-  numLikes,
+  image,
+  video,
+  author,
+  state,
+  is_blocked,
+  can_edit,
+  can_comment,
 }) => {
+  const editPost = () => {
+    navigation.navigate("EditPost", {
+      id,
+      described,
+      image,
+      video,
+    })
+  }
+  const deletePost = () => {}
   return (
     <>
       <Container>
@@ -105,19 +121,30 @@ const Feed = ({
           <Row>
             <Avatar source={require("../assets/user1.jpg")} />
             <View style={{ paddingLeft: 10 }}>
-              <User>{username}</User>
+              <User>{author.name}</User>
               <Row>
-                <Time>{time_stamp}</Time>
+                <Time>{created}</Time>
                 <Entypo name="dot-single" size={12} color="#747476" />
                 <Entypo name="globe" size={10} color="#747476" />
               </Row>
             </View>
           </Row>
 
-          <Entypo name="dots-three-horizontal" size={15} color="#222121" />
+          <OptionsMenu
+            button={require("../assets/icons/more.png")}
+            buttonStyle={{
+              width: 64,
+              height: 16,
+              margin: 7.5,
+              resizeMode: "contain",
+            }}
+            destructiveIndex={1}
+            options={[can_edit ? "Edit" : null, "Delete"]}
+            actions={[editPost, deletePost]}
+          />
         </Header>
 
-        <Post>{post_content}</Post>
+        <Post>{described}</Post>
         <Photo source={require("../assets/post1.jpg")} />
 
         <Footer>
@@ -126,9 +153,9 @@ const Feed = ({
               <IconCount>
                 <AntDesign name="like1" size={12} color="#FFFFFF" />
               </IconCount>
-              <TextCount>{numLikes} likes</TextCount>
+              <TextCount>{like} likes</TextCount>
             </Row>
-            <TextCount>{numComments} comments</TextCount>
+            <TextCount>{comment} comments</TextCount>
           </FooterCount>
 
           <Separator />
@@ -150,17 +177,6 @@ const Feed = ({
                 />
               </Icon>
               <Text>Comment</Text>
-            </Button>
-
-            <Button>
-              <Icon>
-                <MaterialCommunityIcons
-                  name="share-outline"
-                  size={20}
-                  color="#424040"
-                />
-              </Icon>
-              <Text>Share</Text>
             </Button>
           </FooterMenu>
         </Footer>

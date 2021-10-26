@@ -7,12 +7,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { Provider } from "react-redux"
 
 import RootStack from "./route/RootStack"
-
+import { navigationRef } from "./RouteNavigation"
 import store from "./store"
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <RootStack></RootStack>
       </NavigationContainer>
     </Provider>

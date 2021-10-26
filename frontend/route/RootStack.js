@@ -12,7 +12,7 @@ const RootStackScreen = () => {
         headerShown: false,
       }}
     >
-      {authInfo.user ? (
+      {!authInfo.user ? (
         <RootStack.Screen
           name="App"
           component={MainTabs}
