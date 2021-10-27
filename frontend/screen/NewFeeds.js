@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import Feed from "../components/Feed"
 import PostToolsGroup from "../components/PostToolsGroup"
+import HeaderWithSearchBar from "../components/HeaderWithSearchBar"
+import { SafeAreaView } from "react-native-safe-area-context"
 export default function NewFeeds({ navigation }) {
   const [feeds, setFeeds] = useState([
     {
@@ -16,27 +18,30 @@ export default function NewFeeds({ navigation }) {
     },
   ])
   return (
-    <View style={styles.container}>
-      <PostToolsGroup />
-      <FlatList
-        data={feeds}
-        renderItem={({ item }) => {
-          return (
-            <Feed
-              navigation={navigation}
-              author={item.author}
-              key={item.id + "1"}
-              can_edit={item.can_edit}
-              like={item.like}
-              comment={item.comment}
-              image={item.image}
-              id={item.id}
-              created={item.created}
-            />
-          )
-        }}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <HeaderWithSearchBar />
+        <PostToolsGroup />
+        <FlatList
+          data={feeds}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            return (
+              <Feed
+                navigation={navigation}
+                author={item.author}
+                can_edit={item.can_edit}
+                like={item.like}
+                comment={item.comment}
+                image={item.image}
+                id={item.id}
+                created={item.created}
+              />
+            )
+          }}
+        />
+      </View>
+    </SafeAreaView>
   )
 }
 

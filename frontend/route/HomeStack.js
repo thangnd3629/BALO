@@ -7,7 +7,11 @@ export default function HomeStack() {
   const HomeStack = createNativeStackNavigator()
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="NewFeed" component={NewFeeds} />
+      <HomeStack.Screen
+        options={{ headerShown: false }}
+        name="NewFeed"
+        component={NewFeeds}
+      />
       <HomeStack.Screen name="AddPost" component={AddPost} />
       <HomeStack.Screen name="EditPost" component={EditPost} />
     </HomeStack.Navigator>

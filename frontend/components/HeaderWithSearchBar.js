@@ -75,8 +75,9 @@ const HeaderWithSearchBar = (props) => {
 
 const styles = StyleSheet.create({
   headerWrapper: {
-    paddingTop: 30,
-    paddingBottom: 15,
+    borderWidth: 1,
+    borderColor: "red",
+    height: 100,
   },
 
   textInput: {
