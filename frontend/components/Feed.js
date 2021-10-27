@@ -37,7 +37,7 @@ const Post = styled.Text`
   line-height: 16px;
   padding: 0 11px;
 `
-const Photo = styled.Image`
+const Photo = styled.View`
   margin-top: 9px;
   width: 100%;
   height: 200px;
@@ -90,6 +90,7 @@ const BottomDivider = styled.View`
   background: #f0f2f5;
 `
 import * as navigation from "../RouteNavigation"
+import FluidGrid from "./FluidGrid"
 const Feed = ({
   id,
   described,
@@ -115,6 +116,7 @@ const Feed = ({
     })
   }
   const deletePost = () => {}
+
   return (
     <>
       <Container>
@@ -140,13 +142,15 @@ const Feed = ({
               resizeMode: "contain",
             }}
             destructiveIndex={1}
-            options={[can_edit ? "Edit" : null, "Delete"]}
+            options={[can_edit ? "Edit" : null, can_edit ? "Delete" : null]}
             actions={[editPost, deletePost]}
           />
         </Header>
 
         <Post>{described}</Post>
-        <Photo source={require("../assets/post1.jpg")} />
+        <Photo>
+          <FluidGrid editable={false} images={image.map((item) => item.uri)} />
+        </Photo>
 
         <Footer>
           <FooterCount>

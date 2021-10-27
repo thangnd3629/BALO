@@ -14,7 +14,17 @@ export default function NewFeeds({ navigation }) {
       described: "hello my friend",
       created: "5m",
       can_edit: true,
-      image: [{ uri: "" }],
+      image: [
+        {
+          uri: "https://reactnative.dev/img/tiny_logo.png",
+        },
+        {
+          uri: "https://www.w3schools.com/w3images/fjords.jpg",
+        },
+        {
+          uri: "https://tinypng.com/images/social/website.jpg",
+        },
+      ],
     },
   ])
   return (
@@ -28,7 +38,7 @@ export default function NewFeeds({ navigation }) {
           renderItem={({ item }) => {
             return (
               <Feed
-                navigation={navigation}
+                described={item.described}
                 author={item.author}
                 can_edit={item.can_edit}
                 like={item.like}
