@@ -8,6 +8,7 @@ import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.repo.PostRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class PostServiceImpl implements PostService {
     public List<User> findAllLikers(String id) throws Exception {
         if (!postRepo.existsById(id)) throw new Exception("No user found"); //custom for handler later
         Post post = postRepo.findById(id).get();
-        return post.getLikers();        
+        return post.getLikers();
     }
     @Override
     public List<Comment> findAllComments(String id) throws Exception {
