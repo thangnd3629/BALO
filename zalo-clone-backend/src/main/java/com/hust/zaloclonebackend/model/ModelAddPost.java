@@ -6,13 +6,14 @@ import java.util.List;
 
 import com.hust.zaloclonebackend.entity.User;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-public class ModelPost {
-    //List<File> images;
-    //File video;
+@Data
+@Builder
+public class ModelAddPost {
+    List<String> image;
     String describe; 
 }
