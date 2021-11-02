@@ -6,15 +6,15 @@ const ProfileGroup = ({avatar, background, name, bio}) => {
         <View>
             <Image
                 style={styles.backgroundImg}
-                source={require("../assets/story2.jpg")}
+                source={require(background)}
             ></Image>
             <View style={styles.avatarContainer}>
                 <View style={styles.blueCircle}>
-                    <Image style={styles.avatar} source={require("../assets/user2.jpg")}></Image>
+                    <Image style={styles.avatar} source={require(avatar)}></Image>
                 </View>
             </View>
-            <Text style={styles.name}>Name</Text>
-            <Text style={styles.shortBio}> This is bio Section</Text>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.shortBio}> {bio}</Text>
         </View>
     )
 }

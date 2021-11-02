@@ -6,6 +6,8 @@ import HorizontalOptions from "../components/HorizontalOptions"
 import ProfileGroup from "../components/ProfileGroup"
 
 export default function UserFeed({ navigation, feeds }) {
+
+  
   const sections = {data: [{
     content: "Image",
     colors:["#D3959B","#BFE6BA"]
@@ -16,11 +18,19 @@ export default function UserFeed({ navigation, feeds }) {
     content: "Memories",
     colors:["#FC466B","#3F5EFB"]
   }]}
-
+  // ! still need to call api from sv to get user
+  const user = {
+    id:"id",
+    name:"This is name section",
+    bio:"This is bio section",
+    avatar:"../assets/user2.jpg",
+    background:"../assets/story2.jpg"
+  }
+  
   return (
     <View style={styles.container}>
       <View style={styles.background}>
-        <ProfileGroup />
+        <ProfileGroup avatar = {user.avatar} background={user.background} name={user.name} bio={user.bio}/>
       </View>
 
       <View style={styles.feed_container}>
