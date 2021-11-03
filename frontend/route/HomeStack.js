@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import React from "react"
 import AddPost from "../screen/AddPost"
+import Comment from "../screen/Comment"
 import EditPost from "../screen/EditPost"
 import NewFeeds from "../screen/NewFeeds"
 export default function HomeStack() {
@@ -14,6 +15,7 @@ export default function HomeStack() {
       />
       <HomeStack.Screen name="AddPost" component={AddPost} />
       <HomeStack.Screen name="EditPost" component={EditPost} />
+      <HomeStack.Screen name="Comment" component={Comment} />
     </HomeStack.Navigator>
   )
 }

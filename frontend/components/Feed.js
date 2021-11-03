@@ -194,7 +194,11 @@ const Feed = ({
               <Text>Like</Text>
             </Button>
 
-            <Button>
+            <Button
+              onPress={() => {
+                navigation.navigate("Comment")
+              }}
+            >
               <Icon>
                 <MaterialCommunityIcons
                   name="comment-outline"
