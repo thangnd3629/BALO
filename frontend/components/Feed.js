@@ -2,9 +2,10 @@ import React from "react"
 
 import { View } from "react-native"
 import styled from "styled-components/native"
-import OptionsMenu from "react-native-option-menu"
+import OptionsMenu from "../components/OptionMenu"
 
 import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
+import { useSelector } from "react-redux"
 import Avatar from "./Avatar"
 
 const Container = styled.View`
@@ -106,7 +107,10 @@ const Feed = ({
   is_blocked,
   can_edit,
   can_comment,
+  onReport,
 }) => {
+  const user = useSelector((state) => state.authReducer.user)
+
   const editPost = () => {
     navigation.navigate("EditPost", {
       id,
@@ -115,7 +119,21 @@ const Feed = ({
       video,
     })
   }
+  const reportPost = () => {
+    onReport(id)
+  }
+
   const deletePost = () => {}
+
+  const initOptionMenu = () => {
+    const optionMenu = []
+    if (can_edit) optionMenu.push({ option: "Edit", operation: editPost })
+    if (user.id === author.id)
+      optionMenu.push({ option: "Delete", operation: deletePost })
+    else optionMenu.push({ option: "Report", operation: reportPost })
+
+    return optionMenu
+  }
 
   return (
     <>
@@ -134,16 +152,19 @@ const Feed = ({
           </Row>
 
           <OptionsMenu
-            button={require("../assets/icons/more.png")}
+            customButton={
+              <View style={{ margin: 20 }}>
+                <Entypo name="dots-three-horizontal" size={24} color="black" />
+              </View>
+            }
             buttonStyle={{
               width: 64,
               height: 16,
               margin: 7.5,
               resizeMode: "contain",
             }}
-            destructiveIndex={1}
-            options={[can_edit ? "Edit" : null, can_edit ? "Delete" : null]}
-            actions={[editPost, deletePost]}
+            options={initOptionMenu().map((item) => item.option)}
+            actions={initOptionMenu().map((item) => item.operation)}
           />
         </Header>
 

@@ -17,20 +17,18 @@ export default function Profile() {
     },
   ])
   return (
-    <View style = {styles.container} >
+    <View style={styles.container}>
       <ScrollView>
-      <UserFeed feeds = {feeds} navigation = {"s"}>
-        
-      </UserFeed>
+        <UserFeed feeds={feeds}></UserFeed>
       </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container:{
-    display:"flex",
-    flexDirection:"column",
-    height:"100%"
-  }
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
 })
