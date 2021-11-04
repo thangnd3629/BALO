@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomColor: "#ddd",
     borderBottomWidth: 1,
-    marginTop: 10,
     backgroundColor: "#fff",
   },
   postToolWrapper: {

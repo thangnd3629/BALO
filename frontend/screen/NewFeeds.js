@@ -78,7 +78,7 @@ export default function NewFeeds({}) {
     },
   ])
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ReportModal
         visible={reportFeedModalShow}
         feedID={reportedFeedID}
@@ -107,7 +107,7 @@ export default function NewFeeds({}) {
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   )
 }
 
