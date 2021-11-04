@@ -2,17 +2,11 @@ package com.hust.zaloclonebackend.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hust.zaloclonebackend.entity.Comment;
-import com.hust.zaloclonebackend.entity.Image;
-import com.hust.zaloclonebackend.entity.Post;
-import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.entity.*;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
-import com.hust.zaloclonebackend.repo.ImageRepo;
-import com.hust.zaloclonebackend.repo.PostPagingAndSortingRepo;
-import com.hust.zaloclonebackend.repo.PostRepo;
+import com.hust.zaloclonebackend.repo.*;
 
-import com.hust.zaloclonebackend.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +21,7 @@ public class PostServiceImpl implements PostService {
     ImageRepo imageRepo;
     UserRepo userRepo;
     PostPagingAndSortingRepo postPagingAndSortingRepo;
+    ReportRepo reportRepo;
     @Override
     public Post save(Post post) {
         return postRepo.save(post);
@@ -158,4 +153,22 @@ public class PostServiceImpl implements PostService {
                 .zaloStatus(ZaloStatus.OK)
                 .build();
     }
+
+    @Override
+    public ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber) {
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        Post post = postRepo.findPostByPostId(modelReportPost.getId());
+        if(post.equals(null)){
+            return ZaloStatus.POST_NOT_EXISTED;
+        }
+        Report report = Report.builder()
+                .post(post)
+                .detail(modelReportPost.getDetails())
+                .subject(modelReportPost.getSubject())
+                .user(user)
+                .build();
+        reportRepo.save(report);
+        return ZaloStatus.OK;
+    }
+
 }

@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.hust.zaloclonebackend.entity.Comment;
 import com.hust.zaloclonebackend.entity.Post;
 import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,6 @@ public interface PostService {
     ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber);
 
     ModelEditPostResponse editPost(ModelEditPostRequest modelEditPostRequest);
+
+    ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber);
 }
