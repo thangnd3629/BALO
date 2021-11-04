@@ -2,10 +2,12 @@ package com.hust.zaloclonebackend.controller;
 
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.model.ModelUserRegister;
+import com.hust.zaloclonebackend.model.ModelUserRegisterResponse;
 import com.hust.zaloclonebackend.repo.UserRepo;
 import com.hust.zaloclonebackend.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,15 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterController {
     UserService userService;
     @PostMapping("/user/register")
-    public ResponseEntity<?> register(@RequestBody ModelUserRegister modelUserRegister){
-        if(userService.findByPhoneNumber(modelUserRegister.getPhoneNumber()) != null){
-            ResponseEntity.ok("phone number allready exist");
-        }
-        User user = new User();
-        user.setPhoneNumber(modelUserRegister.getPhoneNumber());
-        user.setName(modelUserRegister.getName());
-        user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
-        User u = userService.save(user);
-        return ResponseEntity.ok("ok");
+    public ResponseEntity<?> register(@RequestBody ModelUserRegister modelUserRegister) throws Exception {
+        ModelUserRegisterResponse modelUserRegisterResponse = userService.register(modelUserRegister);
+        return ResponseEntity.status(HttpStatus.OK).body(modelUserRegisterResponse);
     }
 }
