@@ -13,4 +13,6 @@ public interface ImageRepo extends JpaRepository<Image, Long> {
     List<String> findAllImageValueByPost(@Param(":post") Post post);
 
     void deleteAllByPost(Post post);
+
+    void deleteById(Long id);
 }

@@ -1,20 +1,16 @@
 package com.hust.zaloclonebackend.controller;
 
 import java.security.Principal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
 
-import com.hust.zaloclonebackend.entity.Post;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.model.*;
-import com.hust.zaloclonebackend.model.response.PostResponse;
 import com.hust.zaloclonebackend.service.PostServiceImpl;
 import com.hust.zaloclonebackend.service.UserServiceImpl;
-import com.hust.zaloclonebackend.util.EpochConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,5 +52,21 @@ public class PostController {
     public ResponseEntity<?> deletePost(@PathVariable("id") String id,Principal principal) throws Exception {
         ModelDeletePostResponse modelDeletePostResponse = postService.deletePostById(id);
         return ResponseEntity.ok(modelDeletePostResponse);
+    }
+
+    @PostMapping("/post/get-user-list-post")
+    public ResponseEntity<?> getUserListPost(Principal principal, @RequestBody ModelGetUserListPostRequest modelGetUserListPostRequest ){
+
+        Pageable pageable = PageRequest.of((modelGetUserListPostRequest.getLastId()+1)/modelGetUserListPostRequest.getCount(), modelGetUserListPostRequest.getCount(), Sort.by("createdDate").descending());
+        String phoneNumber = principal.getName();
+
+        ModelGetListPostResponse modelGetListPostResponse = postService.getUserListPost(pageable, phoneNumber);
+        return ResponseEntity.status(200).body(modelGetListPostResponse);
+    }
+
+    @PostMapping("/post/edit")
+    public ResponseEntity<?> editPost(@RequestBody ModelEditPostRequest modelEditPostRequest ){
+        ModelEditPostResponse modelEditPostResponse = postService.editPost(modelEditPostRequest);
+        return ResponseEntity.status(200).body(modelEditPostResponse);
     }
 }

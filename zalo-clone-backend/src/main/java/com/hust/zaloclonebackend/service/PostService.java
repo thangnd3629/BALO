@@ -7,10 +7,8 @@ import java.util.UUID;
 import com.hust.zaloclonebackend.entity.Comment;
 import com.hust.zaloclonebackend.entity.Post;
 import com.hust.zaloclonebackend.entity.User;
-import com.hust.zaloclonebackend.model.ModelAddPost;
-import com.hust.zaloclonebackend.model.ModelAddPostResponse;
-import com.hust.zaloclonebackend.model.ModelDeletePostResponse;
-import com.hust.zaloclonebackend.model.ModelGetPostResponse;
+import com.hust.zaloclonebackend.model.*;
+import org.springframework.data.domain.Pageable;
 
 public interface PostService {
     Post save(Post post);
@@ -22,4 +20,8 @@ public interface PostService {
     ModelAddPostResponse addPost(ModelAddPost modelAddPost, User user) throws Exception;
 
     ModelGetPostResponse getPostById(String id) throws Exception;
+
+    ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber);
+
+    ModelEditPostResponse editPost(ModelEditPostRequest modelEditPostRequest);
 }
