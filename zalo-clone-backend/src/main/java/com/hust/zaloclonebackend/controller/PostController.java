@@ -40,7 +40,7 @@ public class PostController {
         //get User from Session
         User user = userService.findByPhoneNumber(principal.getName());
         ModelAddPostResponse modelAddPostResponse = postService.addPost(modelAddPost, user);
-        return ResponseEntity.status(HttpStatus.OK).body(modelAddPost.getDescribe());
+        return ResponseEntity.status(HttpStatus.OK).body(modelAddPostResponse);
 
 
     }
