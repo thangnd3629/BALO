@@ -3,13 +3,13 @@ import React from "react"
 import styled from "styled-components/native"
 
 const Container = styled.View`
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   position: relative;
 `
 const User = styled.Image`
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   border-radius: 20px;
   border-color: #1777f2;
   border-width: ${(props) => (props.story ? "3px" : 0)};
