@@ -11,8 +11,8 @@ import ImageGrid from "../components/ImageGrid"
 import { NewStatusInput } from "../components/NewStatusInput"
 import FluidGrid from "../components/FluidGrid"
 import * as ImagePicker from "expo-image-picker"
-import * as navigation from "../RouteNavigation"
 export default function AddPost({}) {
+  const [statusContent, setContent] = useState("")
   const [chosenImgs, setChosenImgs] = useState([])
   const addPhotoHandler = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -36,7 +36,12 @@ export default function AddPost({}) {
   }
   return (
     <View style={styles.container}>
-      <NewStatusInput placeholder="Bạn đang nghĩ gì"></NewStatusInput>
+      <NewStatusInput
+        placeholder="Bạn đang nghĩ gì"
+        onChangeText={(text) => {
+          setContent(text)
+        }}
+      ></NewStatusInput>
       <FluidGrid
         images={chosenImgs.map((item) => item.uri)}
         onPress={() => console.log("img pressed")}

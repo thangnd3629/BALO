@@ -5,7 +5,6 @@ import HomeStack from "./HomeStack"
 import MessageStack from "./MessageStack"
 import DirStack from "./DirectoryStack"
 import ProfileStack from "./ProfileStack"
-import HeaderWithSearchBar from "../components/HeaderWithSearchBar"
 
 const Tab = createBottomTabNavigator()
 export default function MainTabs() {
@@ -13,7 +12,7 @@ export default function MainTabs() {
     <>
       <Tab.Navigator
         screenOptions={{
-          header: () => <HeaderWithSearchBar />,
+          headerShown: false,
         }}
       >
         <Tab.Screen name="HomeStack" component={HomeStack} />

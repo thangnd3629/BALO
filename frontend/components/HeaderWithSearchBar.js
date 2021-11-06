@@ -1,21 +1,59 @@
 import React, { useState } from "react"
-import { StyleSheet, Text, View, TextInput } from "react-native"
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native"
 import { AntDesign } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
-import { SearchBar } from "react-native-elements"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { useDispatch, useSelector } from "react-redux"
+import { CANCEL_GLOBAL_QUERY, PERFORM_GLOBAL_QUERY } from "../action/types"
 
-export default function HeaderWithSearchBar({ query, onChangeText }) {
+import { useNavigation } from "@react-navigation/native"
+
+export default function HeaderWithSearchBar() {
+  const navigation = useNavigation()
+  const dispatch = useDispatch()
+  const cancelQuery = () => {
+    dispatch({
+      type: CANCEL_GLOBAL_QUERY,
+    })
+    navigation.goBack()
+  }
+  const { query, isQuerying } = useSelector((state) => {
+    return state.globalQueryReducer
+  })
+  const onChangeText = (text) => {
+    dispatch({
+      type: PERFORM_GLOBAL_QUERY,
+      payload: text,
+    })
+  }
+  const onPressSearchBar = () => {
+    console.log("object")
+    if (!isQuerying) navigation.navigate("Search")
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchIcon}>
-        <AntDesign name="search1" size={24} color="black" />
+        {!isQuerying ? (
+          <AntDesign name="search1" size={24} color="black" />
+        ) : (
+          <TouchableOpacity onPress={cancelQuery}>
+            <AntDesign name="arrowleft" size={24} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.searchBar}>
         <TextInput
+          onTouchStart={onPressSearchBar}
           value={query}
+          placeholder="Tìm kiếm bạn bè , tin nhắn"
           onChangeText={onChangeText}
-          placeholder={"Tim kiem ban be , tin nhan"}
         />
       </View>
       <View style={styles.qrIcon}>

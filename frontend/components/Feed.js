@@ -12,7 +12,6 @@ const Container = styled.View`
   flex: 1;
 `
 const Header = styled.View`
-  height: 50px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -90,6 +89,10 @@ const BottomDivider = styled.View`
   height: 9px;
   background: #f0f2f5;
 `
+const AvatarSection = styled.View`
+  height: 40px;
+  width: 40px;
+`
 import * as navigation from "../RouteNavigation"
 import FluidGrid from "./FluidGrid"
 const Feed = ({
@@ -140,7 +143,9 @@ const Feed = ({
       <Container>
         <Header>
           <Row>
-            <Avatar source={require("../assets/user1.jpg")} />
+            <AvatarSection>
+              <Avatar source={require("../assets/user1.jpg")} />
+            </AvatarSection>
             <View style={{ paddingLeft: 10 }}>
               <User>{author.name}</User>
               <Row>
