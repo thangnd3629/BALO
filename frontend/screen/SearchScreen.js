@@ -2,9 +2,17 @@ import React from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 import { useSelector } from "react-redux"
 import { TabView, SceneMap } from "react-native-tab-view"
+import UserContactCard from "../components/UserContactCard"
 
 const FriendRoute = () => (
-  <View style={{ flex: 1, backgroundColor: "#ff4081" }} />
+  <View style={{ flex: 1 }}>
+    <UserContactCard />
+    <UserContactCard />
+    <UserContactCard />
+    <UserContactCard />
+    <UserContactCard />
+    <UserContactCard />
+  </View>
 )
 
 const MsgRoute = () => <View style={{ flex: 1, backgroundColor: "#673ab7" }} />
