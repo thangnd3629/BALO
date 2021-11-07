@@ -1,92 +1,88 @@
-import React, { useState, useRef } from "react";
-import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import { Header, Icon } from "react-native-elements";
-import { ERROR_MESSAGE } from "../constants/ErrorMessage";
-import { SIZE } from "../constants/Style";
-import { TEXT_MESSAGE } from "../constants/Message";
+import React, { useState } from "react"
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native"
+import { AntDesign } from "@expo/vector-icons"
+import { LinearGradient } from "expo-linear-gradient"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { useDispatch, useSelector } from "react-redux"
+import { CANCEL_GLOBAL_QUERY, PERFORM_GLOBAL_QUERY } from "../action/types"
 
+import { useNavigation } from "@react-navigation/native"
 
-const HeaderWithSearchBar = ( props ) => {
+export default function HeaderWithSearchBar() {
+  const navigation = useNavigation()
+  const dispatch = useDispatch()
+  const cancelQuery = () => {
+    dispatch({
+      type: CANCEL_GLOBAL_QUERY,
+    })
+    navigation.goBack()
+  }
+  const { query, isQuerying } = useSelector((state) => {
+    return state.globalQueryReducer
+  })
+  const onChangeText = (text) => {
+    dispatch({
+      type: PERFORM_GLOBAL_QUERY,
+      payload: text,
+    })
+  }
+  const onPressSearchBar = () => {
+    console.log("object")
+    if (!isQuerying) navigation.navigate("Search")
+  }
 
-    if ( props.rightComponent && !React.isValidElement( props.rightComponent ) ) {
-        throw ERROR_MESSAGE.INVALID_RIGHT_COMPONENT_ELEMENT
-    }
-
-    const refCenterComponent = useRef( null );
-    const API_PATH = props.apiPath;
-    const [isFocused, setIsFocused] = useState( false );
-    const [searchInput, setSearchInput] = useState( '' );
-
-    submitSearch = async () => {
-        // TODO: implement submit search
-    }
-
-    clickSearchButton = () => {
-        if ( refCenterComponent.current?.isFocused() ) {
-            refCenterComponent.current?.blur();
-        } else {
-            refCenterComponent.current?.focus();
-        }
-    }
-
-    const centerComponent = <TextInput
-                            style={ isFocused ? { ...styles.textInput, ...styles.focusedTextInput} : styles.textInput }
-                            placeholder={ TEXT_MESSAGE.SEARCH_BAR_PLACE_HOLDER }
-                            placeholderTextColor='white'
-                            onFocus={ () => setIsFocused( true ) }
-                            onBlur={ () => setIsFocused( false ) }
-                            ref={ refCenterComponent } ></TextInput>;
-
-    const leftComponent =  <TouchableOpacity onPress={ clickSearchButton }>
-                                <Icon name={ refCenterComponent.current?.isFocused() ? 'chevron-left' : 'search'  } size={ SIZE.MEDIUM_ICON } color='white' />
-                            </TouchableOpacity>;
-
-    if ( !props.rightComponent ) {
-        return (
-            <Header 
-                containerStyle={ styles.headerWrapper }
-                placement='left'
-                leftComponent={ leftComponent }
-                centerComponent={ centerComponent }
-            >
-            </Header>
-        );
-    } else {
-        return (
-            <Header 
-                containerStyle={ styles.headerWrapper }
-                placement='left'
-                leftComponent={ leftComponent }
-                centerComponent={ centerComponent }
-                rightComponent={ props.rightComponent }
-            >
-            </Header>
-        );
-    }
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.searchIcon}>
+        {!isQuerying ? (
+          <AntDesign name="search1" size={24} color="black" />
+        ) : (
+          <TouchableOpacity onPress={cancelQuery}>
+            <AntDesign name="arrowleft" size={24} color="black" />
+          </TouchableOpacity>
+        )}
+      </View>
+      <View style={styles.searchBar}>
+        <TextInput
+          onTouchStart={onPressSearchBar}
+          value={query}
+          placeholder="Tìm kiếm bạn bè , tin nhắn"
+          onChangeText={onChangeText}
+        />
+      </View>
+      <View style={styles.qrIcon}>
+        <AntDesign name="qrcode" size={24} color="black" />
+      </View>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingTop: 10,
+  },
 
-    headerWrapper: {
-        paddingTop: 30,
-        paddingBottom: 10,
-    },
-
-    textInput: {
-        flex: 1,
-        width: '100%',
-        borderRadius: SIZE.MEDIUM_BORDER_RADIUS,
-        paddingHorizontal: 5,
-        paddingVertical: 5,
-        color: 'white',
-        fontSize: SIZE.MEDIUM_FONT,
-    },
-
-    focusedTextInput: {
-        color: 'black',
-        backgroundColor: 'white',
-    },
-
-});
-
-export default HeaderWithSearchBar;
+  searchIcon: {
+    padding: 5,
+    marginLeft: 10,
+  },
+  searchBar: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: "#FFFFFF",
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  qrIcon: {
+    padding: 5,
+  },
+})
