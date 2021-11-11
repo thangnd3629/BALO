@@ -210,4 +210,23 @@ public class ZaloServiceImpl implements ZaloService {
                 .build();
     }
 
+    @Override
+    public ZaloStatus editComment(ModelEditComment modelEditComment) {
+        Comment comment = commentRepo.findCommentByCommentId(modelEditComment.getCommentId());
+        comment.setContent(modelEditComment.getComment());
+        return  ZaloStatus.OK;
+    }
+
+    @Override
+    public ModelLikePostResponse likePost(String phoneNumber, String postId) {
+        Post post = postRepo.findPostByPostId(postId);
+        User u = userRepo.findUserByPhoneNumber(phoneNumber);
+        post.getLikers().add(u);
+        postRepo.save(post);
+        ModelLikePostResponse modelLikePostResponse = ModelLikePostResponse.builder()
+                .like(post.getLikers().size())
+                .build();
+        return modelLikePostResponse;
+    }
+
 }

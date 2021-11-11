@@ -83,5 +83,15 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelGetCommentPagingResponse);
     }
 
+    @PostMapping("/comment/edit")
+    public ResponseEntity<?> editComment(@RequestBody ModelEditComment modelEditComment){
+        ZaloStatus zaloStatus = zaloService.editComment(modelEditComment);
+        return ResponseEntity.status(200).body(zaloStatus);
+    }
 
+    @PostMapping("/post/like/{postId}")
+    public ResponseEntity<?> likePost(Principal principal, @PathVariable("postId") String postId){
+        ModelLikePostResponse modelLikePostResponse = zaloService.likePost(principal.getName(), postId);
+        return ResponseEntity.status(200).body(modelLikePostResponse);
+    }
 }
