@@ -98,8 +98,8 @@ export default function Messages({ navigation }) {
             return (
               item.id !== "0" ?
                 <View style={styles.friendContainer}>
-
-                  <Avatar2 size={55} source={item.userImg} /> {/* touch opacity to navigate to add contact*/}
+                      
+                  <Avatar2 size={55} source={item.userImg} /* touch opacity to navigate to User Profile*//> 
 
                   <Text numberOfLines={2} style={{
                     textAlign: "center"
@@ -109,7 +109,7 @@ export default function Messages({ navigation }) {
                 </View> :
                 <View style={styles.friendContainer}>
 
-                  <AntDesign name="pluscircle" size={55} color="darkgrey" /> {/* touch opacity to navigate to User Profile*/}
+                  <AntDesign name="pluscircle" size={55} color="darkgrey"  /* touch opacity to navigate to User Profile*//> 
 
                   <Text numberOfLines={2} style={{
                     textAlign: "center"
@@ -146,7 +146,7 @@ export default function Messages({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+    display: "flex"
   },
   friendListContainer: {
     width: "100%",
