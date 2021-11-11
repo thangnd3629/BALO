@@ -23,14 +23,14 @@ export default function UserFeed({ navigation, feeds }) {
     id:"id",
     name:"This is name section",
     bio:"This is bio section",
-    avatar:"../assets/user2.jpg",
-    background:"../assets/story2.jpg"
+    avatar:require("../assets/user2.jpg"),
+    background:require("../assets/story2.jpg")
   }
   
   return (
     <View style={styles.container}>
       <View style={styles.background}>
-        <ProfileGroup avatar = {user.avatar} background={user.background} name={user.name} bio={user.bio}/>
+        <ProfileGroup avatar = {user.avatar} backgroundImage={user.background} name={user.name} bio={user.bio}/>
       </View>
 
       <View style={styles.feed_container}>

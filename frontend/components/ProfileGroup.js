@@ -1,16 +1,16 @@
 import React from 'react'
 import { StyleSheet, View, Image, Text } from 'react-native'
 
-const ProfileGroup = ({avatar, background, name, bio}) => {
+const ProfileGroup = ({avatar, backgroundImage, name, bio}) => {
     return (
         <View>
             <Image
                 style={styles.backgroundImg}
-                source={require(background)}
+                source={backgroundImage}
             ></Image>
             <View style={styles.avatarContainer}>
                 <View style={styles.blueCircle}>
-                    <Image style={styles.avatar} source={require(avatar)}></Image>
+                    <Image style={styles.avatar} source={avatar}></Image>
                 </View>
             </View>
             <Text style={styles.name}>{name}</Text>
