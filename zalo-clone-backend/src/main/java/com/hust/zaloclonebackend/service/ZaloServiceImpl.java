@@ -1,32 +1,33 @@
 package com.hust.zaloclonebackend.service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import com.hust.zaloclonebackend.entity.Comment;
-import com.hust.zaloclonebackend.entity.Image;
-import com.hust.zaloclonebackend.entity.Post;
-import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.entity.*;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
-import com.hust.zaloclonebackend.repo.ImageRepo;
-import com.hust.zaloclonebackend.repo.PostPagingAndSortingRepo;
-import com.hust.zaloclonebackend.repo.PostRepo;
+import com.hust.zaloclonebackend.repo.*;
 
-import com.hust.zaloclonebackend.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 
-@Service
+@org.springframework.stereotype.Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class PostServiceImpl implements PostService {
+public class ZaloServiceImpl implements ZaloService {
 
-    PostRepo postRepo;
-    ImageRepo imageRepo;
-    UserRepo userRepo;
-    PostPagingAndSortingRepo postPagingAndSortingRepo;
+    private PostRepo postRepo;
+    private ImageRepo imageRepo;
+    private UserRepo userRepo;
+    private PostPagingAndSortingRepo postPagingAndSortingRepo;
+    private ReportRepo reportRepo;
+    private CommentRepo commentRepo;
+    private CommentPagingAndSortingRepo commentPagingAndSortingRepo;
+
     @Override
     public Post save(Post post) {
         return postRepo.save(post);
@@ -50,18 +51,13 @@ public class PostServiceImpl implements PostService {
     }
     @Override
     public ModelDeletePostResponse deletePostById(String id) throws Exception {
-        try {
-            Post p = postRepo.findPostByPostId(id);
-
-            imageRepo.deleteAllByPost(p);
-            postRepo.deletePostByPostId(id);
-            return ModelDeletePostResponse.builder()
-                    .zaloStatus(ZaloStatus.OK)
-                    .build();
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
-        }
-
+        Post p = postRepo.findPostByPostId(id);
+        imageRepo.deleteAllByPost(p);
+        commentRepo.deleteAllByPost(p);
+        postRepo.deletePostByPostId(id);
+        return ModelDeletePostResponse.builder()
+                .zaloStatus(ZaloStatus.OK)
+                .build();
     }
 
     @Override
@@ -150,12 +146,68 @@ public class PostServiceImpl implements PostService {
                     .build();
             imageRepo.save(image1);
         });
-        modelEditPostRequest.getImageDelId().forEach(s -> {
-            imageRepo.deleteById(s);
-        });
+        modelEditPostRequest.getImageDelId().forEach(s -> imageRepo.deleteById(s));
         postRepo.save(post);
         return ModelEditPostResponse.builder()
                 .zaloStatus(ZaloStatus.OK)
                 .build();
     }
+
+    @Override
+    public ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber) {
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        Post post = postRepo.findPostByPostId(modelReportPost.getId());
+        if(post == null){
+            return ZaloStatus.POST_NOT_EXISTED;
+        }
+        Report report = Report.builder()
+                .post(post)
+                .detail(modelReportPost.getDetails())
+                .subject(modelReportPost.getSubject())
+                .user(user)
+                .build();
+        reportRepo.save(report);
+        return ZaloStatus.OK;
+    }
+
+    @Override
+    public ZaloStatus addComment(ModelAddComment modelAddComment, String phoneNumber) {
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        Post post = postRepo.findPostByPostId(modelAddComment.getPostId());
+        Comment comment = Comment.builder()
+                .commentOwner(user)
+                .post(post)
+                .content(modelAddComment.getComment())
+                .timestamp(new Date())
+                .build();
+        commentRepo.save(comment);
+        return ZaloStatus.OK;
+    }
+
+    @Override
+    public ModelGetCommentPagingResponse getCommentPaging(Pageable pageable, String postId) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp").ascending());
+        Post post = postRepo.findPostByPostId(postId);
+        Page<Comment> commentPage = commentPagingAndSortingRepo.findAllByPost(post,pageable);
+        List<ModelGetCommentResponse> list = new ArrayList<>();
+        commentPage.forEach(comment -> {
+            ModelCommenterResponse modelCommenterResponse = ModelCommenterResponse.builder()
+                    .name(comment.getCommentOwner().getName())
+                    .phoneNumber(comment.getCommentOwner().getPhoneNumber())
+                    .avatar(comment.getCommentOwner().getAvatarLink())
+                    .build();
+
+            ModelGetCommentResponse modelGetCommentResponse = ModelGetCommentResponse.builder()
+                    .comment(comment.getContent())
+                    .commenter(modelCommenterResponse)
+                    .createAt(comment.getTimestamp())
+                    .id(comment.getCommentId())
+                    .build();
+            list.add(modelGetCommentResponse);
+        });
+        return ModelGetCommentPagingResponse.builder()
+                .list(list)
+                .build();
+    }
+
 }

@@ -7,13 +7,17 @@ import java.util.UUID;
 import com.hust.zaloclonebackend.entity.Comment;
 import com.hust.zaloclonebackend.entity.Post;
 import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
 import org.springframework.data.domain.Pageable;
 
-public interface PostService {
+public interface ZaloService {
     Post save(Post post);
+
     Post findById(String id) throws Exception;
+
     List<User> findAllLikers (String id) throws Exception;
+
     List<Comment> findAllComments (String id) throws Exception;
     ModelDeletePostResponse deletePostById(String id) throws Exception;
 
@@ -24,4 +28,10 @@ public interface PostService {
     ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber);
 
     ModelEditPostResponse editPost(ModelEditPostRequest modelEditPostRequest);
+
+    ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber);
+
+    ZaloStatus addComment(ModelAddComment modelAddComment, String phoneNumber);
+
+    ModelGetCommentPagingResponse getCommentPaging(Pageable pageable, String postId);
 }
