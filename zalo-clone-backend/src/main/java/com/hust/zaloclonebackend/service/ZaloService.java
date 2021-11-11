@@ -34,4 +34,8 @@ public interface ZaloService {
     ZaloStatus addComment(ModelAddComment modelAddComment, String phoneNumber);
 
     ModelGetCommentPagingResponse getCommentPaging(Pageable pageable, String postId);
+
+    ZaloStatus editComment(ModelEditComment modelEditComment);
+
+    ModelLikePostResponse likePost(String phoneNumber, String postId);
 }
