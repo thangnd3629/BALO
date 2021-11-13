@@ -9,5 +9,5 @@ import lombok.Data;
 @Builder
 public class ModelUserRegisterResponse {
     private ZaloStatus zaloStatus;
-    private User user;
+//    private User user;
 }
