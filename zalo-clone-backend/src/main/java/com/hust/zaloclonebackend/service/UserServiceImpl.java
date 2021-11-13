@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService{
 
         User user = User.builder()
                 .phoneNumber(modelUserRegister.getPhoneNumber())
-                .password(modelUserRegister.getPassword())
+                .password(User.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()))
                 .name(modelUserRegister.getName())
                 .build();
         User u;
