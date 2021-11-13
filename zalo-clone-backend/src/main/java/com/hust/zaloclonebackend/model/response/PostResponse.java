@@ -15,8 +15,8 @@ public class PostResponse {
     {
         HashMap<String, String> data = new HashMap<>();
         data.put("id", post.getPostId());
-        data.put("created on", EpochConverter.fromEpochToDate(post.getCreatedDate()));
-        data.put("modified on", EpochConverter.fromEpochToDate(post.getModifiedDate()));
+//        data.put("created on", EpochConverter.fromEpochToDate(post.getCreatedDate()));
+//        data.put("modified on", EpochConverter.fromEpochToDate(post.getModifiedDate()));
         data.put("likes", "" + post.getLikers().size());
         data.put("comments", "" + post.getComments());
         List<Post> likedPost = user.getLikedPosts();
