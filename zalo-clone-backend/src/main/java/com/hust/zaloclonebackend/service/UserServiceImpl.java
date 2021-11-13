@@ -6,6 +6,7 @@ import com.hust.zaloclonebackend.model.ModelUserRegister;
 import com.hust.zaloclonebackend.model.ModelUserRegisterResponse;
 import com.hust.zaloclonebackend.repo.UserRepo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class UserServiceImpl implements UserService{
     UserRepo userRepo;
     @Override
@@ -38,18 +40,20 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public ModelUserRegisterResponse register(ModelUserRegister modelUserRegister) throws Exception {
+        log.info("register");
         User exist = userRepo.findUserByPhoneNumber(modelUserRegister.getPhoneNumber());
+        log.info("exist {}", exist);
         if(Optional.ofNullable(exist).isPresent()){
             return ModelUserRegisterResponse.builder()
                     .zaloStatus(ZaloStatus.USER_EXISTED)
-                    .user(null)
+//                    .user(null)
                     .build();
         }
 
         if(!validateModelUserRegister(modelUserRegister)){
             return ModelUserRegisterResponse.builder()
                     .zaloStatus(ZaloStatus.PARAMETER_VALUE_IS_INVALID)
-                    .user(null)
+//                    .user(null)
                     .build();
         }
 
@@ -62,7 +66,7 @@ public class UserServiceImpl implements UserService{
         try {
             u = userRepo.save(user);
             return ModelUserRegisterResponse.builder()
-                    .user(user)
+//                    .user(user)
                     .zaloStatus(ZaloStatus.OK)
                     .build();
         }catch (Exception e){
