@@ -4,7 +4,8 @@ import Feed from "../components/Feed"
 import PostToolsGroup from "../components/PostToolsGroup"
 import HorizontalOptions from "../components/HorizontalOptions"
 import ProfileGroup from "../components/ProfileGroup"
-export default function UserFeed({ feeds }) {
+
+export default function UserFeed({ navigation, feeds }) {
   const sections = {
     data: [
       {
@@ -21,11 +22,24 @@ export default function UserFeed({ feeds }) {
       },
     ],
   }
+  // ! still need to call api from sv to get user
+  const user = {
+    id: "id",
+    name: "This is name section",
+    bio: "This is bio section",
+    avatar: require("../assets/user2.jpg"),
+    background: require("../assets/story2.jpg"),
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.background}>
-        <ProfileGroup />
+        <ProfileGroup
+          avatar={user.avatar}
+          backgroundImage={user.background}
+          name={user.name}
+          bio={user.bio}
+        />
       </View>
 
       <View style={styles.feed_container}>

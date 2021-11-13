@@ -1,6 +1,6 @@
 import React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-
+import { useState } from "react"
 import HomeStack from "./HomeStack"
 import MessageStack from "./MessageStack"
 import DirStack from "./DirectoryStack"
