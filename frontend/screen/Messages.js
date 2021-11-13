@@ -4,6 +4,7 @@ import UserMessageBar from "../components/UserMessageBar"
 import { Divider } from "react-native-paper"
 import Avatar2 from "../components/Avatar2"
 import { AntDesign } from '@expo/vector-icons'
+import CustomHeader from "../components/CustomHeader"
 
 export default function Messages({ navigation }) {
   const friends = [
@@ -87,8 +88,9 @@ export default function Messages({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <CustomHeader label={"Messages"}/>
       <View style={styles.friendListContainer}>
-        <FlatList
+        <FlatList /* horizontal flat list showing friend list*/
           data={friends}
           style={styles.scrollContent}
           showsHorizontalScrollIndicator={false}
@@ -98,18 +100,19 @@ export default function Messages({ navigation }) {
             return (
               item.id !== "0" ?
                 <View style={styles.friendContainer}>
-                      
-                  <Avatar2 size={55} source={item.userImg} /* touch opacity to navigate to User Profile*//> 
+
+                  <Avatar2 size={55} source={item.userImg} /* touch opacity to navigate to User Profile*/ />
 
                   <Text numberOfLines={2} style={{
                     textAlign: "center"
                   }}>
                     {item.name}
                   </Text>
-                </View> :
+                </View>
+                :
                 <View style={styles.friendContainer}>
 
-                  <AntDesign name="pluscircle" size={55} color="darkgrey"  /* touch opacity to navigate to User Profile*//> 
+                  <AntDesign name="pluscircle" size={55} color="darkgrey"  /* touch opacity to navigate to User Profile*/ />
 
                   <Text numberOfLines={2} style={{
                     textAlign: "center"

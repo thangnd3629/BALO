@@ -14,6 +14,7 @@ export default function MainTabs() {
       <Tab.Screen
         name="MessageStack"
         component={MessageStack}
+        options={{headerShown:false}}
       ></Tab.Screen>
       <Tab.Screen name="DirectoryStack" component={DirStack} />
       <Tab.Screen name="ProfileStack" component={ProfileStack} />
