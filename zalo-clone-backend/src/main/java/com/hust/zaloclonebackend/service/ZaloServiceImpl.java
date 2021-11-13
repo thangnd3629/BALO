@@ -8,6 +8,7 @@ import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
 import com.hust.zaloclonebackend.repo.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 
 @org.springframework.stereotype.Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class ZaloServiceImpl implements ZaloService {
 
     private PostRepo postRepo;
@@ -62,6 +64,7 @@ public class ZaloServiceImpl implements ZaloService {
 
     @Override
     public ModelAddPostResponse addPost(ModelAddPost modelAddPost, User user) throws Exception {
+        log.info("modelAddPost {}", modelAddPost);
         try {
             Post post = Post.builder()
                     .poster(user)
