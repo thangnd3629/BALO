@@ -2,16 +2,16 @@ import React from "react"
 
 import { View } from "react-native"
 import styled from "styled-components/native"
-import OptionsMenu from "react-native-option-menu"
+import OptionsMenu from "../components/OptionMenu"
 
 import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
+import { useSelector } from "react-redux"
 import Avatar from "./Avatar"
 
 const Container = styled.View`
   flex: 1;
 `
 const Header = styled.View`
-  height: 50px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -37,7 +37,7 @@ const Post = styled.Text`
   line-height: 16px;
   padding: 0 11px;
 `
-const Photo = styled.Image`
+const Photo = styled.View`
   margin-top: 9px;
   width: 100%;
   height: 200px;
@@ -89,7 +89,12 @@ const BottomDivider = styled.View`
   height: 9px;
   background: #f0f2f5;
 `
+const AvatarSection = styled.View`
+  height: 40px;
+  width: 40px;
+`
 import * as navigation from "../RouteNavigation"
+import FluidGrid from "./FluidGrid"
 const Feed = ({
   id,
   described,
@@ -105,7 +110,10 @@ const Feed = ({
   is_blocked,
   can_edit,
   can_comment,
+  onReport,
 }) => {
+  const user = useSelector((state) => state.authReducer.user)
+
   const editPost = () => {
     navigation.navigate("EditPost", {
       id,
@@ -114,13 +122,30 @@ const Feed = ({
       video,
     })
   }
+  const reportPost = () => {
+    onReport(id)
+  }
+
   const deletePost = () => {}
+
+  const initOptionMenu = () => {
+    const optionMenu = []
+    if (can_edit) optionMenu.push({ option: "Edit", operation: editPost })
+    if (user.id === author.id)
+      optionMenu.push({ option: "Delete", operation: deletePost })
+    else optionMenu.push({ option: "Report", operation: reportPost })
+
+    return optionMenu
+  }
+
   return (
     <>
       <Container>
         <Header>
           <Row>
-            <Avatar source={require("../assets/user1.jpg")} />
+            <AvatarSection>
+              <Avatar source={require("../assets/user1.jpg")} />
+            </AvatarSection>
             <View style={{ paddingLeft: 10 }}>
               <User>{author.name}</User>
               <Row>
@@ -132,21 +157,26 @@ const Feed = ({
           </Row>
 
           <OptionsMenu
-            button={require("../assets/icons/more.png")}
+            customButton={
+              <View style={{ margin: 20 }}>
+                <Entypo name="dots-three-horizontal" size={24} color="black" />
+              </View>
+            }
             buttonStyle={{
               width: 64,
               height: 16,
               margin: 7.5,
               resizeMode: "contain",
             }}
-            destructiveIndex={1}
-            options={[can_edit ? "Edit" : null, "Delete"]}
-            actions={[editPost, deletePost]}
+            options={initOptionMenu().map((item) => item.option)}
+            actions={initOptionMenu().map((item) => item.operation)}
           />
         </Header>
 
         <Post>{described}</Post>
-        <Photo source={require("../assets/post1.jpg")} />
+        <Photo>
+          <FluidGrid editable={false} images={image.map((item) => item.uri)} />
+        </Photo>
 
         <Footer>
           <FooterCount>
@@ -169,7 +199,11 @@ const Feed = ({
               <Text>Like</Text>
             </Button>
 
-            <Button>
+            <Button
+              onPress={() => {
+                navigation.navigate("Comment")
+              }}
+            >
               <Icon>
                 <MaterialCommunityIcons
                   name="comment-outline"

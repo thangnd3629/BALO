@@ -1,3 +1,6 @@
 export const AUTH_SUCCESS = "AUTH_SUCCESS"
 export const AUTH_FAILED = "AUTH_FIELD"
 export const AUTH_LOGOUT = "AUTH_LOGOUT"
+
+export const PERFORM_GLOBAL_QUERY = "GLOBAL_QUERY"
+export const CANCEL_GLOBAL_QUERY = "CANCEL_QUERY"

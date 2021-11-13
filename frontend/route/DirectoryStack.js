@@ -5,7 +5,11 @@ import Directory from "../screen/Directory"
 export default function DirStack() {
   const DirStack = createNativeStackNavigator()
   return (
-    <DirStack.Navigator>
+    <DirStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <DirStack.Screen name="Directory" component={Directory} />
     </DirStack.Navigator>
   )

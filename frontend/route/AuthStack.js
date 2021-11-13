@@ -8,7 +8,12 @@ import Welcome from "../screen/Welcome"
 export default function AuthStack() {
   const AuthStack = createNativeStackNavigator()
   return (
-    <AuthStack.Navigator initialRouteName="Welcome">
+    <AuthStack.Navigator
+      initialRouteName="Welcome"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <AuthStack.Screen name="Welcome" component={Welcome} />
       <AuthStack.Screen name="Login" component={Login} />
       <AuthStack.Screen name="Signup" component={Signup} />

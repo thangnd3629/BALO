@@ -6,7 +6,11 @@ import UserInboxOption from "../screen/UserInboxOption"
 export default function MessageStack() {
   const DirStack = createNativeStackNavigator()
   return (
-    <DirStack.Navigator>
+    <DirStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <DirStack.Screen name="Messages" component={Messages} />
       <DirStack.Screen
         name="Inbox"

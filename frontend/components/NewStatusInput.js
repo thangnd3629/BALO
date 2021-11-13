@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { View, TextInput, StyleSheet } from "react-native"
 
 const styles = StyleSheet.create({
@@ -14,8 +14,19 @@ const styles = StyleSheet.create({
   },
 })
 
-export const NewStatusInput = ({ ...props }) => (
-  <View style={styles.container}>
-    <TextInput style={styles.input} multiline numberOfLines={6} {...props} />
-  </View>
-)
+export const NewStatusInput = ({ ...props }) => {
+  return (
+    <View style={styles.container}>
+      <TextInput
+        defaultValue={props.text || ""}
+        style={styles.input}
+        multiline
+        numberOfLines={6}
+        onChangeText={(text) => {
+          props.onChangeText(text)
+        }}
+        {...props}
+      />
+    </View>
+  )
+}

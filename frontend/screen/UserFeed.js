@@ -4,29 +4,24 @@ import Feed from "../components/Feed"
 import PostToolsGroup from "../components/PostToolsGroup"
 import HorizontalOptions from "../components/HorizontalOptions"
 import ProfileGroup from "../components/ProfileGroup"
-
-export default function UserFeed({ navigation, feeds }) {
-
-  
-  const sections = {data: [{
-    content: "Image",
-    colors:["#D3959B","#BFE6BA"]
-  }, {
-    content: "Video",
-    colors:["#3E5151","#DECBA4"]
-  }, {
-    content: "Memories",
-    colors:["#FC466B","#3F5EFB"]
-  }]}
-  // ! still need to call api from sv to get user
-  const user = {
-    id:"id",
-    name:"This is name section",
-    bio:"This is bio section",
-    avatar:require("../assets/user2.jpg"),
-    background:require("../assets/story2.jpg")
+export default function UserFeed({ feeds }) {
+  const sections = {
+    data: [
+      {
+        content: "Image",
+        colors: ["#D3959B", "#BFE6BA"],
+      },
+      {
+        content: "Video",
+        colors: ["#3E5151", "#DECBA4"],
+      },
+      {
+        content: "Memories",
+        colors: ["#FC466B", "#3F5EFB"],
+      },
+    ],
   }
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.background}>
@@ -35,9 +30,7 @@ export default function UserFeed({ navigation, feeds }) {
 
       <View style={styles.feed_container}>
         <View style={styles.options}>
-          <HorizontalOptions
-            sections={sections}
-          />
+          <HorizontalOptions sections={sections} />
         </View>
 
         <PostToolsGroup />
@@ -46,7 +39,6 @@ export default function UserFeed({ navigation, feeds }) {
           renderItem={({ item }) => {
             return (
               <Feed
-                navigation={navigation}
                 author={item.author}
                 key={item.id + "1"}
                 can_edit={item.can_edit}
@@ -82,42 +74,42 @@ const styles = StyleSheet.create({
   },
   feed_container: {
     flex: 1,
-    marginTop: "10%"
+    marginTop: "10%",
   },
   avatarContainer: {
     backgroundColor: "white",
     height: 100,
     width: 100,
     borderRadius: 200,
-    position: 'absolute',
+    position: "absolute",
     alignSelf: "center",
     marginTop: 100,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   blueCircle: {
     height: "95%",
     width: "95%",
     borderRadius: 200,
     borderWidth: 2,
-    borderColor: 'blue',
+    borderColor: "blue",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   avatar: {
     height: "95%",
     width: "95%",
-    borderRadius: 200
+    borderRadius: 200,
   },
   name: {
     alignSelf: "center",
     marginTop: 20,
     fontWeight: "bold",
-    fontSize: 30
+    fontSize: 30,
   },
   shortBio: {
     alignSelf: "center",
     fontSize: 16,
-    color: "#BBBFB6"
-  }
+    color: "#BBBFB6",
+  },
 })

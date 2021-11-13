@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native"
 import { Entypo } from "@expo/vector-icons"
 const ImageItem = (props) => {
+  const editable = props.editable
   return props.image ? (
     <TouchableOpacity
       style={styles.image_view}
@@ -9,9 +10,11 @@ const ImageItem = (props) => {
     >
       <TouchableOpacity
         style={styles.remove_img}
-        onPress={() => props.onRemove(props.image)}
+        onPress={() => {
+          props.onRemove(props.index)
+        }}
       >
-        <Entypo name="squared-cross" size={24} color="black" />
+        {editable && <Entypo name="squared-cross" size={24} color="black" />}
       </TouchableOpacity>
       <Image
         style={styles.image}
@@ -33,21 +36,29 @@ const TwoImages = (props) => {
         onPress={props.onPress}
         index={0}
         onRemove={props.onRemove}
+        editable={props.editable}
       />
       <ImageItem
         image={props.images[1]}
         onPress={props.onPress}
         index={1}
         onRemove={props.onRemove}
+        editable={props.editable}
       />
     </>
   )
 }
 
-const renderImages = (start, overflow, images, onPress, onRemove) => {
+const renderImages = (start, overflow, images, onPress, onRemove, editable) => {
   return (
     <>
-      <ImageItem image={images[start]} onPress={onPress} index={start} />
+      <ImageItem
+        image={images[start]}
+        onPress={onPress}
+        onRemove={onRemove}
+        index={start}
+        editable={editable}
+      />
       {images[start + 1] && (
         <View style={styles.image_view}>
           <ImageItem
@@ -55,6 +66,7 @@ const renderImages = (start, overflow, images, onPress, onRemove) => {
             onPress={onPress}
             index={start + 1}
             onRemove={onRemove}
+            editable={editable}
           />
           {overflow && (
             <TouchableOpacity
@@ -72,27 +84,40 @@ const renderImages = (start, overflow, images, onPress, onRemove) => {
 
 export default class FluidGrid extends Component {
   render() {
-    const { images, style, onPress, onRemove } = this.props
+    const { images, style, onPress, onRemove, editable } = this.props
     return images.length > 0 ? (
       <View style={{ ...styles.container_row, ...style }}>
         {images.length < 3 ? (
-          <TwoImages images={images} onPress={onPress} onRemove={onRemove} />
+          <TwoImages
+            images={images}
+            onPress={onPress}
+            onRemove={onRemove}
+            editable={editable}
+          />
         ) : (
           <ImageItem
             image={images[0]}
             onPress={onPress}
             index={0}
             onRemove={onRemove}
+            editable={editable}
           />
         )}
         {images.length > 2 && (
           <View style={styles.container}>
-            {renderImages(1, false, images, onPress, onRemove)}
+            {renderImages(1, false, images, onPress, onRemove, editable)}
           </View>
         )}
         {images.length > 3 && (
           <View style={styles.container}>
-            {renderImages(3, images.length > 4, images, onPress, onRemove)}
+            {renderImages(
+              3,
+              images.length > 4,
+              images,
+              onPress,
+              onRemove,
+              editable
+            )}
           </View>
         )}
       </View>
