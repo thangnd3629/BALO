@@ -28,23 +28,23 @@ const UserInbox = props => {
     }, [])
 
     const onPressOption = () => {
-        navigate('InboxOption', { name: props.route.params.name })
+        navigate('InboxOption', { name: props.route.params.name, nav:props.route.params.nav })
     }
 
     return (
         <View style={styles.container}>
 
-            <CustomHeader hi={"hi"} label={props.route.params.name}>
+            <CustomHeader hi={"hi"} label={props.route.params.name} navigation = {props.route.params.nav}>
                 <View style={styles.headerOptionsContainer}>
                     <View style={styles.headerOptions}>
                         <TouchableOpacity>
-                            <Ionicons style={{ paddingLeft: 10 }} name="call-outline" size={24} color="white" />
+                            <Ionicons style={{ paddingLeft: 25 }} name="call-outline" size={24} color="white" />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Feather style={{ paddingLeft: 10 }} name="video" size={24} color="white" />
+                            <Feather style={{ paddingLeft: 25 }} name="video" size={24} color="white" />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onPressOption}>
-                            <Ionicons style={{ paddingLeft: 10 }} name="options" size={24} color="white" />
+                            <Ionicons style={{ paddingLeft: 25 }} name="options" size={24} color="white" />
                         </TouchableOpacity>
                     </View>
                 </View>

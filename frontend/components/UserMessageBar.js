@@ -9,7 +9,8 @@ const UserMessageBar = ({ navigation, userImg, userName, messageTime, messageTex
         console.log(user);
         navigation.setOptions({ tabBarStyle: { display: "none" } })
         navigation.navigate('Inbox', {
-            name: user.userName
+            name: user.userName,
+            nav:navigation
         })
 
     }

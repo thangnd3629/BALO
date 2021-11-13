@@ -85,10 +85,10 @@ export default function Messages({ navigation }) {
       seen: true
     },
   ]
-
+  
   return (
     <View style={styles.container}>
-      <CustomHeader label={"Messages"}/>
+      <CustomHeader label={"Messages"} navigation = {navigation}/>
       <View style={styles.friendListContainer}>
         <FlatList /* horizontal flat list showing friend list*/
           data={friends}

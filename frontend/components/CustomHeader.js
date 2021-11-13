@@ -12,7 +12,7 @@ const CustomHeader = props => {
             start={{ x: 1.0, y: 0.0 }}
             end={{ x: 0.0, y: 0.0 }}
         >
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
                 <View>
                 <AntDesign style={{alignSelf:"center"}} name="arrowleft" size={24} color="white" />
                 </View>

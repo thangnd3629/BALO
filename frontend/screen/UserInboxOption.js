@@ -8,9 +8,7 @@ import { Divider } from "react-native-paper"
 const UserInboxOption = props => {
     return (
         <View style={styles.container}>
-            <CustomHeader>
-
-            </CustomHeader>
+            <CustomHeader navigation={props.navigation}/>
             <View style={styles.avatarContainer}>
                 <Avatar2
                     size={100}
