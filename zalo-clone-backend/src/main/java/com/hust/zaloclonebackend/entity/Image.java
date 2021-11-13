@@ -19,7 +19,7 @@ public class Image {
     @Column(name = "id")
     Long id;
 
-    @Column(name = "value")
+    @Column(name = "value", columnDefinition = "text")
     private String value;
 
     @ManyToOne
