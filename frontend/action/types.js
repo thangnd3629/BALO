@@ -4,3 +4,5 @@ export const AUTH_LOGOUT = "AUTH_LOGOUT"
 
 export const PERFORM_GLOBAL_QUERY = "GLOBAL_QUERY"
 export const CANCEL_GLOBAL_QUERY = "CANCEL_QUERY"
+
+export const SHOW_MODAL = "SHOW_MODAL"

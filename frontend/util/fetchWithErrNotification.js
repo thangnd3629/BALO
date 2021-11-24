@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux"
+import { SHOW_MODAL } from "../action/types"
 
 const dispatch = useDispatch()
 const fetchWithErrHandler = async (requestOptions) => {
@@ -6,11 +7,16 @@ const fetchWithErrHandler = async (requestOptions) => {
   const mergedOption = { ...defaultOption, ...requestOptions }
   try {
     const rawResponse = await fetch()
-    const jsonResponst = await rawResponse.json()
-  } catch (e) {
-    dispatch({
-      type: "FETCH_ERROR",
-      payload: {},
-    })
-  }
+    if (!rawResponse.ok) {
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "error",
+          content: e.msg,
+        },
+      })
+      return
+    }
+    const jsonResponse = await rawResponse.json()
+  } catch (e) {}
 }
