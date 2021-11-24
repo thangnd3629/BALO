@@ -4,16 +4,17 @@ import {
   View,
   TextInput,
   Button,
-  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
   Pressable,
 } from "react-native"
+import base64 from "base-64"
 import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { AUTH_SUCCESS } from "../action/types"
+import { API_URL } from "../constants/ApiConstant"
 import * as navigation from "../RouteNavigation"
 export default function Login({}) {
   const {
@@ -23,10 +24,46 @@ export default function Login({}) {
   } = useForm()
   const dispatch = useDispatch()
   const onSubmit = (data) => {
-    dispatch({
-      type: AUTH_SUCCESS,
-      payload: { username: "Thangvjp" },
+    const { phoneNumber, password } = data
+    console.log(data)
+    const headers = new Headers()
+
+    //headers.append("Accept", "application/json");
+    headers.set(
+      "Authorization",
+      "Basic " + base64.encode(phoneNumber + ":" + password)
+    )
+    headers.append("Content-Type", "application/json")
+    fetch(`${API_URL}/login`, {
+      method: "GET",
+      headers: headers,
     })
+      .then((res) => {
+        console.log("res", res)
+        if (res.ok) {
+          dispatch({
+            type: AUTH_SUCCESS,
+            payload: {
+              token: res.headers.get("X-Auth-Token"),
+            },
+          })
+        } else if (res.status === 401) {
+          console.log("binh")
+        }
+        return res.json()
+      })
+      .then(
+        (res) => {
+          // if (res.status === "SUCCESS") {
+          //     dispatch(success());
+          // } else{
+          //     dispatch(failed());
+          // }
+        },
+        (error) => {
+          console.log("error  ", error)
+        }
+      )
   }
   return (
     <View style={styles.container}>
@@ -61,7 +98,7 @@ export default function Login({}) {
                 value={value}
               />
             )}
-            name="firstName"
+            name="phoneNumber"
             defaultValue=""
           />
           {errors.firstName && <Text>This is required.</Text>}
@@ -83,7 +120,7 @@ export default function Login({}) {
                 value={value}
               />
             )}
-            name="lastName"
+            name="password"
             defaultValue=""
           />
         </View>
