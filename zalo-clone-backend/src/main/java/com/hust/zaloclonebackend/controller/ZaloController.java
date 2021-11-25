@@ -35,8 +35,6 @@ public class ZaloController {
         User user = userService.findByPhoneNumber(principal.getName());
         ModelAddPostResponse modelAddPostResponse = zaloService.addPost(modelAddPost, user);
         return ResponseEntity.status(HttpStatus.OK).body(modelAddPostResponse);
-
-
     }
 
     @GetMapping("/post/get/{id}")
@@ -106,4 +104,6 @@ public class ZaloController {
         ModelLikePostResponse modelLikePostResponse = zaloService.likePost(principal.getName(), postId);
         return ResponseEntity.status(200).body(modelLikePostResponse);
     }
+
+
 }

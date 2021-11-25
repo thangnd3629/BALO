@@ -1,5 +1,11 @@
 package com.hust.zaloclonebackend.exception;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ZaloStatus {
     OK(1000,""),
     POST_NOT_EXISTED(9992, "Post is not exist"),
@@ -28,5 +34,15 @@ public enum ZaloStatus {
     ZaloStatus(int code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+//    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+//    @JsonValue
+    public String getMessage() {
+        return message;
     }
 }
