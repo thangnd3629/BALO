@@ -6,43 +6,52 @@ import Avatar2 from "../components/Avatar2"
 import { AntDesign } from '@expo/vector-icons'
 import CustomHeader from "../components/CustomHeader"
 
+const userId = "0";
+
+const getOffsetTime = (date) =>{
+  return "9 mins"
+} 
+
 export default function Messages({ navigation }) {
+
+
   const friends = [
     {
-      id: "0"
+      id: "01"
     },
     {
-      id: "1",
+      id: "15",
       name: "this user name",
       userImg: require('../assets/user1.jpg')
     },
     {
-      id: "2",
+      id: "25",
       name: "this user namer",
       userImg: require('../assets/user1.jpg')
     },
     {
-      id: "3",
+      id: "35",
       name: "this user namer",
       userImg: require('../assets/user1.jpg')
     },
     {
-      id: "4",
+      id: "45",
       name: "this user namer",
       userImg: require('../assets/user1.jpg')
     },
     {
-      id: "5",
+      id: "55",
       name: "user namer",
       userImg: require('../assets/user1.jpg')
     },
     {
-      id: "6",
+      id: "65",
       name: "user namer",
       userImg: require('../assets/user1.jpg')
     }
 
   ]
+
   const users = [
     {
       id: "1",
@@ -85,10 +94,55 @@ export default function Messages({ navigation }) {
       seen: true
     },
   ]
-  
+
+  const data = [
+    {
+      id: "1",
+      partner: {
+        id: "11",
+        username: "A",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 0,
+        senderId: "11"
+      }
+    },
+    {
+      id: "2",
+      partner: {
+        id: "21",
+        username: "B",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 1,
+        senderId: "0"
+      }
+    },
+    {
+      id: "3",
+      partner: {
+        id: "33",
+        username: "C",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 0,
+        senderId: "33"
+      }
+    }
+  ]
+
   return (
     <View style={styles.container}>
-      <CustomHeader label={"Messages"} navigation = {navigation}/>
+      <CustomHeader label={"Messages"} navigation={navigation} />
       <View style={styles.friendListContainer}>
         <FlatList /* horizontal flat list showing friend list*/
           data={friends}
@@ -124,19 +178,19 @@ export default function Messages({ navigation }) {
       </View>
       <Divider />
       <FlatList
-        data={users}
+        data={data}
         keyExtractor={(item) => (item.id)}
         renderItem={({ item }) => {
           return (
             <UserMessageBar
               navigation={navigation}
-              userName={item.userName}
-              userImg={item.userImg}
-              messageTime={item.messageTime}
-              messageText={item.messageText}
-              fromMe={item.fromMe}
-              seen={item.seen}
-              read={item.read}
+              userName={item.partner.username}
+              userImg={item.partner.avatar}
+              messageTime={getOffsetTime(item.lastmessage.created)}
+              messageText={item.lastmessage.message}
+              fromMe={item.lastmessage.senderId == userId}
+              seen={(item.lastmessage.senderId != userId) && (item.lastmessage.unread == 0)}
+              read={(item.lastmessage.senderId = userId) && (item.lastmessage.unread == 0)}
 
               user={item} // you can remove these props above and only use this
             />
