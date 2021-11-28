@@ -36,9 +36,11 @@ public class WebSocketController {
                 break;
             case SEND_MESSAGE:
                 zaloChatService.getAndSaveMessage(dto);
-                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser(), output);
+                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser());
                 break;
-            case MARK_MESSAGE_AS_SEEN:
+            default:
+                log.info("err");
+                break;
 
         }
     }
