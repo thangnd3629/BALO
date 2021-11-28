@@ -17,7 +17,7 @@ export default function Messages({ navigation }) {
 
   const friends = [
     {
-      id: "01"
+      id: "0"
     },
     {
       id: "15",
@@ -50,49 +50,6 @@ export default function Messages({ navigation }) {
       userImg: require('../assets/user1.jpg')
     }
 
-  ]
-
-  const users = [
-    {
-      id: "1",
-      userName: "A",
-      userImg: require('../assets/user1.jpg'),
-      messageTime: "1 min",
-      messageText: "Hey this is my latest text",
-      fromMe: true,
-      read: true,
-      seen: false
-    },
-    {
-      id: "2",
-      userName: "B",
-      userImg: require('../assets/user1.jpg'),
-      messageTime: "Oct", //difference of time + get time unit where changes happened e.g 1h 1m & 1h 4m -> 3 mins 
-      messageText: "Hey this is my latest text", //latest text 
-      fromMe: true, //  allow "You: "  to show on the left of messageText if use; if user is me then fromMe = true
-      read: true, // device owner read other mess  
-      seen: true  // other users saw device owner mess
-    },
-    {
-      id: "3",
-      userName: "C",
-      userImg: require('../assets/user1.jpg'),
-      messageTime: "1 min", read: false,
-      messageText: "Hey this is my latest text",
-      fromMe: false,
-      read: false,
-      seen: true
-    },
-    {
-      id: "4",
-      userName: "D",
-      userImg: require('../assets/user1.jpg'),
-      messageTime: "1 min",
-      messageText: "Hey this is my latest text",
-      fromMe: false,
-      read: false,
-      seen: true
-    },
   ]
 
   const data = [
@@ -188,9 +145,9 @@ export default function Messages({ navigation }) {
               userImg={item.partner.avatar}
               messageTime={getOffsetTime(item.lastmessage.created)}
               messageText={item.lastmessage.message}
-              fromMe={item.lastmessage.senderId == userId}
-              seen={(item.lastmessage.senderId != userId) && (item.lastmessage.unread == 0)}
-              read={(item.lastmessage.senderId = userId) && (item.lastmessage.unread == 0)}
+              fromMe={item.lastmessage.senderId === userId}
+              seen={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 1)}
+              read={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 0)}
 
               user={item} // you can remove these props above and only use this
             />
