@@ -13,58 +13,54 @@ import base64 from "base-64"
 import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { AUTH_SUCCESS } from "../action/types"
+import { AUTH_SUCCESS, SHOW_MODAL } from "../action/types"
 import { API_URL } from "../config"
+import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
 import * as navigation from "../RouteNavigation"
 export default function Login({}) {
-  console.log(API_URL)
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm()
   const dispatch = useDispatch()
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { phoneNumber, password } = data
-    console.log(data)
     const headers = new Headers()
-
-    //headers.append("Accept", "application/json");
     headers.set(
       "Authorization",
       "Basic " + base64.encode(phoneNumber + ":" + password)
     )
-    headers.append("Content-Type", "application/json")
-    fetch(`${API_URL}/login`, {
-      method: "GET",
+
+    const requestOptions = {
       headers: headers,
-    })
-      .then((res) => {
-        console.log("res", res)
-        if (res.ok) {
-          dispatch({
-            type: AUTH_SUCCESS,
-            payload: {
-              token: res.headers.get("X-Auth-Token"),
-            },
-          })
-        } else if (res.status === 401) {
-          console.log("binh")
-        }
-        return res.json()
-      })
-      .then(
-        (res) => {
-          // if (res.status === "SUCCESS") {
-          //     dispatch(success());
-          // } else{
-          //     dispatch(failed());
-          // }
-        },
-        (error) => {
-          console.log("error  ", error)
-        }
+    }
+    try {
+      const response = await fetchWithErrHandler(
+        `${API_URL}/login`,
+        requestOptions,
+        3000,
+        dispatch
       )
+      if (response.status === 200) {
+        dispatch({
+          type: AUTH_SUCCESS,
+          payload: {
+            token: response.headers.get("X-Auth-Token"),
+          },
+        })
+        return
+      }
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Credential Error",
+          content: "Wrong username or password",
+        },
+      })
+
+      return
+    } catch (e) {}
   }
   return (
     <View style={styles.container}>
