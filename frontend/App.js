@@ -9,9 +9,11 @@ import { Provider } from "react-redux"
 import RootStack from "./route/RootStack"
 import { navigationRef } from "./RouteNavigation"
 import store from "./store"
+import GlobalModal from "./components/GlobalModal"
 export default function App() {
   return (
     <Provider store={store}>
+      <GlobalModal />
       <NavigationContainer ref={navigationRef}>
         <RootStack></RootStack>
       </NavigationContainer>

@@ -1,22 +1,46 @@
-import { useDispatch } from "react-redux"
 import { SHOW_MODAL } from "../action/types"
 
-const dispatch = useDispatch()
-const fetchWithErrHandler = async (requestOptions) => {
-  const defaultOption = {}
+export const fetchWithErrHandler = async (
+  url,
+  requestOptions,
+  timeout,
+  dispatch
+) => {
+  const headers = new Headers()
+  headers.append("Accept", "application/json")
+  const defaultOption = {
+    method: "GET",
+    redirect: "follow",
+    headers: headers,
+  }
   const mergedOption = { ...defaultOption, ...requestOptions }
   try {
-    const rawResponse = await fetch()
-    if (!rawResponse.ok) {
-      dispatch({
-        type: SHOW_MODAL,
-        payload: {
-          status: "error",
-          content: e.msg,
-        },
-      })
-      return
+    const rawResponse = await Promise.race([
+      fetch(url, mergedOption),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), timeout)
+      ),
+    ])
+
+    let jsonResponse = {}
+    const textResponse = await rawResponse.text()
+    if (textResponse.length !== 0) {
+      jsonResponse = JSON.parse(textResponse)
     }
-    const jsonResponse = await rawResponse.json()
-  } catch (e) {}
+    jsonResponse.status = rawResponse.status
+    return {
+      ...jsonResponse,
+      status: rawResponse.status,
+      headers: rawResponse.headers,
+    }
+  } catch (e) {
+    dispatch({
+      type: SHOW_MODAL,
+      payload: {
+        status: "Unknown error",
+        content: e.message,
+      },
+    })
+    return Promise.reject(e)
+  }
 }

@@ -1,11 +1,12 @@
 import { AUTH_SUCCESS, AUTH_FAILED, AUTH_LOGOUT } from "../action/types"
 const initialState = {
-  user: {
-    user: {
-      token: "123",
-    },
-  },
+  // user: {
+  //   user: {
+  //     token: "123",
+  //   },
+  // },
 
+  user: null,
   error: null,
 }
 
