@@ -46,6 +46,7 @@ export default function Login({}) {
         dispatch({
           type: AUTH_SUCCESS,
           payload: {
+            user: response,
             token: response.headers.get("X-Auth-Token"),
           },
         })

@@ -18,7 +18,10 @@ export const fetchWithErrHandler = async (
     const rawResponse = await Promise.race([
       fetch(url, mergedOption),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), timeout)
+        setTimeout(
+          () => reject(new Error("Network takes too long to respond")),
+          timeout
+        )
       ),
     ])
 
