@@ -5,18 +5,20 @@ import Signup from "./screen/Signup"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { Provider } from "react-redux"
-
+import { PersistGate } from "redux-persist/integration/react"
 import RootStack from "./route/RootStack"
 import { navigationRef } from "./RouteNavigation"
-import store from "./store"
+import { store, persistor } from "./store"
 import GlobalModal from "./components/GlobalModal"
 export default function App() {
   return (
     <Provider store={store}>
-      <GlobalModal />
-      <NavigationContainer ref={navigationRef}>
-        <RootStack></RootStack>
-      </NavigationContainer>
+      <PersistGate loading={null} persistor={persistor}>
+        <GlobalModal />
+        <NavigationContainer ref={navigationRef}>
+          <RootStack></RootStack>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   )
 }
