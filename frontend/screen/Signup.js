@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
+import { API_URL } from "../config"
 import { Entypo } from "@expo/vector-icons"
 export default function Signup({}) {
   const [selectedRegion, setRegion] = useState("VN")

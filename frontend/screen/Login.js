@@ -14,9 +14,10 @@ import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { AUTH_SUCCESS } from "../action/types"
-import { API_URL } from "../constants/ApiConstant"
+import { API_URL } from "../config"
 import * as navigation from "../RouteNavigation"
 export default function Login({}) {
+  console.log(API_URL)
   const {
     control,
     handleSubmit,

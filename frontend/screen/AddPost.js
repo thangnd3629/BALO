@@ -9,6 +9,7 @@ import {
 } from "react-native"
 import { NewStatusInput } from "../components/NewStatusInput"
 import FluidGrid from "../components/FluidGrid"
+import { API_URL } from "../config"
 import * as ImagePicker from "expo-image-picker"
 import { useSelector } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
