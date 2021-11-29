@@ -34,26 +34,26 @@ public class PostController {
     UserServiceImpl userService;
     
     //Hasn't set status code, caught exception and validated ..
-    @PostMapping("/post/add")
-    public ResponseEntity<?> addPost(@RequestBody ModelPost modelPost, Principal principal) throws ParseException {
-        //get User from Session
-        Post post = new Post();
-        String username = principal.getName();
-        User user = userService.findByPhoneNumber(username);
-        post.setContent(modelPost.getDescribe());
-        post.setPoster(user);
-        post.setCreatedDate(EpochConverter.getCurrentEpoch());
-        post.setModifiedDate(EpochConverter.getCurrentEpoch());
-        postService.save(post);
-        
-        HashMap<String, String> response = new HashMap<>();
-        String baseUrl = "unkown"; // ? How to get URL :)
-        String postId = post.getPostId().toString();
-        String url = baseUrl + "/" + username + "/posts" + postId;
-        response.put("url", url);
-        return ResponseEntity.ok().body(response);
-
-    }
+//    @PostMapping("/post/add")
+//    public ResponseEntity<?> addPost(@RequestBody ModelPost modelPost, Principal principal) throws ParseException {
+//        //get User from Session
+//        Post post = new Post();
+//        String username = principal.getName();
+//        User user = userService.findByPhoneNumber(username);
+//        post.setContent(modelPost.getDescribe());
+//        post.setPoster(user);
+//        post.setCreatedDate(EpochConverter.getCurrentEpoch());
+//        post.setModifiedDate(EpochConverter.getCurrentEpoch());
+//        postService.save(post);
+//
+//        HashMap<String, String> response = new HashMap<>();
+//        String baseUrl = "unkown"; // ? How to get URL :)
+//        String postId = post.getPostId().toString();
+//        String url = baseUrl + "/" + username + "/posts" + postId;
+//        response.put("url", url);
+//        return ResponseEntity.ok().body(response);
+//
+//    }
 
     @GetMapping("/post/get/{id}")
     public ResponseEntity<?> getPost(@PathVariable("id") String id,Principal principal) throws Exception {
@@ -79,11 +79,11 @@ public class PostController {
 
         return ResponseEntity.ok().body(response);
     }
-
-    @DeleteMapping("/post/delete/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable("id") String id,Principal principal) throws Exception
-    {
-        postService.deletePostById(id);
-        return ResponseEntity.ok("Deleted "+id);
-    }
+//
+//    @DeleteMapping("/post/delete/{id}")
+//    public ResponseEntity<?> deletePost(@PathVariable("id") String id,Principal principal) throws Exception
+//    {
+//        postService.deletePostById(id);
+//        return ResponseEntity.ok("Deleted "+id);
+//    }
 }

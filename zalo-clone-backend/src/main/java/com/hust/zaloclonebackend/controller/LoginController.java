@@ -1,18 +1,17 @@
 package com.hust.zaloclonebackend.controller;
 
+import com.hust.zaloclonebackend.exception.ZaloStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 @RestController
 @CrossOrigin
 public class LoginController {
-    @GetMapping("/login")
+    @RequestMapping(method = RequestMethod.GET, value = "/login")
     public ResponseEntity<Map> home(@CurrentSecurityContext(expression = "authentication.name") String name) {
         Map<String, String> response = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -21,8 +20,13 @@ public class LoginController {
         return ResponseEntity.ok().headers(headers).body(response);
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<?> hello(){
-        return ResponseEntity.ok("hello");
+    @RequestMapping(method = RequestMethod.GET, value = "/hello")
+    public String sayHello() {
+        return "Swagger Hello World";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/test")
+    public ResponseEntity test(){
+        return ResponseEntity.status(200).body(ZaloStatus.CODE_VERIFY_IS_INCORRECT);
     }
 }

@@ -1,14 +1,16 @@
 package com.hust.zaloclonebackend.util;
 
 import java.text.ParseException;
+import java.util.Date;
 
 //convert to time epoch to be stored in DB for datetime consideration
 public class EpochConverter {
     
-    public static String getCurrentEpoch() throws ParseException
+    public static Date getCurrentEpoch() throws ParseException
     {
         Long epoch = System.currentTimeMillis()/1000;
-        return epoch.toString();
+//        return epoch.toString();
+        return new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse( "Dec 11 2021 23:37:50");
     }
     public static String fromEpochToDate(String epoch)
     {
