@@ -1,5 +1,5 @@
 import { SHOW_MODAL } from "../action/types"
-
+import apiError from "./errorConstant"
 export const fetchWithErrHandler = async (
   url,
   requestOptions,
@@ -31,6 +31,15 @@ export const fetchWithErrHandler = async (
       jsonResponse = JSON.parse(textResponse)
     }
     jsonResponse.status = rawResponse.status
+    if (apiError[jsonResponse.code]) {
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Server Error",
+          content: apiError[jsonResponse.code],
+        },
+      })
+    }
     return {
       ...jsonResponse,
       status: rawResponse.status,
