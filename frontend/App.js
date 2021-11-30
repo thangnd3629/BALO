@@ -14,7 +14,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <GlobalModal />
+        <GlobalModal duration={3000} />
         <NavigationContainer ref={navigationRef}>
           <RootStack></RootStack>
         </NavigationContainer>
