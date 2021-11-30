@@ -48,7 +48,7 @@ public class WebSocketController {
                 this.messagingTemplate.convertAndSend("/topic/user/"+dto.getRelationShipId());
                 break;
             case FETCH_GROUP_MESSAGES:
-                Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize(), Sort.by("timestamp").descending())
+                Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize(), Sort.by("timestamp").descending());
                 WrapperMessageDto wrapperMessageDto = zaloChatService.getConversationMessage(dto.getRelationShipId(), pageable, Constant.TransportActionEnum.FETCH_GROUP_MESSAGES);
                 Constant.TransportActionEnum action1;
                 if (dto.getMessageId() == -1) {
