@@ -1,17 +1,27 @@
 package com.hust.zaloclonebackend.dto;
 
 import com.hust.zaloclonebackend.constant.Constant;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageDto {
-    private String fromUser;
-
-    private String toUser;
-
-    private String content;
+    private Object object;
 
     private Constant.TransportActionEnum action;
+
+    private String fromUserID;
+
+    private String toUserId;
+
+    private Long relationShipId;
+
+    private String message;
+
+
 }
