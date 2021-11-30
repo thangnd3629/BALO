@@ -11,13 +11,17 @@ import { NewStatusInput } from "../components/NewStatusInput"
 import FluidGrid from "../components/FluidGrid"
 import { API_URL } from "../config"
 import * as ImagePicker from "expo-image-picker"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
+import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
+import { SHOW_MODAL } from "../action/types"
 export default function AddPost({}) {
   const [statusContent, setContent] = useState("")
   const [chosenImgs, setChosenImgs] = useState([])
-  const user = useSelector((state) => state.authReducer)
+  const auth = useSelector((state) => state.authReducer)
+
   const navigation = useNavigation()
+  const dispatch = useDispatch()
   const addPhotoHandler = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
@@ -29,7 +33,6 @@ export default function AddPost({}) {
 
     if (!result.cancelled) {
       setChosenImgs([...chosenImgs, result])
-      console.log(result)
     }
   }
   const removePhotoHandler = (index) => {
@@ -39,23 +42,19 @@ export default function AddPost({}) {
     setChosenImgs(processedImgs)
   }
 
-  const onPost = useCallback(() => {
-    alert(statusContent)
-  }, [statusContent])
-
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Button title="wtf" onPress={onPost} />,
+      headerRight: () => <Button title="Post" onPress={postNewFeedHandler} />,
     })
-  }, [statusContent])
+  }, [statusContent, chosenImgs])
 
-  const postNewFeedHandler = () => {
+  const postNewFeedHandler = async () => {
     var myHeaders = new Headers()
-    myHeaders.append("X-Auth-Token", `${user.user.token}`)
+    myHeaders.append("X-Auth-Token", `${auth.token}`)
     myHeaders.append("Content-Type", "application/json")
 
     var raw = JSON.stringify({
-      describe: "test api post",
+      describe: statusContent,
       image: chosenImgs.map((image) => image["base64"]),
     })
 
@@ -65,22 +64,33 @@ export default function AddPost({}) {
       body: raw,
       redirect: "follow",
     }
-
-    fetch("http://34.70.67.66:8080/api/post/add", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error))
+    try {
+      const response = await fetchWithErrHandler(
+        `${API_URL}/post/add`,
+        requestOptions,
+        10000,
+        dispatch
+      )
+      console.log(response)
+      if (response.zaloStatus.code === 1000) {
+        // add popup
+        dispatch({
+          type: SHOW_MODAL,
+          payload: {
+            content: "Posted",
+          },
+        })
+        navigation.goBack()
+        return
+      }
+    } catch (e) {}
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={postNewFeedHandler}>
-        <Text>POST</Text>
-      </TouchableOpacity>
       <NewStatusInput
         placeholder="Bạn đang nghĩ gì"
         onChangeText={(text) => {
           setContent(text)
-          console.log(statusContent)
         }}
       ></NewStatusInput>
       <FluidGrid
