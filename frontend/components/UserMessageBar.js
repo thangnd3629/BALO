@@ -4,6 +4,7 @@ import Avatar2 from './Avatar2'
 import { AntDesign } from '@expo/vector-icons';
 
 const UserMessageBar = ({ navigation, userImg, userName, messageTime, messageText, fromMe, seen, read, user }) => {
+    console.log(seen,read,fromMe);
     const senderPrefix = fromMe ? "You: " : "";
     const onTouchHandle = () => {
         console.log(user);

@@ -41,84 +41,94 @@ const onMessageReceived = (msg) => {
   console.log(notification)
 }
 
+const userId = "0";
+
+const getOffsetTime = (date) =>{
+  return "9 mins"
+} 
+
 export default function Messages({ navigation }) {
+
+
   const friends = [
     {
       id: "0",
     },
     {
-      id: "1",
+      id: "15",
       name: "this user name",
       userImg: require("../assets/user1.jpg"),
     },
     {
-      id: "2",
+      id: "25",
       name: "this user namer",
       userImg: require("../assets/user1.jpg"),
     },
     {
-      id: "3",
+      id: "35",
       name: "this user namer",
       userImg: require("../assets/user1.jpg"),
     },
     {
-      id: "4",
+      id: "45",
       name: "this user namer",
       userImg: require("../assets/user1.jpg"),
     },
     {
-      id: "5",
+      id: "55",
       name: "user namer",
       userImg: require("../assets/user1.jpg"),
     },
     {
-      id: "6",
+      id: "65",
       name: "user namer",
       userImg: require("../assets/user1.jpg"),
     },
   ]
-  const users = [
+
+  const data = [
     {
       id: "1",
-      userName: "A",
-      userImg: require("../assets/user1.jpg"),
-      messageTime: "1 min",
-      messageText: "Hey this is my latest text",
-      fromMe: true,
-      read: true,
-      seen: false,
+      partner: {
+        id: "11",
+        username: "A",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 0,
+        senderId: "11"
+      }
     },
     {
       id: "2",
-      userName: "B",
-      userImg: require("../assets/user1.jpg"),
-      messageTime: "Oct", //difference of time + get time unit where changes happened e.g 1h 1m & 1h 4m -> 3 mins
-      messageText: "Hey this is my latest text", //latest text
-      fromMe: true, //  allow "You: "  to show on the left of messageText if use; if user is me then fromMe = true
-      read: true, // device owner read other mess
-      seen: true, // other users saw device owner mess
+      partner: {
+        id: "21",
+        username: "B",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 1,
+        senderId: "0"
+      }
     },
     {
       id: "3",
-      userName: "C",
-      userImg: require("../assets/user1.jpg"),
-      messageTime: "1 min",
-      read: false,
-      messageText: "Hey this is my latest text",
-      fromMe: false,
-      read: false,
-      seen: true,
-    },
-    {
-      id: "4",
-      userName: "D",
-      userImg: require("../assets/user1.jpg"),
-      messageTime: "1 min",
-      messageText: "Hey this is my latest text",
-      fromMe: false,
-      read: false,
-      seen: true,
-    },
+      partner: {
+        id: "33",
+        username: "C",
+        avatar: require('../assets/user1.jpg'),
+      },
+      lastmessage: {
+        message: "Hey this is my latest text",
+        created: "01/01/2021 01:01:01",
+        unread: 0,
+        senderId: "33"
+      }
+    }
   ]
 
   return (
@@ -174,12 +184,18 @@ export default function Messages({ navigation }) {
       </View>
       <Divider />
       <FlatList
+<<<<<<< HEAD
         data={users}
         keyExtractor={(item) => item.id}
+=======
+        data={data}
+        keyExtractor={(item) => (item.id)}
+>>>>>>> nduc4nh
         renderItem={({ item }) => {
           return (
             <UserMessageBar
               navigation={navigation}
+<<<<<<< HEAD
               userName={item.userName}
               userImg={item.userImg}
               messageTime={item.messageTime}
@@ -187,6 +203,16 @@ export default function Messages({ navigation }) {
               fromMe={item.fromMe}
               seen={item.seen}
               read={item.read}
+=======
+              userName={item.partner.username}
+              userImg={item.partner.avatar}
+              messageTime={getOffsetTime(item.lastmessage.created)}
+              messageText={item.lastmessage.message}
+              fromMe={item.lastmessage.senderId === userId}
+              seen={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 1)}
+              read={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 0)}
+
+>>>>>>> nduc4nh
               user={item} // you can remove these props above and only use this
             />
           )

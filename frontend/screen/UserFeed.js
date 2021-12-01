@@ -4,8 +4,7 @@ import Feed from "../components/Feed"
 import PostToolsGroup from "../components/PostToolsGroup"
 import HorizontalOptions from "../components/HorizontalOptions"
 import ProfileGroup from "../components/ProfileGroup"
-
-export default function UserFeed({ navigation, feeds }) {
+export default function UserFeed({ feeds }) {
   const sections = {
     data: [
       {
