@@ -1,9 +1,14 @@
 package com.hust.zaloclonebackend.config.session;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
 public final class RedisSerializationBuilder {
 
     public static <T> RedisTemplate<String, T> getSnappyRedisTemplate(
@@ -21,19 +26,27 @@ public final class RedisSerializationBuilder {
 
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(snappyMsgPackSerializer);
-
         redisTemplate.afterPropertiesSet();
+
         return redisTemplate;
     }
 
     public static <T> RedisTemplate<String, T> getDefaultRedisTemplate(final LettuceConnectionFactory factory) {
+        log.info("getDefaultRedisTemplate factory {}", factory);
+
         RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
 
+        RedisSerializer<?> serializer = new StringRedisSerializer();
+        RedisSerializer<?> hashKeySerializer = new StringRedisSerializer();
+//        log.info("serializer {}", serializer);
+//        log.info("hashKeySerializer {}", hashKeySerializer);
         redisTemplate.setConnectionFactory(factory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(serializer);
+        redisTemplate.setHashKeySerializer(hashKeySerializer);
         redisTemplate.afterPropertiesSet();
 
+//        redisTemplate.opsForHash().put("UniqueKey","HttpBin.Org","response_to_cache");
+//        redisTemplate.expire("UniqueKey",60, TimeUnit.HOURS);
         return redisTemplate;
     }
 }

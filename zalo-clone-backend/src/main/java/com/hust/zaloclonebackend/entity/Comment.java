@@ -35,4 +35,5 @@ public class Comment {
             timestamp = date;
         }
     }
+
 }
