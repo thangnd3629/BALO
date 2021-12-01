@@ -36,14 +36,14 @@ public class ZaloController {
         ModelAddPostResponse modelAddPostResponse = zaloService.addPost(modelAddPost, user);
         return ResponseEntity.status(HttpStatus.OK).body(modelAddPostResponse);
     }
-//
-//    @GetMapping("/post/get/{id}")
-//    public ResponseEntity<?> getPost(@PathVariable("id") String id,Principal principal) throws Exception {
-//        log.info("get post id {}", id);
-//        ModelGetPostResponse modelGetPostResponse = zaloService.getPostById(id);
-//        return ResponseEntity.status(HttpStatus.OK).body(modelGetPostResponse);
-//
-//    }
+
+    @GetMapping("/post/get/{id}")
+    public ResponseEntity<?> getPost(@PathVariable("id") String id,Principal principal) throws Exception {
+        log.info("get post id {}", id);
+        ModelGetPostResponse modelGetPostResponse = zaloService.getPostById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(modelGetPostResponse);
+
+    }
 
     @DeleteMapping("/post/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable("id") String id,Principal principal) throws Exception {
