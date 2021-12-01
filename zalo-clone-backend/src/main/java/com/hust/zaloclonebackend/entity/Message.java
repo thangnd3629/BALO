@@ -32,4 +32,6 @@ public class Message {
     String content;
 
     Date timestamp;
+
+    Long relationShipId;
 }
