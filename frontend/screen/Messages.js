@@ -5,6 +5,41 @@ import { Divider } from "react-native-paper"
 import Avatar2 from "../components/Avatar2"
 import { AntDesign } from "@expo/vector-icons"
 import CustomHeader from "../components/CustomHeader"
+import { API_URL } from "../config"
+import { useEffect } from "react"
+
+var stompClient = null
+
+useEffect(() => {
+  connect()
+}, [])
+
+const connect = () => {
+  const Stomp = require("stompjs")
+  var SockJS = require("sockjs-client")
+  SockJS = new SockJS(`${API_URL}/ws`)
+  stompClient = Stomp.over(SockJS)
+  stompClient.connect({}, onConnected, onError)
+}
+
+const onConnected = () => {
+  const userID = 1
+  console.log("connected")
+
+  stompClient.subscribe(
+    "/user/" + userID + "/queue/messages",
+    onMessageReceived
+  )
+}
+
+const onError = (err) => {
+  console.log(err)
+}
+
+const onMessageReceived = (msg) => {
+  const notification = JSON.parse(msg.body)
+  console.log(notification)
+}
 
 export default function Messages({ navigation }) {
   const friends = [
