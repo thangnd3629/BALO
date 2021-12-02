@@ -113,4 +113,24 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelGetListPostResponse);
     }
 
+    @GetMapping("/friend-request-list")
+    public ResponseEntity<?> getFriendRequestList(Pageable pageable, Principal principal){
+        ModelGetListFriendRequest modelGetListFriendRequest = zaloService.getListFriendRequest(principal.getName(), pageable);
+        return ResponseEntity.status(200).body(modelGetListFriendRequest);
+    }
+
+    @PostMapping("/handle-friend-request")
+    public ResponseEntity<?> handleFriendRequest(Principal principal, @RequestBody ModelHandleFriendRequest req){
+        ModelStatusResponse status = zaloService.handleFriendRequest(principal.getName(), req);
+        return ResponseEntity.status(200).body(status);
+    }
+
+    @PostMapping("/send-frined-request/{userId}")
+    public ResponseEntity<?> sendFriendRequest(Principal principal, @PathVariable("userId") String userId){
+        ModelSendFriendRequestResponse resp = zaloService.sendFriendRequest(principal.getName(), userId);
+        return ResponseEntity.status(200).body(resp);
+    }
+
+
+
 }

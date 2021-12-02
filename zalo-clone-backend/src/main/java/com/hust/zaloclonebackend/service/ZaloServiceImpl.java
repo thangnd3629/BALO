@@ -9,6 +9,7 @@ import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
 import com.hust.zaloclonebackend.repo.*;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,9 @@ public class ZaloServiceImpl implements ZaloService {
     private ReportRepo reportRepo;
     private CommentRepo commentRepo;
     private CommentPagingAndSortingRepo commentPagingAndSortingRepo;
-
+    private FriendRequestRepo friendRequestRepo;
+    private FriendRequestPagingAndSortingRepo friendRequestPagingAndSortingRepo;
+    private RelationShipRepo relationShipRepo;
     @Override
     public Post save(Post post) {
         return postRepo.save(post);
@@ -146,6 +149,66 @@ public class ZaloServiceImpl implements ZaloService {
                 .build();
     }
 
+    @Override
+    public ModelGetListFriendRequest getListFriendRequest(String phoneNumber, Pageable pageable) {
+        User toUser = userRepo.findUserByPhoneNumber(phoneNumber);
+        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByFromUser(pageable, toUser);
+        List<ModelGetFriendRequest> data = list.stream()
+                .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
+                .collect(Collectors.toList());
+        return ModelGetListFriendRequest.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .data(data)
+                .build();
+    }
+
+    @Override
+    public ModelStatusResponse handleFriendRequest(String phoneNumber, ModelHandleFriendRequest request) {
+        User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
+        User fromUser = userRepo.findUserByUserId(request.getUserId());
+        if(request.isAccept()){
+
+            relationShipRepo.save(Relationship.builder()
+                    .userA(fromUser)
+                    .userB(toUSer)
+                    .build());
+            relationShipRepo.save(Relationship.builder()
+                    .userA(toUSer)
+                    .userB(fromUser)
+                    .build());
+        }
+        friendRequestRepo.deleteFriendRequestByFromUserAndToUser(fromUser, toUSer);
+        return ModelStatusResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
+    }
+
+    @Override
+    public ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId) {
+        User fromUser = userRepo.findUserByPhoneNumber(phoneNumber);
+        User toUser = userRepo.findUserByUserId(userId);
+        friendRequestRepo.save(FriendRequest.builder()
+                .fromUser(fromUser)
+                .toUser(toUser)
+                .createdDate(new Date())
+                .build());
+        return ModelSendFriendRequestResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
+    }
+
+
+    private ModelGetFriendRequest convertUserInfoToModelGetFriendRequest(User user, Date date){
+        return ModelGetFriendRequest.builder()
+                .avatar(user.getAvatarLink())
+                .userName(user.getName())
+                .id(user.getUserId())
+                .created(date)
+                .build();
+    }
 
 
     @Override
