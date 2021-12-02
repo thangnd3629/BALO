@@ -165,20 +165,29 @@ public class ZaloServiceImpl implements ZaloService {
 
     @Override
     public ModelStatusResponse handleFriendRequest(String phoneNumber, ModelHandleFriendRequest request) {
+        log.info("request {}", request);
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
+        log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
         if(request.isAccept()){
-
-            relationShipRepo.save(Relationship.builder()
+            Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)
-                    .build());
-            relationShipRepo.save(Relationship.builder()
+                    .build();
+            relationShipRepo.save(relationship);
+            log.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            Relationship relationship1 = Relationship.builder()
                     .userA(toUSer)
                     .userB(fromUser)
-                    .build());
+                    .build();
+            relationShipRepo.save(relationship1);
         }
-        friendRequestRepo.deleteFriendRequestByFromUserAndToUser(fromUser, toUSer);
+        log.info("11111");
+        FriendRequest friendRequest = friendRequestRepo.findFriendRequestByFromUserAndToUser(fromUser, toUSer);
+        friendRequestRepo.deleteById(friendRequest.getId());
+//        friendRequestRepo.deleteByFromUserAndToUser(fromUser, toUSer);
+        log.info("222");
+
         return ModelStatusResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
