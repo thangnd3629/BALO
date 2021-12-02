@@ -1,5 +1,6 @@
 package com.hust.zaloclonebackend.config.session;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,11 @@ import org.springframework.session.data.redis.RedisSessionRepository;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
+import java.time.Duration;
+
 @Configuration
 @EnableSpringHttpSession
+@Slf4j
 public class SessionConfig {
 
     @Value("${spring.redis.host}")
@@ -24,22 +28,28 @@ public class SessionConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
+        log.info("redisConnectionFactory");
         return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port));
     }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
+        log.info("redisTemplate");
         return RedisSerializationBuilder.getDefaultRedisTemplate(redisConnectionFactory());
     }
 
     @Bean
     public RedisOperations<String, Object> redisOperations() {
+        log.info("redisOperations");
         return RedisSerializationBuilder.getSnappyRedisTemplate(redisConnectionFactory(), Object.class);
     }
 
     @Bean
     public RedisSessionRepository sessionRepository(RedisTemplate<String, Object> redisTemplate) {
-        return new RedisSessionRepository(redisTemplate);
+        log.info("sessionRepository");
+        RedisSessionRepository redisSessionRepository = new RedisSessionRepository(redisTemplate);
+        redisSessionRepository.setDefaultMaxInactiveInterval( Duration.ofDays(365L));
+        return redisSessionRepository;
     }
 
     /**
@@ -51,6 +61,7 @@ public class SessionConfig {
      */
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
+        log.info("httpSessionIdResolver");
         return HeaderHttpSessionIdResolver.xAuthToken();
     }
 }
