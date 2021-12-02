@@ -38,4 +38,10 @@ public interface ZaloService {
     ModelLikePostResponse likePost(String phoneNumber, String postId);
 
     ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable);
+
+    ModelGetListFriendRequest getListFriendRequest(String phoneNumber, Pageable pageable);
+
+    ModelStatusResponse handleFriendRequest(String phoneNumber, ModelHandleFriendRequest request);
+
+    ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId);
 }
