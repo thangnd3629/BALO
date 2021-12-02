@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Configuration
@@ -48,6 +50,9 @@ public class HandShakeInterceptor implements HandshakeInterceptor, WebSocketHand
         log.info("serverHttpResponse {}", serverHttpResponse);
         log.info("webSocketHandler {}", webSocketHandler);
         log.info("map {}", map);
+        ServletServerHttpRequest servletResquest = (ServletServerHttpRequest) serverHttpRequest;
+        HttpServletRequest httpServletRequest = servletResquest.getServletRequest();
+        System.out.println(httpServletRequest.getParameter("X-Auth-Token"));
         return true;
     }
 
