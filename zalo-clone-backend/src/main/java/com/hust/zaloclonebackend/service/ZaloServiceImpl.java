@@ -58,7 +58,8 @@ public class ZaloServiceImpl implements ZaloService {
         commentRepo.deleteAllByPost(p);
         postRepo.deletePostByPostId(id);
         return ModelDeletePostResponse.builder()
-                .zaloStatus(ZaloStatus.OK)
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
                 .build();
     }
 
@@ -79,8 +80,9 @@ public class ZaloServiceImpl implements ZaloService {
                 imageRepo.save(image1);
             });
             return ModelAddPostResponse.builder()
-                    .zaloStatus(ZaloStatus.OK)
-                    .postId(finalPost.getPostId())
+                    .code(ZaloStatus.OK.getCode())
+                    .message(ZaloStatus.OK.getMessage())
+                    .id(finalPost.getPostId())
                     .url("/"+user.getPhoneNumber()+"/"+ post.getPostId())
                     .build();
         }catch (Exception e){
@@ -101,9 +103,10 @@ public class ZaloServiceImpl implements ZaloService {
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
             ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
-                    .modelGetPostBody(modelGetPostBody)
+                    .data(modelGetPostBody)
                     .image(images)
-                    .zaloStatus(ZaloStatus.OK)
+                    .code(ZaloStatus.OK.getCode())
+                    .message(ZaloStatus.OK.getMessage())
                     .build();
             return modelGetPostResponse;
         }catch (Exception e){
@@ -126,7 +129,7 @@ public class ZaloServiceImpl implements ZaloService {
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
             ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
-                    .modelGetPostBody(modelGetPostBody)
+                    .data(modelGetPostBody)
                     .image(images)
                     .build();
             modelGetPostResponseArrayList.add(modelGetPostResponse);
@@ -134,13 +137,14 @@ public class ZaloServiceImpl implements ZaloService {
 
        ModelGetListPostResponse modelGetListPostResponse = ModelGetListPostResponse.builder()
                .data(modelGetPostResponseArrayList)
-               .zaloStatus(ZaloStatus.OK)
+               .code(ZaloStatus.OK.getCode())
+               .message(ZaloStatus.OK.getMessage())
                .build();
        return modelGetListPostResponse;
     }
 
     @Override
-    public ModelEditPostResponse editPost(ModelEditPostRequest modelEditPostRequest) {
+    public ModelStatusResponse editPost(ModelEditPostRequest modelEditPostRequest) {
         Post post = postRepo.findPostByPostId(modelEditPostRequest.getId());
         modelEditPostRequest.getImage().forEach(image -> {
             Image image1 = Image.builder()
@@ -151,17 +155,22 @@ public class ZaloServiceImpl implements ZaloService {
         });
         modelEditPostRequest.getImageDelId().forEach(s -> imageRepo.deleteById(s));
         postRepo.save(post);
-        return ModelEditPostResponse.builder()
-                .zaloStatus(ZaloStatus.OK)
+        return ModelStatusResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
                 .build();
     }
 
     @Override
-    public ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber) {
+    public ModelStatusResponse reportPost(ModelReportPost modelReportPost, String phoneNumber) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         Post post = postRepo.findPostByPostId(modelReportPost.getId());
         if(post == null){
-            return ZaloStatus.POST_NOT_EXISTED;
+//            return ZaloStatus.POST_NOT_EXISTED;
+            return ModelStatusResponse.builder()
+                    .code(ZaloStatus.POST_NOT_EXISTED.getCode())
+                    .message(ZaloStatus.POST_NOT_EXISTED.getMessage())
+                    .build();
         }
         Report report = Report.builder()
                 .post(post)
@@ -170,11 +179,14 @@ public class ZaloServiceImpl implements ZaloService {
                 .user(user)
                 .build();
         reportRepo.save(report);
-        return ZaloStatus.OK;
+        return ModelStatusResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
     }
 
     @Override
-    public ZaloStatus addComment(ModelAddComment modelAddComment, String phoneNumber) {
+    public ModelStatusResponse addComment(ModelAddComment modelAddComment, String phoneNumber) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         Post post = postRepo.findPostByPostId(modelAddComment.getPostId());
         Comment comment = Comment.builder()
@@ -184,7 +196,10 @@ public class ZaloServiceImpl implements ZaloService {
                 .timestamp(new Date())
                 .build();
         commentRepo.save(comment);
-        return ZaloStatus.OK;
+        return ModelStatusResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
     }
 
     @Override
@@ -209,16 +224,20 @@ public class ZaloServiceImpl implements ZaloService {
             list.add(modelGetCommentResponse);
         });
         return ModelGetCommentPagingResponse.builder()
-                .list(list)
+                .data(list)
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
                 .build();
     }
 
     @Override
-    public ZaloStatus editComment(ModelEditComment modelEditComment) {
+    public ModelStatusResponse editComment(ModelEditComment modelEditComment) {
         Comment comment = commentRepo.findCommentByCommentId(modelEditComment.getCommentId());
         comment.setContent(modelEditComment.getComment());
-        return  ZaloStatus.OK;
-    }
+        return ModelStatusResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();    }
 
     @Override
     public ModelLikePostResponse likePost(String phoneNumber, String postId) {

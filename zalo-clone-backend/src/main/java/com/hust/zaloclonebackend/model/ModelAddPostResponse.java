@@ -7,7 +7,8 @@ import lombok.Data;
 @Data
 @Builder
 public class ModelAddPostResponse {
-    private ZaloStatus zaloStatus;
-    private String postId;
+    private int code;
+    private String message;
+    private String id;
     private String url;
 }

@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class ModelGetListPostResponse {
-    ZaloStatus zaloStatus;
-    List<ModelGetPostResponse> data;
+    private int code;
+    private String message;
+    private List<ModelGetPostResponse> data;
 }

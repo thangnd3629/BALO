@@ -1,8 +1,6 @@
 package com.hust.zaloclonebackend.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import com.hust.zaloclonebackend.entity.Comment;
 import com.hust.zaloclonebackend.entity.Post;
@@ -27,15 +25,15 @@ public interface ZaloService {
 
     ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber);
 
-    ModelEditPostResponse editPost(ModelEditPostRequest modelEditPostRequest);
+    ModelStatusResponse editPost(ModelEditPostRequest modelEditPostRequest);
 
-    ZaloStatus reportPost(ModelReportPost modelReportPost, String phoneNumber);
+    ModelStatusResponse reportPost(ModelReportPost modelReportPost, String phoneNumber);
 
-    ZaloStatus addComment(ModelAddComment modelAddComment, String phoneNumber);
+    ModelStatusResponse addComment(ModelAddComment modelAddComment, String phoneNumber);
 
     ModelGetCommentPagingResponse getCommentPaging(Pageable pageable, String postId);
 
-    ZaloStatus editComment(ModelEditComment modelEditComment);
+    ModelStatusResponse editComment(ModelEditComment modelEditComment);
 
     ModelLikePostResponse likePost(String phoneNumber, String postId);
 }

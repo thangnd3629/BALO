@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModelDeletePostResponse {
-    private ZaloStatus zaloStatus;
+    private int code;
+    private String message;
 }
