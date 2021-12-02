@@ -196,6 +196,13 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId) {
         User fromUser = userRepo.findUserByPhoneNumber(phoneNumber);
         User toUser = userRepo.findUserByUserId(userId);
+        Relationship relationship = relationShipRepo.findRelationshipByUserAAndUserB(fromUser, toUser);
+        if(relationship == null){
+            return ModelSendFriendRequestResponse.builder()
+                    .code(8888)
+                    .message("They are friend")
+                    .build();
+        }
         friendRequestRepo.save(FriendRequest.builder()
                 .fromUser(fromUser)
                 .toUser(toUser)
