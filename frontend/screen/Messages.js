@@ -7,48 +7,48 @@ import { AntDesign } from "@expo/vector-icons"
 import CustomHeader from "../components/CustomHeader"
 import { API_URL } from "../config"
 import { useEffect } from "react"
-
-var stompClient = null
-
-useEffect(() => {
-  connect()
-}, [])
-
-const connect = () => {
-  const Stomp = require("stompjs")
-  var SockJS = require("sockjs-client")
-  SockJS = new SockJS(`${API_URL}/ws`)
-  stompClient = Stomp.over(SockJS)
-  stompClient.connect({}, onConnected, onError)
-}
-
-const onConnected = () => {
-  const userID = 1
-  console.log("connected")
-
-  stompClient.subscribe(
-    "/user/" + userID + "/queue/messages",
-    onMessageReceived
-  )
-}
-
-const onError = (err) => {
-  console.log(err)
-}
-
-const onMessageReceived = (msg) => {
-  const notification = JSON.parse(msg.body)
-  console.log(notification)
-}
-
-const userId = "0";
-
-const getOffsetTime = (date) =>{
+import { useSelector } from "react-redux"
+import SockJS from "sockjs-client" // Note this line
+import Stomp from "stompjs"
+const getOffsetTime = (date) => {
   return "9 mins"
-} 
+}
 
 export default function Messages({ navigation }) {
+  const authToken = useSelector((state) => state.authReducer.token)
+  console.log(authToken)
+  var stompClient = null
 
+  useEffect(() => {
+    connect()
+  }, [])
+
+  const connect = () => {
+    sockJS = new SockJS(`${API_URL}/messenger/?X-Auth-Token=${authToken}`)
+    stompClient = Stomp.over(sockJS)
+
+    stompClient.connect(
+      { "X-Auth-Token": `${authToken}` },
+      onConnected,
+      onError
+    )
+  }
+
+  const onConnected = () => {
+    const userID = 1
+    console.log("connected")
+  }
+
+  const onError = (err) => {
+    console.log(err)
+  }
+
+  const onMessageReceived = (msg) => {
+    const notification = JSON.parse(msg.body)
+    console.log(notification)
+  }
+
+  const userId = "0"
 
   const friends = [
     {
@@ -92,43 +92,43 @@ export default function Messages({ navigation }) {
       partner: {
         id: "11",
         username: "A",
-        avatar: require('../assets/user1.jpg'),
+        avatar: require("../assets/user1.jpg"),
       },
       lastmessage: {
         message: "Hey this is my latest text",
         created: "01/01/2021 01:01:01",
         unread: 0,
-        senderId: "11"
-      }
+        senderId: "11",
+      },
     },
     {
       id: "2",
       partner: {
         id: "21",
         username: "B",
-        avatar: require('../assets/user1.jpg'),
+        avatar: require("../assets/user1.jpg"),
       },
       lastmessage: {
         message: "Hey this is my latest text",
         created: "01/01/2021 01:01:01",
         unread: 1,
-        senderId: "0"
-      }
+        senderId: "0",
+      },
     },
     {
       id: "3",
       partner: {
         id: "33",
         username: "C",
-        avatar: require('../assets/user1.jpg'),
+        avatar: require("../assets/user1.jpg"),
       },
       lastmessage: {
         message: "Hey this is my latest text",
         created: "01/01/2021 01:01:01",
         unread: 0,
-        senderId: "33"
-      }
-    }
+        senderId: "33",
+      },
+    },
   ]
 
   return (
@@ -184,35 +184,25 @@ export default function Messages({ navigation }) {
       </View>
       <Divider />
       <FlatList
-<<<<<<< HEAD
-        data={users}
-        keyExtractor={(item) => item.id}
-=======
         data={data}
-        keyExtractor={(item) => (item.id)}
->>>>>>> nduc4nh
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           return (
             <UserMessageBar
               navigation={navigation}
-<<<<<<< HEAD
-              userName={item.userName}
-              userImg={item.userImg}
-              messageTime={item.messageTime}
-              messageText={item.messageText}
-              fromMe={item.fromMe}
-              seen={item.seen}
-              read={item.read}
-=======
               userName={item.partner.username}
               userImg={item.partner.avatar}
               messageTime={getOffsetTime(item.lastmessage.created)}
               messageText={item.lastmessage.message}
               fromMe={item.lastmessage.senderId === userId}
-              seen={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 1)}
-              read={(item.lastmessage.senderId === userId) && (item.lastmessage.unread == 0)}
-
->>>>>>> nduc4nh
+              seen={
+                item.lastmessage.senderId === userId &&
+                item.lastmessage.unread == 1
+              }
+              read={
+                item.lastmessage.senderId === userId &&
+                item.lastmessage.unread == 0
+              }
               user={item} // you can remove these props above and only use this
             />
           )
