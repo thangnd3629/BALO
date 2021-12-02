@@ -149,8 +149,10 @@ public class ZaloServiceImpl implements ZaloService {
 
     @Override
     public ModelGetListFriendRequest getListFriendRequest(String phoneNumber, Pageable pageable) {
+        log.info("pageable {}", pageable);
         User toUser = userRepo.findUserByPhoneNumber(phoneNumber);
-        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByFromUser(pageable, toUser);
+        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByToUser(pageable, toUser);
+        log.info("list {}", list.size());
         List<ModelGetFriendRequest> data = list.stream()
                 .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
                 .collect(Collectors.toList());
@@ -197,7 +199,8 @@ public class ZaloServiceImpl implements ZaloService {
         User fromUser = userRepo.findUserByPhoneNumber(phoneNumber);
         User toUser = userRepo.findUserByUserId(userId);
         Relationship relationship = relationShipRepo.findRelationshipByUserAAndUserB(fromUser, toUser);
-        if(relationship == null){
+        log.info("relationship {}", relationship);
+        if(relationship != null){
             return ModelSendFriendRequestResponse.builder()
                     .code(8888)
                     .message("They are friend")
