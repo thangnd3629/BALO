@@ -17,4 +17,5 @@ public class ModelGetPostResponse {
     private String message;
     private ModelGetPostBody data;
     private List<String> image;
+    private ModelAuthor author;
 }

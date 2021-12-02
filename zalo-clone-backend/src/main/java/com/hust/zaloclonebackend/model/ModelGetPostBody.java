@@ -15,7 +15,7 @@ public class ModelGetPostBody {
     private String id;
     private String describe;
     private Date createAt;
-    private int numLike;
+    private int like;
     private int numComment;
-//    boolean isLike;
+    int isLike;
 }
