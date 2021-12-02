@@ -94,12 +94,25 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetPostResponse getPostById(String id) throws Exception {
         try {
             Post post = postRepo.findPostByPostId(id);
+            Integer isLike = 0;
+            User poster = post.getPoster();
+            for(User u : post.getLikers()){
+                if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
+                    isLike=1;
+                }
+            }
             ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
                     .id(post.getPostId())
                     .createAt(post.getCreatedDate())
                     .describe(post.getContent())
                     .numComment(post.getComments().size())
-                    .numLike(post.getLikers().size())
+                    .like(post.getLikers().size())
+                    .isLike(isLike)
+                    .build();
+            ModelAuthor modelAuthor = ModelAuthor.builder()
+                    .avartar(poster.getAvatarLink())
+                    .name(poster.getName())
+                    .id(poster.getUserId())
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
             ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
@@ -107,6 +120,7 @@ public class ZaloServiceImpl implements ZaloService {
                     .image(images)
                     .code(ZaloStatus.OK.getCode())
                     .message(ZaloStatus.OK.getMessage())
+                    .author(modelAuthor)
                     .build();
             return modelGetPostResponse;
         }catch (Exception e){
@@ -125,7 +139,7 @@ public class ZaloServiceImpl implements ZaloService {
                     .createAt(post.getCreatedDate())
                     .describe(post.getContent())
                     .numComment(post.getComments().size())
-                    .numLike(post.getLikers().size())
+                    .like(post.getLikers().size())
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
             ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
