@@ -106,5 +106,11 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelLikePostResponse);
     }
 
+    @PostMapping("/post/get-list-post-paging}")
+    public ResponseEntity<?> getListPostPaging(Pageable pageable, Principal principal){
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdDate").and(Sort.by("modifiedDate")).descending());
+        ModelGetListPostResponse modelGetListPostResponse = zaloService.getListPostPaging(principal.getName(), pageable);
+        return ResponseEntity.status(200).body(modelGetListPostResponse);
+    }
 
 }
