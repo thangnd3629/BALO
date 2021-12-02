@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModelGetPostResponse {
-    ZaloStatus zaloStatus;
-    ModelGetPostBody modelGetPostBody;
-    List<String> image;
+    private int code;
+    private String message;
+    private ModelGetPostBody data;
+    private List<String> image;
 }

@@ -8,6 +8,7 @@ import com.hust.zaloclonebackend.model.*;
 import com.hust.zaloclonebackend.service.ZaloService;
 import com.hust.zaloclonebackend.service.UserService;
 
+import io.swagger.models.Model;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +27,8 @@ import lombok.AllArgsConstructor;
 public class ZaloController {
     ZaloService zaloService;
     UserService userService;
-    
-    //Hasn't set status code, caught exception and validated ..
+
+    //
     @PostMapping("/post/add")
     public ResponseEntity<?> addPost(@RequestBody ModelAddPost modelAddPost, Principal principal) throws Exception {
         //get User from Session
@@ -36,7 +37,7 @@ public class ZaloController {
         ModelAddPostResponse modelAddPostResponse = zaloService.addPost(modelAddPost, user);
         return ResponseEntity.status(HttpStatus.OK).body(modelAddPostResponse);
     }
-
+//
     @GetMapping("/post/get/{id}")
     public ResponseEntity<?> getPost(@PathVariable("id") String id,Principal principal) throws Exception {
         log.info("get post id {}", id);
@@ -44,14 +45,14 @@ public class ZaloController {
         return ResponseEntity.status(HttpStatus.OK).body(modelGetPostResponse);
 
     }
-
+//
     @DeleteMapping("/post/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable("id") String id,Principal principal) throws Exception {
         log.info("delete post id {}", id);
         ModelDeletePostResponse modelDeletePostResponse = zaloService.deletePostById(id);
         return ResponseEntity.ok(modelDeletePostResponse);
     }
-
+//
     @PostMapping("/post/get-user-list-post")
     public ResponseEntity<?> getUserListPost(Principal principal, @RequestBody ModelGetUserListPostRequest modelGetUserListPostRequest ){
         log.info("get user list post {}", modelGetUserListPostRequest);
@@ -61,28 +62,28 @@ public class ZaloController {
         ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPost(pageable, phoneNumber);
         return ResponseEntity.status(200).body(modelGetListPostResponse);
     }
-
+//
     @PostMapping("/post/edit")
     public ResponseEntity<?> editPost(@RequestBody ModelEditPostRequest modelEditPostRequest ){
         log.info("edit post {}", modelEditPostRequest);
-        ModelEditPostResponse modelEditPostResponse = zaloService.editPost(modelEditPostRequest);
-        return ResponseEntity.status(200).body(modelEditPostResponse);
+        ModelStatusResponse modelStatusResponse = zaloService.editPost(modelEditPostRequest);
+        return ResponseEntity.status(200).body(modelStatusResponse);
     }
-
+//
     @PostMapping("/report-post")
     public ResponseEntity<?> reportPost(@RequestBody ModelReportPost modelReportPost, Principal principal){
         log.info("report post {}", modelReportPost);
-        ZaloStatus zaloStatus = zaloService.reportPost(modelReportPost, principal.getName());
+        ModelStatusResponse zaloStatus = zaloService.reportPost(modelReportPost, principal.getName());
         return ResponseEntity.status(200).body(zaloStatus);
     }
-
+//
     @PostMapping("/comment/add")
     public ResponseEntity<?> addComment(@RequestBody ModelAddComment modelAddComment, Principal principal){
         log.info("add comment {}", modelAddComment);
-        ZaloStatus zaloStatus = zaloService.addComment(modelAddComment, principal.getName());
+        ModelStatusResponse zaloStatus = zaloService.addComment(modelAddComment, principal.getName());
         return ResponseEntity.status(200).body(zaloStatus);
     }
-
+//
     @GetMapping("/get-comment-paging/{postId}")
     public ResponseEntity<?> getCommentPaging(Pageable pageable, @PathVariable("postId") String postId){
         log.info("get comment paging");
@@ -90,11 +91,11 @@ public class ZaloController {
         log.info("modelGetCommentPagingResponse {}", modelGetCommentPagingResponse);
         return ResponseEntity.status(200).body(modelGetCommentPagingResponse);
     }
-
+//
     @PostMapping("/comment/edit")
     public ResponseEntity<?> editComment(@RequestBody ModelEditComment modelEditComment){
         log.info("edit comment {}", modelEditComment);
-        ZaloStatus zaloStatus = zaloService.editComment(modelEditComment);
+        ModelStatusResponse zaloStatus = zaloService.editComment(modelEditComment);
         return ResponseEntity.status(200).body(zaloStatus);
     }
 
@@ -104,4 +105,6 @@ public class ZaloController {
         ModelLikePostResponse modelLikePostResponse = zaloService.likePost(principal.getName(), postId);
         return ResponseEntity.status(200).body(modelLikePostResponse);
     }
+
+
 }

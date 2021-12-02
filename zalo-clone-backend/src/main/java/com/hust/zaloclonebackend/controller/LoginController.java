@@ -1,5 +1,6 @@
 package com.hust.zaloclonebackend.controller;
 
+import com.hust.zaloclonebackend.exception.ZaloStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -18,8 +19,14 @@ public class LoginController {
         headers.set("Access-Control-Expose-Headers", "X-Auth-Token");
         return ResponseEntity.ok().headers(headers).body(response);
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/hello")
     public String sayHello() {
         return "Swagger Hello World";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/test")
+    public ResponseEntity test(){
+        return ResponseEntity.status(200).body(ZaloStatus.CODE_VERIFY_IS_INCORRECT);
     }
 }

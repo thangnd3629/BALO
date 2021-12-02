@@ -8,5 +8,7 @@ import java.util.List;
 @Data
 @Builder
 public class ModelGetCommentPagingResponse {
-    List<ModelGetCommentResponse> list;
+    private int code;
+    private String message;
+    private List<ModelGetCommentResponse> data;
 }
