@@ -14,5 +14,6 @@ public interface PostPagingAndSortingRepo extends PagingAndSortingRepository<Pos
     List<Post> getPostNewFeedByUser(Pageable pageable, @Param("user") User user);
 
     List<Post> findAllByPoster(Pageable pageable, User poster);
+
 }
 

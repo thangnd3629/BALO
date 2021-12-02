@@ -2,6 +2,7 @@ package com.hust.zaloclonebackend.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.hust.zaloclonebackend.entity.*;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
@@ -94,39 +95,56 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetPostResponse getPostById(String id) throws Exception {
         try {
             Post post = postRepo.findPostByPostId(id);
-            Integer isLike = 0;
-            User poster = post.getPoster();
-            for(User u : post.getLikers()){
-                if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
-                    isLike=1;
-                }
-            }
-            ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
-                    .id(post.getPostId())
-                    .createAt(post.getCreatedDate())
-                    .describe(post.getContent())
-                    .numComment(post.getComments().size())
-                    .like(post.getLikers().size())
-                    .isLike(isLike)
-                    .build();
-            ModelAuthor modelAuthor = ModelAuthor.builder()
-                    .avartar(poster.getAvatarLink())
-                    .name(poster.getName())
-                    .id(poster.getUserId())
-                    .build();
-            List<String> images = imageRepo.findAllImageValueByPost(post);
-            ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
-                    .data(modelGetPostBody)
-                    .image(images)
-                    .code(ZaloStatus.OK.getCode())
-                    .message(ZaloStatus.OK.getMessage())
-                    .author(modelAuthor)
-                    .build();
-            return modelGetPostResponse;
+           return convertPostToModelGetPostResponse(post);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
     }
+
+    private ModelGetPostResponse convertPostToModelGetPostResponse(Post post){
+        Integer isLike = 0;
+        User poster = post.getPoster();
+        for(User u : post.getLikers()){
+            if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
+                isLike=1;
+            }
+        }
+        ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
+                .id(post.getPostId())
+                .createAt(post.getCreatedDate())
+                .describe(post.getContent())
+                .numComment(post.getComments().size())
+                .like(post.getLikers().size())
+                .isLike(isLike)
+                .build();
+        ModelAuthor modelAuthor = ModelAuthor.builder()
+                .avartar(poster.getAvatarLink())
+                .name(poster.getName())
+                .id(poster.getUserId())
+                .build();
+        List<String> images = imageRepo.findAllImageValueByPost(post);
+        return ModelGetPostResponse.builder()
+                .data(modelGetPostBody)
+                .image(images)
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .author(modelAuthor)
+                .build();
+    }
+
+    @Override
+    public ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable) {
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        List<Post> list = postPagingAndSortingRepo.getPostNewFeedByUser(pageable, user);
+        List<ModelGetPostResponse>  list1 = list.stream().map(post -> convertPostToModelGetPostResponse(post)).collect(Collectors.toList());
+        return ModelGetListPostResponse.builder()
+                .message(ZaloStatus.OK.getMessage())
+                .code(ZaloStatus.OK.getCode())
+                .data(list1)
+                .build();
+    }
+
+
 
     @Override
     public ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber) {
@@ -264,5 +282,7 @@ public class ZaloServiceImpl implements ZaloService {
                 .build();
         return modelLikePostResponse;
     }
+
+
 
 }
