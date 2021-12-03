@@ -16,8 +16,10 @@ const UserInbox = props => {
     const [text,setText] = useState("")
 
     const onChangeTextHandle = (string) =>{
-        setText(string)
-        console.log(string+","+re);
+        let rawString = emoji.reverseParse(string)
+        setText(rawString)
+
+        console.log(string+","+rawString);
     }
 
     const renderInput = props => {
@@ -28,7 +30,7 @@ const UserInbox = props => {
                     <FontAwesome style={{ paddingLeft: 5 }} name="picture-o" size={24} color="#ddddd1" />
                 </TouchableOpacity>
                 
-                <Composer {...props} />
+                <Composer  {...props} />
                 
                 <TouchableOpacity onPress={() => { if (text && onSend) { onSend({ text: text.trim(), user: user, _id: messageIdGenerator() }, true); } }}>
                     <Ionicons style={{ paddingLeft: 10, paddingRight: 5 }} name="send" size={24} color="blue" />
