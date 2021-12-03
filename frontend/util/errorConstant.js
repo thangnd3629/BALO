@@ -1,4 +1,5 @@
-export const errors = {
+const errors = {
+  400: "Bad request",
   9992: "Post is not exist",
   9993: "Code verify is incorrect",
   9994: "No Data or end of list data",
@@ -18,3 +19,4 @@ export const errors = {
   1009: "Not access",
   1010: "Action has been done previously by this user",
 }
+export default errors

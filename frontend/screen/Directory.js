@@ -1,31 +1,25 @@
 import React from "react"
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
-import { TabView, SceneMap } from "react-native-tab-view"
+import { StyleSheet, Text, View, ScrollView } from "react-native"
+import { TouchableOpacity } from "react-native-gesture-handler"
+import * as navigation from "../RouteNavigation"
 
-const MsgRoute = () => <View style={{ flex: 1, backgroundColor: "#673ab7" }} />
-
-const FriendRoute = () => <View style={{ flex: 1 }}></View>
-const renderScene = SceneMap({
-  first: FriendRoute,
-  second: MsgRoute,
-})
 export default function Directory() {
-  const layout = useWindowDimensions()
-
-  const [index, setIndex] = React.useState(0)
-  const [routes] = React.useState([
-    { key: "first", title: "Bạn bè" },
-    { key: "second", title: "Tin nhắn" },
-  ])
-
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-    />
+    <View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("FriendRequest")
+        }}
+      >
+        <Text>Loi moi ket ban</Text>
+      </TouchableOpacity>
+    </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    // alignItems:'center',
+    // justifyContent:'center'
+  },
+})

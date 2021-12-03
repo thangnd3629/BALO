@@ -171,7 +171,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
         log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
-        if(request.isAccept()){
+        if(request.getIsAccept() == 1){
             Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)

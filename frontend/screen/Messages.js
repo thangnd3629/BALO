@@ -24,7 +24,7 @@ export default function Messages({ navigation }) {
   }, [])
 
   const connect = () => {
-    sockJS = new SockJS(`${API_URL}/messenger/?X-Auth-Token=${authToken}`)
+    sockJS = new SockJS(`${API_URL}/messenger`)
     stompClient = Stomp.over(sockJS)
 
     stompClient.connect(

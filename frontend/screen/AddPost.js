@@ -73,7 +73,6 @@ export default function AddPost({}) {
       )
       console.log(response)
       if (response.zaloStatus.code === 1000) {
-        // add popup
         dispatch({
           type: SHOW_MODAL,
           payload: {

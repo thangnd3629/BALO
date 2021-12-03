@@ -2,6 +2,7 @@ import { SHOW_MODAL } from "../action/types"
 import apiError from "./errorConstant"
 export const fetchWithErrHandler = async (
   url,
+
   requestOptions,
   timeout,
   dispatch
@@ -31,12 +32,15 @@ export const fetchWithErrHandler = async (
       jsonResponse = JSON.parse(textResponse)
     }
     jsonResponse.status = rawResponse.status
-    if (apiError[jsonResponse.code]) {
+    if (apiError[jsonResponse.code] || apiError[rawResponse.status]) {
       dispatch({
         type: SHOW_MODAL,
         payload: {
           status: "Server Error",
-          content: apiError[jsonResponse.code],
+          content:
+            apiError[
+              jsonResponse.code ? jsonResponse.code : rawResponse.status
+            ],
         },
       })
     }

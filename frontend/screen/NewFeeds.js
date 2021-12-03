@@ -12,9 +12,11 @@ export default function NewFeeds({}) {
     setReportFeedID(feedId)
   }
   const closeReportModal = () => {
-    console.log("close")
     setReportFeedModal(false)
   }
+
+  const fetchNewPosts = () => {}
+
   const [feeds, setFeeds] = useState([
     {
       id: 3,
