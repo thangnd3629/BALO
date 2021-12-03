@@ -16,10 +16,8 @@ const UserInbox = props => {
     const [text,setText] = useState("")
 
     const onChangeTextHandle = (string) =>{
-        string += " "
-        re = emoji.parse(string)
-        setText(re.slice(0,-1))
-        
+        setText(string)
+        console.log(string+","+re);
     }
 
     const renderInput = props => {
@@ -27,7 +25,7 @@ const UserInbox = props => {
         return (
             <View {...props} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: "white" }}>
                 <TouchableOpacity>
-                    <FontAwesome style={{ paddingLeft: 5 }} name="picture-o" size={24} color="#dddddd" />
+                    <FontAwesome style={{ paddingLeft: 5 }} name="picture-o" size={24} color="#ddddd1" />
                 </TouchableOpacity>
                 
                 <Composer {...props} />
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
     composer: {
         borderRadius: 25,
         borderWidth: 0.5,
-        borderColor: '#dddddd',
+        borderColor: '#ddddd1',
         marginTop: 10,
         marginBottom: 10,
         paddingLeft: 10,
@@ -157,7 +155,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         paddingRight: 10,
         fontSize: 16,
-        backgroundColor: "#dddddd"
+        backgroundColor: "#ddddd1"
     },
     phone: {
         
