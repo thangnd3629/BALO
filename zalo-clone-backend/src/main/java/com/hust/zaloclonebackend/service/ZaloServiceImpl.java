@@ -104,6 +104,33 @@ public class ZaloServiceImpl implements ZaloService {
         }
     }
 
+    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post){
+        Integer isLike = 0;
+        User poster = post.getPoster();
+        for(User u : post.getLikers()){
+            if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
+                isLike=1;
+            }
+        }
+        ModelAuthor modelAuthor = ModelAuthor.builder()
+                .avartar(poster.getAvatarLink())
+                .name(poster.getName())
+                .id(poster.getUserId())
+                .build();
+        List<String> images = imageRepo.findAllImageValueByPost(post);
+
+        return ModelGetListPostBody.builder()
+                .id(post.getPostId())
+                .createAt(post.getCreatedDate())
+                .describe(post.getContent())
+                .numComment(post.getComments().size())
+                .like(post.getLikers().size())
+                .isLike(isLike)
+                .author(modelAuthor)
+                .image(images)
+                .build();
+    }
+
     private ModelGetPostResponse convertPostToModelGetPostResponse(Post post){
         Integer isLike = 0;
         User poster = post.getPoster();
@@ -139,7 +166,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         List<Post> list = postPagingAndSortingRepo.getPostNewFeedByUser(pageable, user);
-        List<ModelGetPostResponse>  list1 = list.stream().map(post -> convertPostToModelGetPostResponse(post)).collect(Collectors.toList());
+        List<ModelGetListPostBody>  list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post)).collect(Collectors.toList());
         return ModelGetListPostResponse.builder()
                 .message(ZaloStatus.OK.getMessage())
                 .code(ZaloStatus.OK.getCode())
@@ -169,7 +196,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
         log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
-        if(request.isAccept()){
+        if(request.getIsAccept() == 1){
             Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)
@@ -184,7 +211,8 @@ public class ZaloServiceImpl implements ZaloService {
         }
         log.info("11111");
         FriendRequest friendRequest = friendRequestRepo.findFriendRequestByFromUserAndToUser(fromUser, toUSer);
-        friendRequestRepo.deleteById(friendRequest.getId());
+        if(friendRequest != null)
+            friendRequestRepo.deleteById(friendRequest.getId());
 //        friendRequestRepo.deleteByFromUserAndToUser(fromUser, toUSer);
         log.info("222");
 
@@ -250,7 +278,7 @@ public class ZaloServiceImpl implements ZaloService {
         });
 
        ModelGetListPostResponse modelGetListPostResponse = ModelGetListPostResponse.builder()
-               .data(modelGetPostResponseArrayList)
+//               .data(modelGetPostResponseArrayList)
                .code(ZaloStatus.OK.getCode())
                .message(ZaloStatus.OK.getMessage())
                .build();
