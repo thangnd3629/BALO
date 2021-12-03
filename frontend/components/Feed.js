@@ -175,7 +175,7 @@ const Feed = ({
 
         <Post>{described}</Post>
         <Photo>
-          <FluidGrid editable={false} images={image.map((item) => item.uri)} />
+          <FluidGrid editable={false} images={image} />
         </Photo>
 
         <Footer>
