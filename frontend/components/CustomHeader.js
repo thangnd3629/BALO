@@ -4,7 +4,6 @@ import { LinearGradient } from "expo-linear-gradient"
 import { AntDesign } from "@expo/vector-icons"
 
 const CustomHeader = (props) => {
-  console.log(props.hi)
   return (
     <LinearGradient
       colors={["#00B4DB", "#0083B0"]}
