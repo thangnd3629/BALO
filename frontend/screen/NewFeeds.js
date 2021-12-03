@@ -43,7 +43,7 @@ export default function NewFeeds({}) {
 
       const newPost = response.data
       if (page === 0) {
-        setFeeds([...feeds, ...newPost].map((item) => item.data))
+        setFeeds([...feeds, ...newPost])
       }
 
       console.log(newPost)

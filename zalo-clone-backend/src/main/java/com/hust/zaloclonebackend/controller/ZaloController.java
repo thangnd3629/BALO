@@ -77,9 +77,9 @@ public class ZaloController {
         return ResponseEntity.status(200).body(zaloStatus);
     }
 //
-    @PostMapping("/comment")
-    public ResponseEntity<?> addComment(@RequestBody ModelAddComment modelAddComment, Principal principal){
-        log.info("add comment {}", modelAddComment);
+    @PostMapping("/post/{postId}/comment")
+    public ResponseEntity<?> addComment(@RequestBody ModelAddCommentRequest modelAddCommentRequest, @PathVariable String postId,Principal principal){
+        ModelAddComment modelAddComment = ModelAddComment.builder().comment(modelAddCommentRequest.getComment()).postId(postId).build();
         ModelStatusResponse zaloStatus = zaloService.addComment(modelAddComment, principal.getName());
         return ResponseEntity.status(200).body(zaloStatus);
     }
@@ -106,7 +106,7 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelLikePostResponse);
     }
 
-    @PostMapping("/post/get-list-post-paging}")
+    @PostMapping("/post/get-list-post-paging")
     public ResponseEntity<?> getListPostPaging(Pageable pageable, Principal principal){
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdDate").and(Sort.by("modifiedDate")).descending());
         ModelGetListPostResponse modelGetListPostResponse = zaloService.getListPostPaging(principal.getName(), pageable);
