@@ -3,9 +3,10 @@ package com.hust.zaloclonebackend.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
-public class ModelAddComment {
-    private String postId;
+public class ModelEditCommentRequest {
     private String comment;
 }

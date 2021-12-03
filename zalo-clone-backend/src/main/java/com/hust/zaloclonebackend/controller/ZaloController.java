@@ -77,7 +77,7 @@ public class ZaloController {
         return ResponseEntity.status(200).body(zaloStatus);
     }
 //
-    @PostMapping("/comment/add")
+    @PostMapping("/comment")
     public ResponseEntity<?> addComment(@RequestBody ModelAddComment modelAddComment, Principal principal){
         log.info("add comment {}", modelAddComment);
         ModelStatusResponse zaloStatus = zaloService.addComment(modelAddComment, principal.getName());
@@ -92,9 +92,9 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelGetCommentPagingResponse);
     }
 //
-    @PostMapping("/comment/edit")
-    public ResponseEntity<?> editComment(@RequestBody ModelEditComment modelEditComment){
-        log.info("edit comment {}", modelEditComment);
+    @PutMapping("/comment/{id}")
+    public ResponseEntity<?> editComment(@RequestBody ModelEditCommentRequest modelEditCommentRequest, @PathVariable Long id){
+        ModelEditComment modelEditComment = ModelEditComment.builder().comment(modelEditCommentRequest.getComment()).commentId(id).build();
         ModelStatusResponse zaloStatus = zaloService.editComment(modelEditComment);
         return ResponseEntity.status(200).body(zaloStatus);
     }
