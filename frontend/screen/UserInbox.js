@@ -6,13 +6,21 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import { navigate } from '../RouteNavigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import Emoji from '../utils/Emoji';
+import { toArray } from "react-emoji-render";
 
+const emoji = new Emoji()
 
 const UserInbox = props => {
     const [messages, setMessages] = useState([]);
-    const [toolBarSize, setToolBarSize] = useState([60])
+    const [text,setText] = useState("")
 
-
+    const onChangeTextHandle = (string) =>{
+        string += " "
+        re = emoji.parse(string)
+        setText(re.slice(0,-1))
+        
+    }
 
     const renderInput = props => {
         const { text, messageIdGenerator, user, onSend } = props
@@ -21,7 +29,9 @@ const UserInbox = props => {
                 <TouchableOpacity>
                     <FontAwesome style={{ paddingLeft: 5 }} name="picture-o" size={24} color="#dddddd" />
                 </TouchableOpacity>
-                <Composer  {...props} />
+                
+                <Composer {...props} />
+                
                 <TouchableOpacity onPress={() => { if (text && onSend) { onSend({ text: text.trim(), user: user, _id: messageIdGenerator() }, true); } }}>
                     <Ionicons style={{ paddingLeft: 10, paddingRight: 5 }} name="send" size={24} color="blue" />
                 </TouchableOpacity>
@@ -31,21 +41,6 @@ const UserInbox = props => {
 
     }
 
-    const renderSend = proprs => {
-        return (
-            <Send {...props}>
-                <View>
-                    <FontAwesome name="picture-o" size={15} color="black" />
-                </View>
-            </Send>
-        )
-    }
-
-    const renderInput2 = () => {
-        return (
-            <View></View>
-        )
-    }
     useEffect(() => {
         setMessages([
             {
@@ -72,7 +67,7 @@ const UserInbox = props => {
     return (
         <View style={styles.container}>
 
-            <CustomHeader hi={"hi"} label={props.route.params.name} navigation={props.route.params.nav}>
+            <CustomHeader label={props.route.params.name} navigation={props.route.params.nav}>
                 <View style={styles.headerOptionsContainer}>
                     <View style={styles.headerOptions}>
                         <TouchableOpacity>
@@ -87,7 +82,7 @@ const UserInbox = props => {
                     </View>
                 </View>
             </CustomHeader>
-
+            
             <GiftedChat
                 listViewProps={styles.inboxContainer}
                 textInputProps={styles.composer}
@@ -100,6 +95,11 @@ const UserInbox = props => {
                 user={{
                     _id: 1,
                 }}
+                text={emoji.parse(text)}
+                onInputTextChanged={onChangeTextHandle}
+                parsePatterns={(linkStyle) => [
+                    { type: 'phone', style: linkStyle, onPress: this.onPressPhoneNumber }
+                ]}
             />
         </View>
     )
@@ -158,6 +158,9 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         fontSize: 16,
         backgroundColor: "#dddddd"
+    },
+    phone: {
+        
     }
 
 })
