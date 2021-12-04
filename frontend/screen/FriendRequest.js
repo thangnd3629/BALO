@@ -24,7 +24,7 @@ export default function FriendRequest() {
         3000,
         dispatch
       )
-      setRequest(response.data)
+      setRequest(response.body.data)
     } catch (e) {}
   }
 

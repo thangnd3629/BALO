@@ -31,7 +31,7 @@ export const fetchWithErrHandler = async (
     if (textResponse.length !== 0) {
       jsonResponse = JSON.parse(textResponse)
     }
-    jsonResponse.status = rawResponse.status
+
     if (apiError[jsonResponse.code] || apiError[rawResponse.status]) {
       dispatch({
         type: SHOW_MODAL,
@@ -45,9 +45,11 @@ export const fetchWithErrHandler = async (
       })
     }
     return {
-      ...jsonResponse,
-      status: rawResponse.status,
-      headers: rawResponse.headers,
+      body: jsonResponse,
+      metadata: {
+        status: rawResponse.status,
+        headers: rawResponse.headers,
+      },
     }
   } catch (e) {
     dispatch({

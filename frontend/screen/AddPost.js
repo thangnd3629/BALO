@@ -71,7 +71,7 @@ export default function AddPost({}) {
         10000,
         dispatch
       )
-      if (response.code === 1000) {
+      if (response.body.code === 1000) {
         dispatch({
           type: SHOW_MODAL,
           payload: {

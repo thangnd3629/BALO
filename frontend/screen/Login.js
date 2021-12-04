@@ -43,12 +43,12 @@ export default function Login({}) {
         dispatch
       )
 
-      if (response.status === 200) {
+      if (response.metadata.status === 200) {
         dispatch({
           type: AUTH_SUCCESS,
           payload: {
-            user: response.user,
-            token: response.headers.get("X-Auth-Token"),
+            user: response.body,
+            token: response.metadata.headers.get("X-Auth-Token"),
           },
         })
         return
