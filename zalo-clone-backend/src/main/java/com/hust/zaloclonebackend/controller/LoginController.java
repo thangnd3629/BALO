@@ -1,23 +1,39 @@
 package com.hust.zaloclonebackend.controller;
 
+import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
+import com.hust.zaloclonebackend.model.ModelLoginResponse;
+import com.hust.zaloclonebackend.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 @RestController
 @CrossOrigin
 public class LoginController {
+
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(method = RequestMethod.GET, value = "/login")
-    public ResponseEntity<Map> home(@CurrentSecurityContext(expression = "authentication.name") String name) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<ModelLoginResponse> home(@CurrentSecurityContext(expression = "authentication.name") String name, Principal principal) {
+
         HttpHeaders headers = new HttpHeaders();
-        response.put("user", name);
+        User user = userService.findByPhoneNumber(principal.getName());
+        ModelLoginResponse modelLoginResponse = ModelLoginResponse.builder().userName(name)
+                                                                            .phoneNumber(user.getPhoneNumber())
+                                                                                    .avatar(user.getAvatarLink())
+                                                                                            .id(user.getUserId())
+                                                                                                    .build();
+
         headers.set("Access-Control-Expose-Headers", "X-Auth-Token");
-        return ResponseEntity.ok().headers(headers).body(response);
+        return ResponseEntity.ok().headers(headers).body(modelLoginResponse);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/hello")
@@ -26,7 +42,8 @@ public class LoginController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/test")
-    public ResponseEntity test(){
+    public ResponseEntity test(Principal principal){
+
         return ResponseEntity.status(200).body(ZaloStatus.CODE_VERIFY_IS_INCORRECT);
     }
 }

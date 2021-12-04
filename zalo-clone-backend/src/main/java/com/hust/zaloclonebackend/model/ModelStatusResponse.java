@@ -9,4 +9,5 @@ public class ModelStatusResponse {
 //    private ZaloStatus zaloStatus;
     private String message;
     private int code;
+    private Long id;
 }

@@ -342,6 +342,7 @@ public class ZaloServiceImpl implements ZaloService {
         return ModelStatusResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
+                .id(comment.getCommentId())
                 .build();
     }
 
