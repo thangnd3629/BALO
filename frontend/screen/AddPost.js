@@ -71,8 +71,7 @@ export default function AddPost({}) {
         10000,
         dispatch
       )
-      console.log(response)
-      if (response.zaloStatus.code === 1000) {
+      if (response.code === 1000) {
         dispatch({
           type: SHOW_MODAL,
           payload: {
@@ -82,7 +81,10 @@ export default function AddPost({}) {
         navigation.goBack()
         return
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log("why not do anything")
+      console.log(e)
+    }
   }
   return (
     <View style={styles.container}>
