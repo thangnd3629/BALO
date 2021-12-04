@@ -112,7 +112,6 @@ const Feed = ({
 }) => {
   const user = useSelector((state) => state.authReducer.user)
 
-  console.log("inside feed id:  ", author.name)
   const editPost = () => {
     navigation.navigate("EditPost", {
       id,
@@ -174,7 +173,7 @@ const Feed = ({
 
         <Post>{described}</Post>
         <Photo>
-          <FluidGrid editable={false} images={image} />
+          <FluidGrid editable={false} images={image} base64={true} />
         </Photo>
 
         <Footer>

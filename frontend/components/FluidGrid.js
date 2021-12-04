@@ -3,6 +3,7 @@ import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native"
 import { Entypo } from "@expo/vector-icons"
 const ImageItem = (props) => {
   const editable = props.editable
+
   return props.image ? (
     <TouchableOpacity
       style={styles.image_view}
@@ -19,7 +20,9 @@ const ImageItem = (props) => {
       <Image
         style={styles.image}
         source={{
-          uri: props.image,
+          uri: !props.base64
+            ? props.image
+            : `data:image/png;base64,${props.image}`,
         }}
       />
     </TouchableOpacity>
@@ -37,6 +40,7 @@ const TwoImages = (props) => {
         index={0}
         onRemove={props.onRemove}
         editable={props.editable}
+        base64={props.base64}
       />
       <ImageItem
         image={props.images[1]}
@@ -44,12 +48,21 @@ const TwoImages = (props) => {
         index={1}
         onRemove={props.onRemove}
         editable={props.editable}
+        base64={props.base64}
       />
     </>
   )
 }
 
-const renderImages = (start, overflow, images, onPress, onRemove, editable) => {
+const renderImages = (
+  start,
+  overflow,
+  images,
+  onPress,
+  onRemove,
+  editable,
+  base64
+) => {
   return (
     <>
       <ImageItem
@@ -58,6 +71,7 @@ const renderImages = (start, overflow, images, onPress, onRemove, editable) => {
         onRemove={onRemove}
         index={start}
         editable={editable}
+        base64={base64}
       />
       {images[start + 1] && (
         <View style={styles.image_view}>
@@ -67,6 +81,7 @@ const renderImages = (start, overflow, images, onPress, onRemove, editable) => {
             index={start + 1}
             onRemove={onRemove}
             editable={editable}
+            base64={base64}
           />
           {overflow && (
             <TouchableOpacity
@@ -84,7 +99,7 @@ const renderImages = (start, overflow, images, onPress, onRemove, editable) => {
 
 export default class FluidGrid extends Component {
   render() {
-    const { images, style, onPress, onRemove, editable } = this.props
+    const { images, style, onPress, onRemove, editable, base64 } = this.props
     return images.length > 0 ? (
       <View style={{ ...styles.container_row, ...style }}>
         {images.length < 3 ? (
@@ -93,6 +108,7 @@ export default class FluidGrid extends Component {
             onPress={onPress}
             onRemove={onRemove}
             editable={editable}
+            base64={base64}
           />
         ) : (
           <ImageItem
@@ -101,11 +117,20 @@ export default class FluidGrid extends Component {
             index={0}
             onRemove={onRemove}
             editable={editable}
+            base64={base64}
           />
         )}
         {images.length > 2 && (
           <View style={styles.container}>
-            {renderImages(1, false, images, onPress, onRemove, editable)}
+            {renderImages(
+              1,
+              false,
+              images,
+              onPress,
+              onRemove,
+              editable,
+              base64
+            )}
           </View>
         )}
         {images.length > 3 && (

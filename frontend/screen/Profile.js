@@ -16,7 +16,7 @@ export default function Profile() {
       described: "hello my friend",
       created: "5m",
       can_edit: true,
-      image: [{ uri: "" }],
+      image: [],
     },
   ])
   return (

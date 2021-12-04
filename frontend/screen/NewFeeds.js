@@ -36,10 +36,6 @@ export default function NewFeeds({}) {
         redirect: "follow",
       }
 
-      console.log(
-        "api request to ",
-        `${API_URL}/post?size=${fetchSize}&page=${page}`
-      )
       const response = await fetchWithErrHandler(
         `${API_URL}/post?size=${fetchSize}&page=${page}`,
         requestOptions,
@@ -55,7 +51,6 @@ export default function NewFeeds({}) {
   }
 
   useEffect(() => {
-    console.log("page change to :", page)
     fetchNewPosts()
   }, [page])
 
@@ -64,7 +59,6 @@ export default function NewFeeds({}) {
       setPage((prevState) => prevState + 1)
       return
     }
-    console.log("no more to load")
   }
   return (
     <View style={styles.container}>
@@ -83,7 +77,6 @@ export default function NewFeeds({}) {
             onEndReachedThreshold={0.1}
             onEndReached={onLoadMore}
             renderItem={({ item, index }) => {
-              console.log(item.describe)
               return (
                 <Feed
                   described={item.describe}
