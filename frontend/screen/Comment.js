@@ -16,12 +16,15 @@ import { AntDesign } from "@expo/vector-icons"
 import useFetch from "../hook/useFetch"
 import { API_URL } from "../config"
 import { useRoute } from "@react-navigation/native"
+import { useSelector } from "react-redux"
 
 export default function CommentScreen() {
   const [inputComment, setInputComment] = useState("")
   const send = useFetch()
-  const fetchSize = 10
+  const fetchSize = 5
+  const [numFetchedNewComment, setFetchedNewComment] = useState(null)
   const [page, setpage] = useState(0)
+  const user = useSelector((state) => state.authReducer.user)
   const route = useRoute()
   const { postId } = route.params
   const fetchComment = async () => {
@@ -34,6 +37,7 @@ export default function CommentScreen() {
         true
       )
       setComments((prevState) => [...prevState, ...response.data])
+      setFetchedNewComment(response.data.length)
     } catch (e) {
       console.log(e)
     }
@@ -43,7 +47,11 @@ export default function CommentScreen() {
     fetchComment()
   }, [page])
 
-  const fetchMore = () => {}
+  const fetchMore = () => {
+    if (numFetchedNewComment === fetchSize) {
+      setpage((prev) => prev + 1)
+    }
+  }
 
   const [comments, setComments] = useState([
     {
@@ -80,6 +88,19 @@ export default function CommentScreen() {
         10000,
         true
       )
+      setComments((prev) => {
+        const submmitedComment = {
+          id: response.id,
+          commenter: {
+            avatar:
+              "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
+            name: user,
+          },
+          createAt: "Vua xong",
+          comment: inputComment,
+        }
+        return [...prev, submmitedComment]
+      })
       setInputComment("")
     } catch (e) {
       console.log(e)
@@ -100,7 +121,7 @@ export default function CommentScreen() {
       <View style={styles.commentSection}>
         <FlatList
           data={comments}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => `${item.id}`}
           onEndReachedThreshold={0.1}
           onEndReached={fetchMore}
           renderItem={({ item }) => {
