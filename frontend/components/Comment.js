@@ -9,32 +9,32 @@ import {
   StyleSheet,
 } from "react-native"
 
-export default class Comment extends Component {
-  render() {
-    const { comment, onDelete } = this.props
-    return (
-      <View style={styles.container}>
-        <Image
-          style={styles.avatar}
-          source={{ uri: comment.avatar_url }}
-        ></Image>
-        <TouchableOpacity
-          style={styles.centerContainer}
-          onLongPress={() => onDelete(comment.id)}
-        >
-          <View style={styles.contentContainer}>
-            <TouchableOpacity>
-              <Text style={styles.name}>{comment.name}</Text>
-            </TouchableOpacity>
-            <Text style={styles.content}>{comment.content}</Text>
-          </View>
-          <View style={styles.toolContainer}>
-            <Text style={styles.createAt}>{comment.create_at}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    )
-  }
+export default function Comment({
+  comment,
+  commenter,
+  createAt,
+  id,
+  onDelete,
+}) {
+  return (
+    <View style={styles.container}>
+      <Image style={styles.avatar} source={{ uri: commenter.avatar }}></Image>
+      <TouchableOpacity
+        style={styles.centerContainer}
+        onLongPress={() => onDelete(id)}
+      >
+        <View style={styles.contentContainer}>
+          <TouchableOpacity>
+            <Text style={styles.name}>{commenter.name}</Text>
+          </TouchableOpacity>
+          <Text style={styles.content}>{comment}</Text>
+        </View>
+        <View style={styles.toolContainer}>
+          <Text style={styles.createAt}>{createAt}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({

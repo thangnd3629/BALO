@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Animated,
   View,
@@ -7,37 +7,85 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
+  FlatList,
 } from "react-native"
 import Comment from "../components/Comment"
 import DeleteCommentModal from "../components/DeleteCommentModal"
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5"
-import { FlatList } from "react-native-gesture-handler"
+import { AntDesign } from "@expo/vector-icons"
+import useFetch from "../hook/useFetch"
+import { API_URL } from "../config"
+import { useRoute } from "@react-navigation/native"
 
 export default function CommentScreen() {
+  const [inputComment, setInputComment] = useState("")
+  const send = useFetch()
+  const fetchSize = 10
+  const [page, setpage] = useState(0)
+  const route = useRoute()
+  const { postId } = route.params
+  const fetchComment = async () => {
+    console.log("fetching comment ---------------------- ", postId)
+    try {
+      const response = await send(
+        `${API_URL}/post/${postId}/comment?size=${fetchSize}&page=${page}`,
+        {},
+        10000,
+        true
+      )
+      setComments((prevState) => [...prevState, ...response.data])
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    fetchComment()
+  }, [page])
+
+  const fetchMore = () => {}
+
   const [comments, setComments] = useState([
     {
       id: 1,
-      avatar_url:
-        "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
+      commenter: {
+        avatar:
+          "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
 
-      name: "Thang",
-      create_at: "5d",
-      content: "hello",
-    },
-    {
-      id: 2,
-      avatar_url:
-        "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
-
-      name: "Thang",
-      create_at: "5d",
-      content: "hello",
+        name: "Thang",
+      },
+      createAt: "5d",
+      comment: "hello",
     },
   ])
   const [commentPopUpMenuID, setCommentPopUpMenu] = useState(null)
   const deleteCommentHandler = (id) => {
     setCommentPopUpMenu(id)
   }
+  const onChangeComment = async (text) => {
+    setInputComment(text)
+  }
+
+  const onSubmitComment = async () => {
+    var raw = JSON.stringify({
+      comment: inputComment,
+    })
+    try {
+      const response = await send(
+        `${API_URL}/post/${postId}/comment`,
+        {
+          method: "POST",
+          body: raw,
+        },
+        10000,
+        true
+      )
+      setInputComment("")
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <View style={styles.wrapper}>
       {commentPopUpMenuID && (
@@ -52,9 +100,19 @@ export default function CommentScreen() {
       <View style={styles.commentSection}>
         <FlatList
           data={comments}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.id}
+          onEndReachedThreshold={0.1}
+          onEndReached={fetchMore}
           renderItem={({ item }) => {
-            return <Comment comment={item} onDelete={deleteCommentHandler} />
+            return (
+              <Comment
+                comment={item.comment}
+                id={item.id}
+                commenter={item.commenter}
+                createAt={item.createAt}
+                onDelete={deleteCommentHandler}
+              />
+            )
           }}
         />
       </View>
@@ -63,7 +121,12 @@ export default function CommentScreen() {
           <FontAwesome5Icon name="camera" size={20}></FontAwesome5Icon>
         </TouchableOpacity>
         <View style={styles.textInputWrapper}>
-          <TextInput autoFocus={true} style={styles.textInput}></TextInput>
+          <TextInput
+            value={inputComment}
+            autoFocus={true}
+            style={styles.textInput}
+            onChangeText={onChangeComment}
+          ></TextInput>
         </View>
         <View style={styles.iconWrapper}>
           <TouchableOpacity style={styles.iconItem}>
@@ -76,6 +139,14 @@ export default function CommentScreen() {
             <FontAwesome5Icon name="grin-wink" size={20}></FontAwesome5Icon>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.iconItem}>
+          <AntDesign
+            name="caretright"
+            size={24}
+            color="blue"
+            onPress={onSubmitComment}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -124,7 +195,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 48,
     backgroundColor: "#ddd",
     marginLeft: 10,
-    width: screenWidth - 40 - 80 - 30 - 10,
+    width: screenWidth - 40 - 80 - 30 - 50,
     borderRightWidth: 0,
   },
   textInput: {

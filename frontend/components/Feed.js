@@ -199,7 +199,9 @@ const Feed = ({
 
             <Button
               onPress={() => {
-                navigation.navigate("Comment")
+                navigation.navigate("Comment", {
+                  postId: id,
+                })
               }}
             >
               <Icon>
