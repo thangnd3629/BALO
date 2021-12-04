@@ -4,23 +4,66 @@ import {
   View,
   TextInput,
   Button,
-  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
   Pressable,
 } from "react-native"
+import base64 from "base-64"
 import { AntDesign } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
-
-export default function Login({ navigation }) {
+import { useDispatch, useSelector } from "react-redux"
+import { AUTH_SUCCESS, SHOW_MODAL } from "../action/types"
+import { API_URL } from "../config"
+import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
+import * as navigation from "../RouteNavigation"
+export default function Login({}) {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm()
-  const onSubmit = (data) => console.log(data)
+  const dispatch = useDispatch()
+  const onSubmit = async (data) => {
+    const { phoneNumber, password } = data
+    const headers = new Headers()
+    headers.set(
+      "Authorization",
+      "Basic " + base64.encode(phoneNumber + ":" + password)
+    )
 
+    const requestOptions = {
+      headers: headers,
+    }
+    try {
+      const response = await fetchWithErrHandler(
+        `${API_URL}/login`,
+        requestOptions,
+        3000,
+        dispatch
+      )
+
+      if (response.status === 200) {
+        dispatch({
+          type: AUTH_SUCCESS,
+          payload: {
+            user: response.user,
+            token: response.headers.get("X-Auth-Token"),
+          },
+        })
+        return
+      }
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Credential Error",
+          content: "Wrong username or password",
+        },
+      })
+
+      return
+    } catch (e) {}
+  }
   return (
     <View style={styles.container}>
       <Image
@@ -54,7 +97,7 @@ export default function Login({ navigation }) {
                 value={value}
               />
             )}
-            name="firstName"
+            name="phoneNumber"
             defaultValue=""
           />
           {errors.firstName && <Text>This is required.</Text>}
@@ -76,7 +119,7 @@ export default function Login({ navigation }) {
                 value={value}
               />
             )}
-            name="lastName"
+            name="password"
             defaultValue=""
           />
         </View>

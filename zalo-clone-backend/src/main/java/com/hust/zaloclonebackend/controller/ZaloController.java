@@ -125,7 +125,7 @@ public class ZaloController {
         return ResponseEntity.status(200).body(status);
     }
 
-    @PostMapping("/send-frined-request/{userId}")
+    @PostMapping("/send-friend-request/{userId}")
     public ResponseEntity<?> sendFriendRequest(Principal principal, @PathVariable("userId") String userId){
         ModelSendFriendRequestResponse resp = zaloService.sendFriendRequest(principal.getName(), userId);
         return ResponseEntity.status(200).body(resp);

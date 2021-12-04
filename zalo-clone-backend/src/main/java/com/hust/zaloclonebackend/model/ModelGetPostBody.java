@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,9 +15,11 @@ import java.util.Date;
 @NoArgsConstructor
 public class ModelGetPostBody {
     private String id;
-    private String describe;
+    private String described;
     private Date createAt;
     private int like;
-    private int numComment;
-    int isLike;
+    private int comment;
+    int is_Like;
+    private List<String> image;
+    private ModelAuthor author;
 }

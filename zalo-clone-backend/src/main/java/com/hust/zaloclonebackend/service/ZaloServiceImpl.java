@@ -112,26 +112,28 @@ public class ZaloServiceImpl implements ZaloService {
                 isLike=1;
             }
         }
-        ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
-                .id(post.getPostId())
-                .createAt(post.getCreatedDate())
-                .describe(post.getContent())
-                .numComment(post.getComments().size())
-                .like(post.getLikers().size())
-                .isLike(isLike)
-                .build();
+        List<String> images = imageRepo.findAllImageValueByPost(post);
         ModelAuthor modelAuthor = ModelAuthor.builder()
                 .avartar(poster.getAvatarLink())
                 .name(poster.getName())
                 .id(poster.getUserId())
                 .build();
-        List<String> images = imageRepo.findAllImageValueByPost(post);
+
+        ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
+                .id(post.getPostId())
+                .createAt(post.getCreatedDate())
+                .described(post.getContent())
+                .comment(post.getComments().size())
+                .like(post.getLikers().size())
+                .is_Like(isLike)
+                .image(images)
+                .author(modelAuthor)
+                .build();
+
         return ModelGetPostResponse.builder()
                 .data(modelGetPostBody)
-                .image(images)
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
-                .author(modelAuthor)
                 .build();
     }
 
@@ -149,8 +151,10 @@ public class ZaloServiceImpl implements ZaloService {
 
     @Override
     public ModelGetListFriendRequest getListFriendRequest(String phoneNumber, Pageable pageable) {
+        log.info("pageable {}", pageable);
         User toUser = userRepo.findUserByPhoneNumber(phoneNumber);
-        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByFromUser(pageable, toUser);
+        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByToUser(pageable, toUser);
+        log.info("list {}", list.size());
         List<ModelGetFriendRequest> data = list.stream()
                 .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
                 .collect(Collectors.toList());
@@ -167,7 +171,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
         log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
-        if(request.isAccept()){
+        if(request.getIsAccept() == 1){
             Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)
@@ -196,6 +200,14 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId) {
         User fromUser = userRepo.findUserByPhoneNumber(phoneNumber);
         User toUser = userRepo.findUserByUserId(userId);
+        Relationship relationship = relationShipRepo.findRelationshipByUserAAndUserB(fromUser, toUser);
+        log.info("relationship {}", relationship);
+        if(relationship != null){
+            return ModelSendFriendRequestResponse.builder()
+                    .code(8888)
+                    .message("They are friend")
+                    .build();
+        }
         friendRequestRepo.save(FriendRequest.builder()
                 .fromUser(fromUser)
                 .toUser(toUser)
@@ -227,14 +239,13 @@ public class ZaloServiceImpl implements ZaloService {
             ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
                     .id(post.getPostId())
                     .createAt(post.getCreatedDate())
-                    .describe(post.getContent())
-                    .numComment(post.getComments().size())
+                    .described(post.getContent())
+                    .comment(post.getComments().size())
                     .like(post.getLikers().size())
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
             ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
                     .data(modelGetPostBody)
-                    .image(images)
                     .build();
             modelGetPostResponseArrayList.add(modelGetPostResponse);
         });

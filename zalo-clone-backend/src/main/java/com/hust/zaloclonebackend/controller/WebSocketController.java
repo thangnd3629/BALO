@@ -45,6 +45,7 @@ public class WebSocketController {
                 break;
             case SEND_MESSAGE:
                 zaloChatService.getAndSaveMessage(dto);
+
                 this.messagingTemplate.convertAndSend("/topic/user/"+dto.getRelationShipId());
                 break;
             case FETCH_GROUP_MESSAGES:

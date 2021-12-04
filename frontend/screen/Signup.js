@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Text,
   View,
@@ -8,11 +8,35 @@ import {
   TouchableOpacity,
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
+import { API_URL } from "../config"
 import { Entypo } from "@expo/vector-icons"
-export default function Signup({ navigation }) {
+export default function Signup({}) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
-  const onSubmit = (data) => console.log(data)
+  const [password, setPassword] = useState("")
+  const [name, setName] = useState("")
+  const onSubmit = () => {
+    var myHeaders = new Headers()
+    myHeaders.append("Content-Type", "application/json")
+
+    var raw = JSON.stringify({
+      phoneNumber: phoneNumber,
+      password: password,
+      name: name,
+    })
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    }
+
+    fetch("http://34.70.67.66:8080/api/user/register", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error))
+  }
 
   return (
     <View style={styles.container}>
@@ -42,7 +66,49 @@ export default function Signup({ navigation }) {
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.submit}>
+      <View style={styles.groupInput}>
+        <AntDesign name="phone" size={24} color="black" />
+        <TextInput
+          placeholder={"Name"}
+          onChangeText={(input) => {
+            setName(input)
+          }}
+          value={password}
+          style={styles.input}
+        />
+        <View>
+          <Entypo
+            name="cross"
+            size={24}
+            color="black"
+            onPress={() => {
+              setName(name)
+            }}
+          />
+        </View>
+      </View>
+      <View style={styles.groupInput}>
+        <AntDesign name="phone" size={24} color="black" />
+        <TextInput
+          placeholder={"Password"}
+          onChangeText={(input) => {
+            setPassword(input)
+          }}
+          value={password}
+          style={styles.input}
+        />
+        <View>
+          <Entypo
+            name="cross"
+            size={24}
+            color="black"
+            onPress={() => {
+              setPhoneNumber("")
+            }}
+          />
+        </View>
+      </View>
+      <TouchableOpacity style={styles.submit} onPress={onSubmit}>
         <View>
           <View style={styles.circle}>
             <AntDesign

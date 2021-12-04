@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ModelHandleFriendRequest {
     String userId;
-    boolean isAccept;
+    int isAccept;
 }

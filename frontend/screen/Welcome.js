@@ -2,9 +2,9 @@ import React from "react"
 import { Image, StyleSheet, Text, View } from "react-native"
 import PrimaryButton from "../components/PrimaryButton"
 import SecondaryButton from "../components/SecondaryButton"
-import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-export default function Welcome({ navigation }) {
+import * as navigation from "../RouteNavigation"
+export default function Welcome({}) {
   const Stack = createNativeStackNavigator()
   return (
     <View style={styles.container}>
@@ -30,7 +30,12 @@ export default function Welcome({ navigation }) {
           navigation.navigate("Login")
         }}
       ></PrimaryButton>
-      <SecondaryButton text="Đăng ký" onPress={(e) => {}}></SecondaryButton>
+      <SecondaryButton
+        text="Đăng ký"
+        onPress={(e) => {
+          navigation.navigate("Signup")
+        }}
+      ></SecondaryButton>
     </View>
   )
 }
