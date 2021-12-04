@@ -8,9 +8,7 @@ import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
 import { useSelector } from "react-redux"
 import Avatar from "./Avatar"
 
-const Container = styled.View`
-  flex: 1;
-`
+const Container = styled.View``
 const Header = styled.View`
   flex-direction: row;
   align-items: center;
@@ -114,6 +112,7 @@ const Feed = ({
 }) => {
   const user = useSelector((state) => state.authReducer.user)
 
+  console.log("inside feed id:  ", author.name)
   const editPost = () => {
     navigation.navigate("EditPost", {
       id,
