@@ -172,9 +172,11 @@ const Feed = ({
         </Header>
 
         <Post>{described}</Post>
-        <Photo>
-          <FluidGrid editable={false} images={image} base64={true} />
-        </Photo>
+        {image.length > 0 && (
+          <Photo>
+            <FluidGrid editable={false} images={image} base64={true} />
+          </Photo>
+        )}
 
         <Footer>
           <FooterCount>
@@ -192,7 +194,11 @@ const Feed = ({
           <FooterMenu>
             <Button>
               <Icon>
-                <AntDesign name="hearto" size={24} color="black" />
+                <AntDesign
+                  name="hearto"
+                  size={24}
+                  color={is_liked ? "blue" : "black"}
+                />
               </Icon>
               <Text>Like</Text>
             </Button>

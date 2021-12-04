@@ -43,7 +43,7 @@ export default function NewFeeds({}) {
         dispatch
       )
 
-      const newPost = response.data
+      const newPost = response.body.data
       setNewNumPostFetch(newPost.length)
 
       setFeeds((prevState) => [...prevState, ...newPost])
@@ -74,7 +74,7 @@ export default function NewFeeds({}) {
           <FlatList
             data={feeds}
             keyExtractor={(item) => item.id}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0.6}
             onEndReached={onLoadMore}
             renderItem={({ item, index }) => {
               return (
@@ -83,7 +83,8 @@ export default function NewFeeds({}) {
                   author={item.author}
                   can_edit={true}
                   like={item.like}
-                  comment={item.comment}
+                  is_liked={item.isLike}
+                  comment={item.numComment}
                   image={item.image}
                   id={item.id}
                   created={item.createAt}
