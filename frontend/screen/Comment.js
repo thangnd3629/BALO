@@ -8,6 +8,7 @@ import {
   Dimensions,
   TextInput,
   FlatList,
+  Button,
 } from "react-native"
 import Comment from "../components/Comment"
 import DeleteCommentModal from "../components/DeleteCommentModal"
@@ -21,7 +22,7 @@ import { useSelector } from "react-redux"
 export default function CommentScreen() {
   const [inputComment, setInputComment] = useState("")
   const send = useFetch()
-  const fetchSize = 5
+  const fetchSize = 10
   const [numFetchedNewComment, setFetchedNewComment] = useState(null)
   const [page, setpage] = useState(0)
   const user = useSelector((state) => state.authReducer.user)
@@ -36,14 +37,16 @@ export default function CommentScreen() {
         10000,
         true
       )
-      setComments((prevState) => [...prevState, ...response.data])
-      setFetchedNewComment(response.data.length)
+      setComments((prevState) => [...prevState, ...response.body.data])
+      setFetchedNewComment(response.body.data.length)
     } catch (e) {
       console.log(e)
     }
   }
 
   useEffect(() => {
+    console.log("Run effect")
+
     fetchComment()
   }, [page])
 
@@ -53,19 +56,7 @@ export default function CommentScreen() {
     }
   }
 
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      commenter: {
-        avatar:
-          "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
-
-        name: "Thang",
-      },
-      createAt: "5d",
-      comment: "hello",
-    },
-  ])
+  const [comments, setComments] = useState([])
   const [commentPopUpMenuID, setCommentPopUpMenu] = useState(null)
   const deleteCommentHandler = (id) => {
     setCommentPopUpMenu(id)
@@ -90,11 +81,10 @@ export default function CommentScreen() {
       )
       setComments((prev) => {
         const submmitedComment = {
-          id: response.id,
+          id: response.body.id,
           commenter: {
-            avatar:
-              "https://upload.wikimedia.org/wikipedia/en/3/3b/URI_-_New_poster.jpg",
-            name: user,
+            avatar: user.avatar,
+            name: user.userName,
           },
           createAt: "Vua xong",
           comment: inputComment,
@@ -122,7 +112,7 @@ export default function CommentScreen() {
         <FlatList
           data={comments}
           keyExtractor={(item) => `${item.id}`}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.5}
           onEndReached={fetchMore}
           renderItem={({ item }) => {
             return (
@@ -161,12 +151,16 @@ export default function CommentScreen() {
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.iconItem}>
-          <AntDesign
-            name="caretright"
-            size={24}
-            color="blue"
+          <TouchableOpacity
+            disabled={!inputComment.length}
             onPress={onSubmitComment}
-          />
+          >
+            <AntDesign
+              name="caretright"
+              size={24}
+              color={inputComment.length ? "blue" : "black"}
+            />
+          </TouchableOpacity>
         </TouchableOpacity>
       </View>
     </View>
