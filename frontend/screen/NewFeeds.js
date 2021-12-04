@@ -7,10 +7,12 @@ import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
 import { API_URL } from "../config"
 import { useSelector, useDispatch } from "react-redux"
 export default function NewFeeds({}) {
+  const fetchSize = 2
   const [reportFeedModalShow, setReportFeedModal] = useState(false)
   const [reportedFeedID, setReportFeedID] = useState(null)
   const [fetching, setfetching] = useState(false)
   const [page, setPage] = useState(0)
+  const [numNewPostsFetched, setNewNumPostFetch] = useState(null)
   const [feeds, setFeeds] = useState([])
   const auth = useSelector((state) => state.authReducer)
   const reportFeedHandler = (feedId) => {
@@ -22,37 +24,48 @@ export default function NewFeeds({}) {
   }
 
   const dispatch = useDispatch()
+
   const fetchNewPosts = async () => {
-    console.log("run effect")
     try {
       var myHeaders = new Headers()
       myHeaders.append("X-Auth-Token", `${auth.token}`)
       myHeaders.append("Content-Type", "application/json")
 
       var requestOptions = {
-        method: "POST",
         headers: myHeaders,
         redirect: "follow",
       }
+
+      console.log(
+        "api request to ",
+        `${API_URL}/post?size=${fetchSize}&page=${page}`
+      )
       const response = await fetchWithErrHandler(
-        `${API_URL}/post/get-list-post-paging}?size=5&page=${page}`,
+        `${API_URL}/post?size=${fetchSize}&page=${page}`,
         requestOptions,
-        3000,
+        10000,
         dispatch
       )
 
       const newPost = response.data
-      if (page === 0) {
-        setFeeds([...feeds, ...newPost])
-      }
+      setNewNumPostFetch(newPost.length)
 
-      console.log(newPost)
+      setFeeds((prevState) => [...prevState, ...newPost])
     } catch (e) {}
   }
+
   useEffect(() => {
+    console.log("page change to :", page)
     fetchNewPosts()
   }, [page])
 
+  const onLoadMore = () => {
+    if (numNewPostsFetched === fetchSize) {
+      setPage((prevState) => prevState + 1)
+      return
+    }
+    console.log("no more to load")
+  }
   return (
     <View style={styles.container}>
       <ReportModal
@@ -66,17 +79,14 @@ export default function NewFeeds({}) {
         {feeds.length > 0 && (
           <FlatList
             data={feeds}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={() => {
-              console.log(
-                "Fetch new item======================================================================"
-              )
-              setPage((prevState) => prevState + 1)
-            }}
-            renderItem={({ item }) => {
+            keyExtractor={(item) => item.id}
+            onEndReachedThreshold={0.1}
+            onEndReached={onLoadMore}
+            renderItem={({ item, index }) => {
+              console.log(item.describe)
               return (
                 <Feed
-                  described={item.described}
+                  described={item.describe}
                   author={item.author}
                   can_edit={true}
                   like={item.like}
