@@ -30,8 +30,6 @@ const UserInbox = (props) => {
   const onChangeTextHandle = (string) => {
     let rawString = emoji.reverseParse(string)
     setText(rawString)
-
-    console.log(string + "," + rawString)
   }
 
   const renderInput = (props) => {
