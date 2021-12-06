@@ -32,7 +32,6 @@ public class ZaloController {
     @PostMapping("/post/add")
     public ResponseEntity<?> addPost(@RequestBody ModelAddPost modelAddPost, Principal principal) throws Exception {
         //get User from Session
-        log.info("add post {}", modelAddPost);
         User user = userService.findByPhoneNumber(principal.getName());
         ModelAddPostResponse modelAddPostResponse = zaloService.addPost(modelAddPost, user);
         return ResponseEntity.status(HttpStatus.OK).body(modelAddPostResponse);

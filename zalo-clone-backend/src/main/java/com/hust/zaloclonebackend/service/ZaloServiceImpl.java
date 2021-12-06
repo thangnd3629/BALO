@@ -1,5 +1,7 @@
 package com.hust.zaloclonebackend.service;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import com.hust.zaloclonebackend.repo.*;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,10 +22,14 @@ import org.springframework.data.domain.Pageable;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 
+import javax.transaction.Transactional;
+import javax.xml.bind.DatatypeConverter;
+
 @org.springframework.stereotype.Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class ZaloServiceImpl implements ZaloService {
+
 
     private PostRepo postRepo;
     private ImageRepo imageRepo;
@@ -68,21 +75,39 @@ public class ZaloServiceImpl implements ZaloService {
     }
 
     @Override
+    @Transactional
     public ModelAddPostResponse addPost(ModelAddPost modelAddPost, User user) throws Exception {
-        log.info("modelAddPost {}", modelAddPost);
+
         try {
             Post post = Post.builder()
                     .poster(user)
                     .content(modelAddPost.getDescribe())
                     .build();
             Post finalPost = postRepo.save(post);
-            modelAddPost.getImage().forEach(image -> {
-                Image image1 = Image.builder()
-                        .post(finalPost)
-                        .value(image)
-                        .build();
-                imageRepo.save(image1);
-            });
+            int index = 0;
+            for(String image : modelAddPost.getImage())
+            {
+                String[] parts = image.split(",");
+                byte[] data = DatatypeConverter.parseBase64Binary(parts[1]);
+
+                String extension = image.substring(image.indexOf("/")+1,image.indexOf(";"));
+                String imgPath = String.format("assets/images/%s-%s.%s", post.getPostId(),index++, extension);
+                try(OutputStream stream = new FileOutputStream(imgPath);){
+                    stream.write(data);
+                    Image image1 = Image.builder()
+                            .post(finalPost)
+                            .value(imgPath)
+                            .build();
+                    imageRepo.save(image1);
+                }
+                catch(FileNotFoundException e){
+                    System.out.println("File not found in index");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             return ModelAddPostResponse.builder()
                     .code(ZaloStatus.OK.getCode())
                     .message(ZaloStatus.OK.getMessage())
@@ -94,11 +119,29 @@ public class ZaloServiceImpl implements ZaloService {
         }
     }
 
+    public String loadAndConvertImageToBase64(String imgPath) throws  IOException{
+        try{
+            File f =  new File(imgPath);
+            String extension = imgPath.substring(imgPath.indexOf(".")+1, imgPath.length());
+            FileInputStream fileInputStreamReader = new FileInputStream(f);
+            byte[] bytes = new byte[(int)f.length()];
+            fileInputStreamReader.read(bytes);
+            System.out.println(new String(Base64.encodeBase64(bytes), "UTF-8"));
+            String base64 = new String(Base64.encodeBase64(bytes), "UTF-8");
+            return  String.format("data:image/%s;base64,%s", extension, base64);
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Returning old image file ");
+            return imgPath;// for old image
+        }
+
+    }
+
     @Override
     public ModelGetPostResponse getPostById(String id) throws Exception {
         try {
             Post post = postRepo.findPostByPostId(id);
-           return convertPostToModelGetPostResponse(post);
+            return convertPostToModelGetPostResponse(post);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
@@ -118,7 +161,15 @@ public class ZaloServiceImpl implements ZaloService {
                 .id(poster.getUserId())
                 .build();
         List<String> images = imageRepo.findAllImageValueByPost(post);
-
+        List<String> encodedImgs = images.stream().map(image -> {
+            String base64 = null;
+            try {
+                base64 = this.loadAndConvertImageToBase64(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return base64;
+        }).collect(Collectors.toList());
         return ModelGetListPostBody.builder()
                 .id(post.getPostId())
                 .createAt(post.getCreatedDate())
@@ -127,7 +178,7 @@ public class ZaloServiceImpl implements ZaloService {
                 .like(post.getLikers().size())
                 .isLike(isLike)
                 .author(modelAuthor)
-                .image(images)
+                .image(encodedImgs)
                 .build();
     }
 
@@ -140,6 +191,15 @@ public class ZaloServiceImpl implements ZaloService {
             }
         }
         List<String> images = imageRepo.findAllImageValueByPost(post);
+        List<String> encodedImgs = images.stream().map(image -> {
+            String base64 = null;
+            try {
+                base64 = this.loadAndConvertImageToBase64(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return base64;
+        }).collect(Collectors.toList());
         ModelAuthor modelAuthor = ModelAuthor.builder()
                 .avartar(poster.getAvatarLink())
                 .name(poster.getName())
@@ -153,7 +213,7 @@ public class ZaloServiceImpl implements ZaloService {
                 .comment(post.getComments().size())
                 .like(post.getLikers().size())
                 .is_Like(isLike)
-                .image(images)
+                .image(encodedImgs)
                 .author(modelAuthor)
                 .build();
 
@@ -185,6 +245,9 @@ public class ZaloServiceImpl implements ZaloService {
         List<ModelGetFriendRequest> data = list.stream()
                 .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
                 .collect(Collectors.toList());
+
+        
+
         return ModelGetListFriendRequest.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
