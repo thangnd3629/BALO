@@ -32,7 +32,11 @@ export default function AddPost({}) {
     })
 
     if (!result.cancelled) {
-      setChosenImgs([...chosenImgs, result])
+      let fileExtension = result.uri.substr(result.uri.lastIndexOf(".") + 1)
+
+      const newImgBase64 = { ...result }
+      newImgBase64.base64 = `data:image/${fileExtension};base64,${result.base64}`
+      setChosenImgs([...chosenImgs, newImgBase64])
     }
   }
   const removePhotoHandler = (index) => {

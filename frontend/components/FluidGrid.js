@@ -20,9 +20,7 @@ const ImageItem = (props) => {
       <Image
         style={styles.image}
         source={{
-          uri: !props.base64
-            ? props.image
-            : `data:image/png;base64,${props.image}`,
+          uri: props.image,
         }}
       />
     </TouchableOpacity>
