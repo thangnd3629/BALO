@@ -1,24 +1,36 @@
 package com.hust.zaloclonebackend.service;
 
+import com.hust.zaloclonebackend.entity.Relationship;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
+import com.hust.zaloclonebackend.model.response.GetUserFriendResponse;
 import com.hust.zaloclonebackend.model.ModelUserRegister;
 import com.hust.zaloclonebackend.model.ModelUserRegisterResponse;
+import com.hust.zaloclonebackend.repo.RelationshipPagingAndSortingRepo;
 import com.hust.zaloclonebackend.repo.UserRepo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
+
     UserRepo userRepo;
+
+    RelationshipPagingAndSortingRepo relationshipPagingAndSortingRepo;
+
     @Override
     public User findById(String id) {
         return userRepo.findUserByUserId(id);
@@ -33,6 +45,7 @@ public class UserServiceImpl implements UserService{
     public User save(User user) {
         return userRepo.save(user);
     }
+
     @Override
     public User findByUsername(String name) {
         return userRepo.findUserByName(name);
@@ -73,6 +86,56 @@ public class UserServiceImpl implements UserService{
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public GetUserFriendResponse getUserFriends(String phoneNumber, Pageable pageable) {
+        log.info("Start get user friend service with phoneNumber " + phoneNumber +
+                " page number " + pageable.getPageNumber() +
+                " page size " + pageable.getPageSize());
+        GetUserFriendResponse errorResponse = GetUserFriendResponse.builder()
+                .zaloStatus(ZaloStatus.PARAMETER_VALUE_IS_INVALID)
+                .data(null)
+                .build();
+
+        if (phoneNumber == null) {
+            return errorResponse;
+        }
+
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        if (user == null) {
+            log.info("Not found user with phoneNumber " + phoneNumber);
+            return errorResponse;
+        }
+
+        List<Relationship> relationships = user.getFriends();
+        if (CollectionUtils.isEmpty(relationships)) {
+            log.info("Relationships is empty");
+            return GetUserFriendResponse.builder()
+                    .zaloStatus(ZaloStatus.NO_DATA)
+                    .data(null)
+                    .build();
+        }
+
+        Set<User> friends = relationships.stream()
+                .map(Relationship::getUserB)
+                .filter(aUser -> !aUser.isDeleted())
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toSet());
+
+        if (CollectionUtils.isEmpty(friends)) {
+            return GetUserFriendResponse.builder()
+                    .zaloStatus(ZaloStatus.NO_DATA)
+                    .data(null)
+                    .build();
+        }
+
+        return GetUserFriendResponse.builder()
+                .zaloStatus(ZaloStatus.OK)
+                .data(new GetUserFriendResponse.DataBuilder(friends))
+                .build();
+    }
+
     private boolean validateModelUserRegister(ModelUserRegister modelUserRegister){
         return true;
     }

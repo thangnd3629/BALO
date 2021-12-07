@@ -21,9 +21,9 @@ public enum ZaloStatus {
     PARAMETER_TYPE_IS_INVALID(1003, "Parameter type is invalid"),
     PARAMETER_VALUE_IS_INVALID(1004, "Parameter value is invalid"),
     UNKNOWN_ERROR(1005, "Unknown error"),
-    FILE_SIZE_IS_TOO_BIF(1006, "File size is too big"),
+    FILE_SIZE_IS_TOO_BIG(1006, "File size is too big"),
     UPLOAD_FILE_FAILED(1007, "Upload file failed!"),
-    MAXIMUM_NUMBER_OF_IMAGE(1008,"Maximun number of images"),
+    MAXIMUM_NUMBER_OF_IMAGE(1008,"Maximum number of images"),
     NOT_ACCESS(1009, "Not access"),
     ACTION_HAS_BEEN_DONE(1010, "Action has been done previously by this user");
 
@@ -45,4 +45,14 @@ public enum ZaloStatus {
     public String getMessage() {
         return message;
     }
+
+    public static ZaloStatus findByCode(int code) {
+        for (ZaloStatus status : ZaloStatus.values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        return null;
+    }
+
 }

@@ -34,4 +34,6 @@ public class Message {
     Date timestamp;
 
     Long relationShipId;
+
+    boolean isDeleted = false;
 }
