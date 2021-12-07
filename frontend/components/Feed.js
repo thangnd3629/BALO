@@ -8,9 +8,7 @@ import { Entypo, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"
 import { useSelector } from "react-redux"
 import Avatar from "./Avatar"
 
-const Container = styled.View`
-  flex: 1;
-`
+const Container = styled.View``
 const Header = styled.View`
   flex-direction: row;
   align-items: center;
@@ -174,9 +172,11 @@ const Feed = ({
         </Header>
 
         <Post>{described}</Post>
-        <Photo>
-          <FluidGrid editable={false} images={image} />
-        </Photo>
+        {image.length > 0 && (
+          <Photo>
+            <FluidGrid editable={false} images={image} base64={true} />
+          </Photo>
+        )}
 
         <Footer>
           <FooterCount>
@@ -194,14 +194,20 @@ const Feed = ({
           <FooterMenu>
             <Button>
               <Icon>
-                <AntDesign name="hearto" size={24} color="black" />
+                <AntDesign
+                  name="hearto"
+                  size={24}
+                  color={is_liked ? "blue" : "black"}
+                />
               </Icon>
               <Text>Like</Text>
             </Button>
 
             <Button
               onPress={() => {
-                navigation.navigate("Comment")
+                navigation.navigate("Comment", {
+                  postId: id,
+                })
               }}
             >
               <Icon>
