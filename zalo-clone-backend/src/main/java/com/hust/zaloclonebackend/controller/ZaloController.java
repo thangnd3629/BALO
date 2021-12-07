@@ -5,6 +5,7 @@ import java.security.Principal;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
+import com.hust.zaloclonebackend.model.response.ModelGetListConservation;
 import com.hust.zaloclonebackend.service.ZaloService;
 import com.hust.zaloclonebackend.service.UserService;
 
@@ -128,6 +129,20 @@ public class ZaloController {
     public ResponseEntity<?> sendFriendRequest(Principal principal, @PathVariable("userId") String userId){
         ModelSendFriendRequestResponse resp = zaloService.sendFriendRequest(principal.getName(), userId);
         return ResponseEntity.status(200).body(resp);
+    }
+
+    @GetMapping("/get-list-conservation")
+    public ResponseEntity<?> getListConservation(Principal principal, Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+        ModelGetListConservation listConservation = zaloService.getListConservationByUser(pageable,principal.getName());
+        return ResponseEntity.status(200).body(listConservation);
+    }
+
+    @PostMapping("/get-message-paging")
+    public ResponseEntity<?> getMessagePaging(Principal principal, @RequestBody ModelGetMessageRequest request, Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+        ModelGetListMessage response = zaloService.getListMessagePaging(pageable, request, principal.getName());
+        return ResponseEntity.status(200).body(response);
     }
 
 

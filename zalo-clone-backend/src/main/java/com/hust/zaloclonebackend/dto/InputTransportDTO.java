@@ -15,7 +15,7 @@ public class InputTransportDTO {
 
     private Constant.TransportActionEnum action;
 
-    private Long relationShipId;
+    private String conservationId;
 
     private int pageNumber;
 

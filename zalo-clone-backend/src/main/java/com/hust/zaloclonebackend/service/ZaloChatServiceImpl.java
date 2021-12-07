@@ -48,12 +48,12 @@ public class ZaloChatServiceImpl implements ZaloChatService{
     }
 
     @Override
-    public WrapperMessageDto getConversationMessage(Long relationShipId, Pageable pageable, Constant.TransportActionEnum action) {
+    public WrapperMessageDto getConversationMessage(String conservationId, Pageable pageable, Constant.TransportActionEnum action) {
 
-        List<Message> list = messageSortingAndPagingRepo.findAllByRelationShipId(pageable, relationShipId);
+        List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, conservationId);
         Long lastMessageId = list != null && list.size() != 0 ? list.get(0).getMessageId() : 0;
         if(list != null){
-            List<MessageDto> list1 = list.stream().map(message -> convertMessageToMessageDto(message, relationShipId, action)).collect(Collectors.toList());
+            List<MessageDto> list1 = list.stream().map(message -> convertMessageToMessageDto(message, conservationId, action)).collect(Collectors.toList());
             return WrapperMessageDto.builder()
                     .isLastMessage(list.size() != 0)
                     .messages(list1)
@@ -66,11 +66,11 @@ public class ZaloChatServiceImpl implements ZaloChatService{
 
     }
 
-    private MessageDto convertMessageToMessageDto(Message message, Long relationShipId, Constant.TransportActionEnum action){
+    private MessageDto convertMessageToMessageDto(Message message, String conservationId, Constant.TransportActionEnum action){
         return MessageDto.builder()
                 .toUserId(message.getReceiver().getUserId())
                 .fromUserID(message.getSender().getUserId())
-                .relationShipId(relationShipId)
+                .conservationId(conservationId)
                 .message(message.getContent())
                 .action(action)
                 .object(null)
