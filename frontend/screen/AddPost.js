@@ -32,7 +32,11 @@ export default function AddPost({}) {
     })
 
     if (!result.cancelled) {
-      setChosenImgs([...chosenImgs, result])
+      let fileExtension = result.uri.substr(result.uri.lastIndexOf(".") + 1)
+
+      const newImgBase64 = { ...result }
+      newImgBase64.base64 = `data:image/${fileExtension};base64,${result.base64}`
+      setChosenImgs([...chosenImgs, newImgBase64])
     }
   }
   const removePhotoHandler = (index) => {
@@ -71,8 +75,7 @@ export default function AddPost({}) {
         10000,
         dispatch
       )
-      console.log(response)
-      if (response.zaloStatus.code === 1000) {
+      if (response.body.code === 1000) {
         dispatch({
           type: SHOW_MODAL,
           payload: {
@@ -82,7 +85,10 @@ export default function AddPost({}) {
         navigation.goBack()
         return
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log("why not do anything")
+      console.log(e)
+    }
   }
   return (
     <View style={styles.container}>
