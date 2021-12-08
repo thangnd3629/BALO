@@ -19,7 +19,7 @@ public class MessageDto {
 
     private String toUserId;
 
-    private Long relationShipId;
+    private String conservationId;
 
     private String message;
 

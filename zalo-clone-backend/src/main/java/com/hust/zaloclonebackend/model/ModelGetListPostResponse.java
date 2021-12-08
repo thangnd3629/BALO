@@ -12,5 +12,5 @@ import java.util.List;
 public class ModelGetListPostResponse {
     private int code;
     private String message;
-    private List<ModelGetPostResponse> data;
+    private List<ModelGetListPostBody> data;
 }

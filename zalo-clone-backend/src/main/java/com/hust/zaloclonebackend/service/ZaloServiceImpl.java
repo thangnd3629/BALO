@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.hust.zaloclonebackend.entity.*;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
+import com.hust.zaloclonebackend.model.response.ModelGetListConservation;
 import com.hust.zaloclonebackend.repo.*;
 
 import lombok.Data;
@@ -34,6 +35,8 @@ public class ZaloServiceImpl implements ZaloService {
     private FriendRequestRepo friendRequestRepo;
     private FriendRequestPagingAndSortingRepo friendRequestPagingAndSortingRepo;
     private RelationShipRepo relationShipRepo;
+    private MessageRepo messageRepo;
+    private MessageSortingAndPagingRepo messageSortingAndPagingRepo;
     @Override
     public Post save(Post post) {
         return postRepo.save(post);
@@ -104,6 +107,33 @@ public class ZaloServiceImpl implements ZaloService {
         }
     }
 
+    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post){
+        Integer isLike = 0;
+        User poster = post.getPoster();
+        for(User u : post.getLikers()){
+            if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
+                isLike=1;
+            }
+        }
+        ModelAuthor modelAuthor = ModelAuthor.builder()
+                .avartar(poster.getAvatarLink())
+                .name(poster.getName())
+                .id(poster.getUserId())
+                .build();
+        List<String> images = imageRepo.findAllImageValueByPost(post);
+
+        return ModelGetListPostBody.builder()
+                .id(post.getPostId())
+                .createAt(post.getCreatedDate())
+                .describe(post.getContent())
+                .numComment(post.getComments().size())
+                .like(post.getLikers().size())
+                .isLike(isLike)
+                .author(modelAuthor)
+                .image(images)
+                .build();
+    }
+
     private ModelGetPostResponse convertPostToModelGetPostResponse(Post post){
         Integer isLike = 0;
         User poster = post.getPoster();
@@ -139,7 +169,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         List<Post> list = postPagingAndSortingRepo.getPostNewFeedByUser(pageable, user);
-        List<ModelGetPostResponse>  list1 = list.stream().map(post -> convertPostToModelGetPostResponse(post)).collect(Collectors.toList());
+        List<ModelGetListPostBody>  list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post)).collect(Collectors.toList());
         return ModelGetListPostResponse.builder()
                 .message(ZaloStatus.OK.getMessage())
                 .code(ZaloStatus.OK.getCode())
@@ -149,8 +179,10 @@ public class ZaloServiceImpl implements ZaloService {
 
     @Override
     public ModelGetListFriendRequest getListFriendRequest(String phoneNumber, Pageable pageable) {
+        log.info("pageable {}", pageable);
         User toUser = userRepo.findUserByPhoneNumber(phoneNumber);
-        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByFromUser(pageable, toUser);
+        List<FriendRequest> list = friendRequestPagingAndSortingRepo.findAllByToUser(pageable, toUser);
+        log.info("list {}", list.size());
         List<ModelGetFriendRequest> data = list.stream()
                 .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
                 .collect(Collectors.toList());
@@ -167,7 +199,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
         log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
-        if(request.isAccept()){
+        if(request.getIsAccept() == 1){
             Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)
@@ -182,7 +214,8 @@ public class ZaloServiceImpl implements ZaloService {
         }
         log.info("11111");
         FriendRequest friendRequest = friendRequestRepo.findFriendRequestByFromUserAndToUser(fromUser, toUSer);
-        friendRequestRepo.deleteById(friendRequest.getId());
+        if(friendRequest != null)
+            friendRequestRepo.deleteById(friendRequest.getId());
 //        friendRequestRepo.deleteByFromUserAndToUser(fromUser, toUSer);
         log.info("222");
 
@@ -196,6 +229,14 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId) {
         User fromUser = userRepo.findUserByPhoneNumber(phoneNumber);
         User toUser = userRepo.findUserByUserId(userId);
+        Relationship relationship = relationShipRepo.findRelationshipByUserAAndUserB(fromUser, toUser);
+        log.info("relationship {}", relationship);
+        if(relationship != null){
+            return ModelSendFriendRequestResponse.builder()
+                    .code(8888)
+                    .message("They are friend")
+                    .build();
+        }
         friendRequestRepo.save(FriendRequest.builder()
                 .fromUser(fromUser)
                 .toUser(toUser)
@@ -204,6 +245,70 @@ public class ZaloServiceImpl implements ZaloService {
         return ModelSendFriendRequestResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
+                .build();
+    }
+
+    @Override
+    public ModelGetListConservation getListConservationByUser(Pageable pageable, String phoneNumber) {
+        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        List<Message> list = messageSortingAndPagingRepo.getListMessageWithConservationId(pageable, user);
+        List<ModelConservation> data = new ArrayList<>();
+        int numNewMessage = 0;
+        for(Message message : list){
+            ModelLastMessage lastMessage = ModelLastMessage.builder()
+                    .message(message.getContent())
+                    .createdAt(message.getTimestamp())
+                    .unread(message.getSeen())
+                    .build();
+            ModelAuthor author = ModelAuthor.builder()
+                    .id(message.getSender().getUserId())
+                    .name(message.getSender().getName())
+                    .avartar(message.getSender().getAvatarLink())
+                    .build();
+            ModelConservation conservation = ModelConservation.builder()
+                    .id(message.getConservationId())
+                    .lastMessage(lastMessage)
+                    .partner(author)
+                    .build();
+            numNewMessage += 1 - (message.getSeen() == 0 ? 0 : 1);
+            data.add(conservation);
+        }
+        return ModelGetListConservation.builder()
+                .numNewMessage(numNewMessage)
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .data(data)
+                .build();
+
+    }
+
+    @Override
+    public ModelGetListMessage getListMessagePaging(Pageable pageable, ModelGetMessageRequest request, String phoneNumber) {
+        List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, request.getConservationId());
+        List<ModelMessageConservation> data = new ArrayList<>();
+        for(Message message: list){
+            ModelAuthor author = ModelAuthor.builder()
+                    .id(message.getSender().getUserId())
+                    .name(message.getSender().getName())
+                    .avartar(message.getSender().getAvatarLink())
+                    .build();
+            ModelMessage modelMessage = ModelMessage.builder()
+                    .message(message.getContent())
+                    .messageId(message.getMessageId())
+                    .unread(1-message.getSeen())
+                    .created(message.getTimestamp())
+                    .sender(author)
+                    .build();
+            ModelMessageConservation modelMessageConservation = ModelMessageConservation.builder()
+                    .conversation(modelMessage)
+                    .isBlocked(0)
+                    .build();
+            data.add(modelMessageConservation);
+        }
+        return ModelGetListMessage.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .data(data)
                 .build();
     }
 
@@ -240,7 +345,7 @@ public class ZaloServiceImpl implements ZaloService {
         });
 
        ModelGetListPostResponse modelGetListPostResponse = ModelGetListPostResponse.builder()
-               .data(modelGetPostResponseArrayList)
+//               .data(modelGetPostResponseArrayList)
                .code(ZaloStatus.OK.getCode())
                .message(ZaloStatus.OK.getMessage())
                .build();

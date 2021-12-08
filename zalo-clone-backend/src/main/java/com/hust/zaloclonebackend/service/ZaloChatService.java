@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface ZaloChatService {
     void getAndSaveMessage(InputTransportDTO dto);
 
-    WrapperMessageDto getConversationMessage(Long relationShipId, Pageable pageable, Constant.TransportActionEnum action);
+    WrapperMessageDto getConversationMessage(String conservationId, Pageable pageable, Constant.TransportActionEnum action);
 }

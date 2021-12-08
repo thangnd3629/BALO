@@ -11,4 +11,6 @@ import java.util.List;
 public interface FriendRequestPagingAndSortingRepo extends PagingAndSortingRepository<FriendRequest, Long> {
     List<FriendRequest> findAllByFromUser(Pageable pageable, User fromUser);
 
+    List<FriendRequest> findAllByToUser(Pageable pageable, User toUser);
+
 }

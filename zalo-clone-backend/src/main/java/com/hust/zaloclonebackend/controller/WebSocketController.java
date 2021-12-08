@@ -30,42 +30,43 @@ public class WebSocketController {
     @MessageMapping("/message")
     public void chattingChannel(InputTransportDTO dto, @Header("simpSessionId") String sessionId) {
         log.info("chattingChannel {}", dto);
-        Constant.TransportActionEnum action = dto.getAction();
-        switch (action){
-            case INIT_USER_DATA:
-                MessageDto output = MessageDto.builder()
-                        .action(dto.getAction())
-                        .object(dto.getToUser())
-                        .message(dto.getContent())
-                        .fromUserID(dto.getFromUser())
-                        .toUserId(dto.getToUser())
-                        .relationShipId(dto.getRelationShipId())
-                        .build();
-                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getRelationShipId(), output);
-                break;
-            case SEND_MESSAGE:
-                zaloChatService.getAndSaveMessage(dto);
-                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getRelationShipId());
-                break;
-            case FETCH_GROUP_MESSAGES:
-                Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize(), Sort.by("timestamp").descending());
-                WrapperMessageDto wrapperMessageDto = zaloChatService.getConversationMessage(dto.getRelationShipId(), pageable, Constant.TransportActionEnum.FETCH_GROUP_MESSAGES);
-                Constant.TransportActionEnum action1;
-                if (dto.getMessageId() == -1) {
-                    action1 = Constant.TransportActionEnum.FETCH_GROUP_MESSAGES;
-                } else {
-                    action1 = Constant.TransportActionEnum.ADD_CHAT_HISTORY;
-                }
-                OutputTransportDTO response = OutputTransportDTO.builder()
-                        .action(action1)
-                        .object(wrapperMessageDto)
-                        .build();
-                this.messagingTemplate.convertAndSend("/topic/user/" + dto.getRelationShipId(), response);
-                break;
-            default:
-                log.info("err");
-                break;
-
-        }
+        zaloChatService.getAndSaveMessage(dto);
+        this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser());
+//        Constant.TransportActionEnum action = dto.getAction();
+//        switch (action){
+//            case INIT_USER_DATA:
+//                MessageDto output = MessageDto.builder()
+//                        .action(dto.getAction())
+//                        .object(dto.getToUser())
+//                        .message(dto.getContent())
+//                        .fromUserID(dto.getFromUser())
+//                        .toUserId(dto.getToUser())
+//                        .conservationId(dto.getConservationId())
+//                        .build();
+//                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getConservationId(), output);
+//                break;
+//            case SEND_MESSAGE:
+//                zaloChatService.getAndSaveMessage(dto);
+//                this.messagingTemplate.convertAndSend("/topic/user/"+dto.getConservationId());
+//                break;
+//            case FETCH_GROUP_MESSAGES:
+//                Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize(), Sort.by("timestamp").descending());
+//                WrapperMessageDto wrapperMessageDto = zaloChatService.getConversationMessage(dto.getConservationId(), pageable, Constant.TransportActionEnum.FETCH_GROUP_MESSAGES);
+//                Constant.TransportActionEnum action1;
+//                if (dto.getMessageId() == -1) {
+//                    action1 = Constant.TransportActionEnum.FETCH_GROUP_MESSAGES;
+//                } else {
+//                    action1 = Constant.TransportActionEnum.ADD_CHAT_HISTORY;
+//                }
+//                OutputTransportDTO response = OutputTransportDTO.builder()
+//                        .action(action1)
+//                        .object(wrapperMessageDto)
+//                        .build();
+//                this.messagingTemplate.convertAndSend("/topic/user/" + dto.getConservationId(), response);
+//                break;
+//            default:
+//                log.info("err");
+//                break;
+//        }
     }
 }

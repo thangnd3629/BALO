@@ -33,5 +33,8 @@ public class Message {
 
     Date timestamp;
 
-    Long relationShipId;
+    String conservationId;
+
+    int seen;
+
 }
