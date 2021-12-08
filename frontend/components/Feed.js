@@ -174,7 +174,12 @@ const Feed = ({
         <Post>{described}</Post>
         {image.length > 0 && (
           <Photo>
-            <FluidGrid editable={false} images={image} base64={true} />
+            <FluidGrid
+              editable={false}
+              images={image}
+              base64={true}
+              onPress={() => {}}
+            />
           </Photo>
         )}
 
