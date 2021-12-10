@@ -89,6 +89,7 @@ public class SearchingServiceImpl implements SearchingService {
         Set<MessageResponse> messageResponses = messages.stream()
                 .map(message -> MessageResponse.builder().message(message).build())
                 .collect(Collectors.toSet());
+        log.info("Message responses is " + messageResponses);
 
         return GlobalSearchingResponse.builder()
                 .zaloStatus(ZaloStatus.OK)

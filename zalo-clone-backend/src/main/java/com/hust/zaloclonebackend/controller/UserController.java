@@ -24,6 +24,7 @@ public class UserController {
     @PostMapping(path = "/get_user_friends")
     public ResponseEntity<?> getUserFriends(Principal principal,
                                             Pageable pageable) {
+        log.info("Start get user friend with page " + pageable.getPageNumber() + " page size " + pageable.getPageSize());
         String phoneNumber = principal.getName();
         GetUserFriendResponse response = userService.getUserFriends(phoneNumber, pageable);
         return ResponseEntity.ok(response);
