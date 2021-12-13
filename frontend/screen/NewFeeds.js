@@ -6,11 +6,16 @@ import ReportModal from "../components/ReportModal"
 import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
 import { API_URL } from "../config"
 import { useSelector, useDispatch } from "react-redux"
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout))
+}
+
 export default function NewFeeds({}) {
   const fetchSize = 2
   const [reportFeedModalShow, setReportFeedModal] = useState(false)
   const [reportedFeedID, setReportFeedID] = useState(null)
-  const [fetching, setfetching] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const [page, setPage] = useState(0)
   const [numNewPostsFetched, setNewNumPostFetch] = useState(null)
   const [feeds, setFeeds] = useState([])
@@ -60,6 +65,14 @@ export default function NewFeeds({}) {
       return
     }
   }
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true)
+    setFeeds([])
+    await fetchNewPosts()
+    setRefreshing(false)
+  }, [])
+
   return (
     <View style={styles.container}>
       <ReportModal
@@ -74,6 +87,8 @@ export default function NewFeeds({}) {
           <FlatList
             data={feeds}
             keyExtractor={(item) => item.id}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             onEndReachedThreshold={0.6}
             onEndReached={onLoadMore}
             renderItem={({ item, index }) => {

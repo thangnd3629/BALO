@@ -29,7 +29,6 @@ export default function CommentScreen() {
   const route = useRoute()
   const { postId } = route.params
   const fetchComment = async () => {
-    console.log("fetching comment ---------------------- ", postId)
     try {
       const response = await send(
         `${API_URL}/post/${postId}/comment?size=${fetchSize}&page=${page}`,
