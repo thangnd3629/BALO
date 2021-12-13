@@ -1,22 +1,14 @@
 package com.hust.zaloclonebackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Data
@@ -41,6 +33,7 @@ public class User {
 
 //    @Column(name = "password")
 //    @NotNull
+    @JsonIgnore
     private String password;
 
 //    @Column(name = "phone_number", unique = true)
@@ -50,17 +43,21 @@ public class User {
     //Duc anh
     String avatarLink;
 
+    private String status;
+
+    private boolean isDeleted = false;
+
     @OneToMany(mappedBy = "poster") // User possess many Posts
     List<Post> post;
     
     // List of relationship of user B adding this user as a friend, there'll be a better solution for this but idk
-    @OneToMany(mappedBy = "userA")  
+    @OneToMany(mappedBy = "userA")
     List<Relationship> friends;
 
-    @OneToMany(mappedBy = "userB") 
-    List<Relationship> beFriendWith; 
+    @OneToMany(mappedBy = "userB")
+    List<Relationship> beFriendWith;
 
-    @OneToMany(mappedBy = "sender") 
+    @OneToMany(mappedBy = "sender")
     List<Message> sentMess;
     
     @OneToMany(mappedBy = "receiver")
@@ -71,7 +68,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "blockedUser")
-    List<Block> blockeByUsers;
+    List<Block> blockedByUsers;
 
     @OneToMany(mappedBy = "commentOwner")
     List<Comment> comments;

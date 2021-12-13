@@ -37,4 +37,6 @@ public class Message {
 
     int seen;
 
+
+    boolean isDeleted = false;
 }
