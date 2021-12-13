@@ -6,11 +6,7 @@ import ReportModal from "../components/ReportModal"
 import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
 import { API_URL } from "../config"
 import { useSelector, useDispatch } from "react-redux"
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout))
-}
-
+import useFetch from "../hook/useFetch"
 export default function NewFeeds({}) {
   const fetchSize = 2
   const [reportFeedModalShow, setReportFeedModal] = useState(false)
@@ -30,6 +26,7 @@ export default function NewFeeds({}) {
 
   const dispatch = useDispatch()
 
+  const send = useFetch()
   const fetchNewPosts = async () => {
     try {
       var myHeaders = new Headers()
@@ -63,6 +60,22 @@ export default function NewFeeds({}) {
     if (numNewPostsFetched === fetchSize) {
       setPage((prevState) => prevState + 1)
       return
+    }
+  }
+
+  const onLikePost = async (id) => {
+    try {
+      await send(
+        `${API_URL}/post/like/${id}`,
+        {
+          method: "POST",
+        },
+        3000,
+        dispatch,
+        true
+      )
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -104,6 +117,7 @@ export default function NewFeeds({}) {
                   id={item.id}
                   created={item.createAt}
                   onReport={reportFeedHandler}
+                  onLike={onLikePost}
                 />
               )
             }}

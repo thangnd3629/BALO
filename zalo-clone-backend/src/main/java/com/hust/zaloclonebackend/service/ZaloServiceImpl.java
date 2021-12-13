@@ -150,11 +150,11 @@ public class ZaloServiceImpl implements ZaloService {
         }
     }
 
-    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post){
+    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post, User currentUser){
         Integer isLike = 0;
         User poster = post.getPoster();
         for(User u : post.getLikers()){
-            if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
+            if(u.getPhoneNumber().equals(currentUser.getPhoneNumber())){
                 isLike=1;
             }
         }
@@ -231,7 +231,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         List<Post> list = postPagingAndSortingRepo.getPostNewFeedByUser(pageable, user);
-        List<ModelGetListPostBody>  list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post)).collect(Collectors.toList());
+        List<ModelGetListPostBody>  list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post, user)).collect(Collectors.toList());
         return ModelGetListPostResponse.builder()
                 .message(ZaloStatus.OK.getMessage())
                 .code(ZaloStatus.OK.getCode())
@@ -517,7 +517,14 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelLikePostResponse likePost(String phoneNumber, String postId) {
         Post post = postRepo.findPostByPostId(postId);
         User u = userRepo.findUserByPhoneNumber(phoneNumber);
-        post.getLikers().add(u);
+        if(post.getLikers().contains(u)){
+
+            post.getLikers().remove(u);
+        }
+        else{
+            post.getLikers().add(u);
+        }
+
         postRepo.save(post);
         ModelLikePostResponse modelLikePostResponse = ModelLikePostResponse.builder()
                 .like(post.getLikers().size())

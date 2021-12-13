@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 import { View } from "react-native"
 import styled from "styled-components/native"
@@ -109,9 +109,11 @@ const Feed = ({
   can_edit,
   can_comment,
   onReport,
+  onLike,
 }) => {
   const user = useSelector((state) => state.authReducer.user)
-
+  const [isLike, setIsLike] = useState(is_liked)
+  const [numLikes, setNumLikes] = useState(like)
   const editPost = () => {
     navigation.navigate("EditPost", {
       id,
@@ -189,7 +191,7 @@ const Feed = ({
               <IconCount>
                 <AntDesign name="like1" size={12} color="#FFFFFF" />
               </IconCount>
-              <TextCount>{like} likes</TextCount>
+              <TextCount>{numLikes} likes</TextCount>
             </Row>
             <TextCount>{comment} comments</TextCount>
           </FooterCount>
@@ -197,12 +199,25 @@ const Feed = ({
           <Separator />
 
           <FooterMenu>
-            <Button>
+            <Button
+              onPress={async () => {
+                await onLike(id)
+                setIsLike(isLike ? 0 : 1)
+                setNumLikes((prev) => {
+                  if (isLike) {
+                    prev = prev - 1
+                  } else {
+                    prev = prev + 1
+                  }
+                  return prev
+                })
+              }}
+            >
               <Icon>
                 <AntDesign
                   name="hearto"
                   size={24}
-                  color={is_liked ? "blue" : "black"}
+                  color={isLike ? "blue" : "black"}
                 />
               </Icon>
               <Text>Like</Text>
