@@ -7,18 +7,7 @@ import { AUTH_LOGOUT } from "../action/types"
 import { useDispatch } from "react-redux"
 export default function Profile() {
   const dispatch = useDispatch()
-  const [feeds, setFeeds] = useState([
-    {
-      id: 3,
-      author: { name: "Thang" },
-      like: 5,
-      comment: 6,
-      described: "hello my friend",
-      created: "5m",
-      can_edit: true,
-      image: [],
-    },
-  ])
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -30,7 +19,7 @@ export default function Profile() {
             })
           }}
         />
-        <UserFeed feeds={feeds}></UserFeed>
+        <UserFeed />
       </ScrollView>
     </View>
   )
