@@ -18,4 +18,6 @@ public interface UserService {
     ModelUserRegisterResponse register(ModelUserRegister modelUserRegister) throws Exception;
 
     GetUserFriendResponse getUserFriends(String phoneNumber, Pageable pageable);
+
+    boolean hasAdminRole(User user);
 }

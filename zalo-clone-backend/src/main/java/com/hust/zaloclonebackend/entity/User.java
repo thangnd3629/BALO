@@ -2,6 +2,7 @@ package com.hust.zaloclonebackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,8 +77,12 @@ public class User {
     @ManyToMany
     List<Post> likedPosts;
 
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    List<Role> roles;
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
+    public static final String SYSTEM_ADMIN = "SYSTEM_ADMIN";
 
     public ArrayList<User> getBlockList()
     {
