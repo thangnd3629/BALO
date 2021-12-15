@@ -24,7 +24,7 @@ public interface ZaloService {
 
     ModelGetPostResponse getPostById(String id) throws Exception;
 
-    ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber);
+    ModelGetListPostResponse getUserListPosts(Pageable pageable, String phoneNumber);
 
     ModelStatusResponse editPost(ModelEditPostRequest modelEditPostRequest);
 

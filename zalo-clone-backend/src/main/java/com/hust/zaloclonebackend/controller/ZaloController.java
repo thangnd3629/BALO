@@ -53,15 +53,28 @@ public class ZaloController {
         return ResponseEntity.ok(modelDeletePostResponse);
     }
 //
-    @PostMapping("/post/get-user-list-post")
-    public ResponseEntity<?> getUserListPost(Principal principal, @RequestBody ModelGetUserListPostRequest modelGetUserListPostRequest ){
-        log.info("get user list post {}", modelGetUserListPostRequest);
-        Pageable pageable = PageRequest.of((modelGetUserListPostRequest.getLastId()+1)/modelGetUserListPostRequest.getCount(), modelGetUserListPostRequest.getCount(), Sort.by("createdDate").descending());
-        String phoneNumber = principal.getName();
+//    @PostMapping("/post/get-user-list-post")
+//    public ResponseEntity<?> getUserListPost(Principal principal, @RequestBody ModelGetUserListPostRequest modelGetUserListPostRequest ){
+//        log.info("get user list post {}", modelGetUserListPostRequest);
+//        Pageable pageable = PageRequest.of((modelGetUserListPostRequest.getLastId()+1)/modelGetUserListPostRequest.getCount(), modelGetUserListPostRequest.getCount(), Sort.by("createdDate").descending());
+//        String phoneNumber = principal.getName();
+//
+//        ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPosts(pageable, phoneNumber);
+//        return ResponseEntity.status(200).body(modelGetListPostResponse);
+//    }
 
-        ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPost(pageable, phoneNumber);
+    @GetMapping("/post/get-user-list-post")
+    public ResponseEntity<?> getUserPosts(Principal principal, Pageable pageable){
+        String phoneNumber = principal.getName();
+        ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPosts(pageable, phoneNumber);
         return ResponseEntity.status(200).body(modelGetListPostResponse);
     }
+
+
+
+
+
+
 //
     @PostMapping("/post/edit")
     public ResponseEntity<?> editPost(@RequestBody ModelEditPostRequest modelEditPostRequest ){

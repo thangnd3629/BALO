@@ -1,4 +1,5 @@
 package com.hust.zaloclonebackend.service;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,27 +45,32 @@ public class ZaloServiceImpl implements ZaloService {
     private RelationShipRepo relationShipRepo;
     private MessageRepo messageRepo;
     private MessageSortingAndPagingRepo messageSortingAndPagingRepo;
+
     @Override
     public Post save(Post post) {
         return postRepo.save(post);
     }
+
     @Override
     public Post findById(String id) throws Exception {
         if (postRepo.existsById(id)) return postRepo.findById(id).get();
         else throw new Exception("No user found"); //custom for handler later
     }
+
     @Override
     public List<User> findAllLikers(String id) throws Exception {
         if (!postRepo.existsById(id)) throw new Exception("No user found"); //custom for handler later
         Post post = postRepo.findById(id).get();
         return post.getLikers();
     }
+
     @Override
     public List<Comment> findAllComments(String id) throws Exception {
         if (!postRepo.existsById(id)) throw new Exception("No user found"); //custom for handler later
         Post post = postRepo.findById(id).get();
-        return post.getComments();   
+        return post.getComments();
     }
+
     @Override
     public ModelDeletePostResponse deletePostById(String id) throws Exception {
         Post p = postRepo.findPostByPostId(id);
@@ -88,22 +94,20 @@ public class ZaloServiceImpl implements ZaloService {
                     .build();
             Post finalPost = postRepo.save(post);
             int index = 0;
-            for(String image : modelAddPost.getImage())
-            {
+            for (String image : modelAddPost.getImage()) {
                 String[] parts = image.split(",");
                 byte[] data = DatatypeConverter.parseBase64Binary(parts[1]);
 
-                String extension = image.substring(image.indexOf("/")+1,image.indexOf(";"));
-                String imgPath = String.format("assets/images/%s-%s.%s", post.getPostId(),index++, extension);
-                try(OutputStream stream = new FileOutputStream(imgPath);){
+                String extension = image.substring(image.indexOf("/") + 1, image.indexOf(";"));
+                String imgPath = String.format("assets/images/%s-%s.%s", post.getPostId(), index++, extension);
+                try (OutputStream stream = new FileOutputStream(imgPath);) {
                     stream.write(data);
                     Image image1 = Image.builder()
                             .post(finalPost)
                             .value(imgPath)
                             .build();
                     imageRepo.save(image1);
-                }
-                catch(FileNotFoundException e){
+                } catch (FileNotFoundException e) {
                     System.out.println("File not found in index");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -115,28 +119,32 @@ public class ZaloServiceImpl implements ZaloService {
                     .code(ZaloStatus.OK.getCode())
                     .message(ZaloStatus.OK.getMessage())
                     .id(finalPost.getPostId())
-                    .url("/"+user.getPhoneNumber()+"/"+ post.getPostId())
+                    .url("/" + user.getPhoneNumber() + "/" + post.getPostId())
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    public String loadAndConvertImageToBase64(String imgPath) throws  IOException{
-        try{
-            File f =  new File(imgPath);
-            String extension = imgPath.substring(imgPath.indexOf(".")+1, imgPath.length());
+    public String loadAndConvertImageToBase64(String imgPath) {
+        try {
+            File f = new File(imgPath);
+            String extension = imgPath.substring(imgPath.indexOf(".") + 1, imgPath.length());
             FileInputStream fileInputStreamReader = new FileInputStream(f);
-            byte[] bytes = new byte[(int)f.length()];
+            byte[] bytes = new byte[(int) f.length()];
             fileInputStreamReader.read(bytes);
-            System.out.println(new String(Base64.encodeBase64(bytes), "UTF-8"));
+
             String base64 = new String(Base64.encodeBase64(bytes), "UTF-8");
-            return  String.format("data:image/%s;base64,%s", extension, base64);
+            return String.format("data:image/%s;base64,%s", extension, base64);
+        } catch (FileNotFoundException e) {
+            log.warn(e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            log.warn(e.getMessage());
+        } catch (IOException e) {
+            log.warn(e.getMessage());
         }
-        catch (FileNotFoundException e) {
-            System.out.println("Returning old image file ");
-            return imgPath;// for old image
-        }
+        return null;
+
 
     }
 
@@ -145,17 +153,17 @@ public class ZaloServiceImpl implements ZaloService {
         try {
             Post post = postRepo.findPostByPostId(id);
             return convertPostToModelGetPostResponse(post);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post, User currentUser){
+    private ModelGetListPostBody convertPostToModelGetListPostBody(Post post, User currentUser) {
         Integer isLike = 0;
         User poster = post.getPoster();
-        for(User u : post.getLikers()){
-            if(u.getPhoneNumber().equals(currentUser.getPhoneNumber())){
-                isLike=1;
+        for (User u : post.getLikers()) {
+            if (u.getPhoneNumber().equals(currentUser.getPhoneNumber())) {
+                isLike = 1;
             }
         }
         ModelAuthor modelAuthor = ModelAuthor.builder()
@@ -166,11 +174,9 @@ public class ZaloServiceImpl implements ZaloService {
         List<String> images = imageRepo.findAllImageValueByPost(post);
         List<String> encodedImgs = images.stream().map(image -> {
             String base64 = null;
-            try {
-                base64 = this.loadAndConvertImageToBase64(image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            base64 = this.loadAndConvertImageToBase64(image);
+
             return base64;
         }).collect(Collectors.toList());
         return ModelGetListPostBody.builder()
@@ -185,22 +191,20 @@ public class ZaloServiceImpl implements ZaloService {
                 .build();
     }
 
-    private ModelGetPostResponse convertPostToModelGetPostResponse(Post post){
+    private ModelGetPostResponse convertPostToModelGetPostResponse(Post post) {
         Integer isLike = 0;
         User poster = post.getPoster();
-        for(User u : post.getLikers()){
-            if(u.getPhoneNumber().equals(poster.getPhoneNumber())){
-                isLike=1;
+        for (User u : post.getLikers()) {
+            if (u.getPhoneNumber().equals(poster.getPhoneNumber())) {
+                isLike = 1;
             }
         }
         List<String> images = imageRepo.findAllImageValueByPost(post);
         List<String> encodedImgs = images.stream().map(image -> {
             String base64 = null;
-            try {
-                base64 = this.loadAndConvertImageToBase64(image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            base64 = this.loadAndConvertImageToBase64(image);
+
             return base64;
         }).collect(Collectors.toList());
         ModelAuthor modelAuthor = ModelAuthor.builder()
@@ -231,7 +235,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetListPostResponse getListPostPaging(String phoneNumber, Pageable pageable) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         List<Post> list = postPagingAndSortingRepo.getPostNewFeedByUser(pageable, user);
-        List<ModelGetListPostBody>  list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post, user)).collect(Collectors.toList());
+        List<ModelGetListPostBody> list1 = list.stream().map(post -> convertPostToModelGetListPostBody(post, user)).collect(Collectors.toList());
         return ModelGetListPostResponse.builder()
                 .message(ZaloStatus.OK.getMessage())
                 .code(ZaloStatus.OK.getCode())
@@ -249,7 +253,6 @@ public class ZaloServiceImpl implements ZaloService {
                 .map(friendRequest -> convertUserInfoToModelGetFriendRequest(friendRequest.getFromUser(), friendRequest.getCreatedDate()))
                 .collect(Collectors.toList());
 
-        
 
         return ModelGetListFriendRequest.builder()
                 .code(ZaloStatus.OK.getCode())
@@ -264,7 +267,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUSer = userRepo.findUserByPhoneNumber(phoneNumber);
         User fromUser = userRepo.findUserByUserId(request.getUserId());
         log.info("touser {} fromuser {}", toUSer.getPhoneNumber(), fromUser.getPhoneNumber());
-        if(request.getIsAccept() == 1){
+        if (request.getIsAccept() == 1) {
             Relationship relationship = Relationship.builder()
                     .userA(fromUser)
                     .userB(toUSer)
@@ -279,7 +282,7 @@ public class ZaloServiceImpl implements ZaloService {
         }
         log.info("11111");
         FriendRequest friendRequest = friendRequestRepo.findFriendRequestByFromUserAndToUser(fromUser, toUSer);
-        if(friendRequest != null)
+        if (friendRequest != null)
             friendRequestRepo.deleteById(friendRequest.getId());
 //        friendRequestRepo.deleteByFromUserAndToUser(fromUser, toUSer);
         log.info("222");
@@ -296,7 +299,7 @@ public class ZaloServiceImpl implements ZaloService {
         User toUser = userRepo.findUserByUserId(userId);
         Relationship relationship = relationShipRepo.findRelationshipByUserAAndUserB(fromUser, toUser);
         log.info("relationship {}", relationship);
-        if(relationship != null){
+        if (relationship != null) {
             return ModelSendFriendRequestResponse.builder()
                     .code(8888)
                     .message("They are friend")
@@ -319,7 +322,7 @@ public class ZaloServiceImpl implements ZaloService {
         List<Message> list = messageSortingAndPagingRepo.getListMessageWithConservationId(pageable, user);
         List<ModelConservation> data = new ArrayList<>();
         int numNewMessage = 0;
-        for(Message message : list){
+        for (Message message : list) {
             ModelLastMessage lastMessage = ModelLastMessage.builder()
                     .message(message.getContent())
                     .createdAt(message.getTimestamp())
@@ -351,7 +354,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetListMessage getListMessagePaging(Pageable pageable, ModelGetMessageRequest request, String phoneNumber) {
         List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, request.getConservationId());
         List<ModelMessageConservation> data = new ArrayList<>();
-        for(Message message: list){
+        for (Message message : list) {
             ModelAuthor author = ModelAuthor.builder()
                     .id(message.getSender().getUserId())
                     .name(message.getSender().getName())
@@ -360,7 +363,7 @@ public class ZaloServiceImpl implements ZaloService {
             ModelMessage modelMessage = ModelMessage.builder()
                     .message(message.getContent())
                     .messageId(message.getMessageId())
-                    .unread(1-message.getSeen())
+                    .unread(1 - message.getSeen())
                     .created(message.getTimestamp())
                     .sender(author)
                     .build();
@@ -378,7 +381,7 @@ public class ZaloServiceImpl implements ZaloService {
     }
 
 
-    private ModelGetFriendRequest convertUserInfoToModelGetFriendRequest(User user, Date date){
+    private ModelGetFriendRequest convertUserInfoToModelGetFriendRequest(User user, Date date) {
         return ModelGetFriendRequest.builder()
                 .avatar(user.getAvatarLink())
                 .userName(user.getName())
@@ -389,31 +392,46 @@ public class ZaloServiceImpl implements ZaloService {
 
 
     @Override
-    public ModelGetListPostResponse getUserListPost(Pageable pageable, String phoneNumber) {
+    public ModelGetListPostResponse getUserListPosts(Pageable pageable, String phoneNumber) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdDate").descending());
         List<Post> list = postPagingAndSortingRepo.findAllByPoster(pageable, user);
-        List<ModelGetPostResponse> modelGetPostResponseArrayList = new ArrayList<>();
+
+        List<ModelGetListPostBody> modelGetPostResponseArrayList = new ArrayList<>();
         list.forEach(post -> {
-            ModelGetPostBody modelGetPostBody = ModelGetPostBody.builder()
-                    .id(post.getPostId())
-                    .createAt(post.getCreatedDate())
-                    .described(post.getContent())
-                    .comment(post.getComments().size())
-                    .like(post.getLikers().size())
+            User poster = post.getPoster();
+            ModelAuthor modelAuthor = ModelAuthor.builder()
+                    .avartar(poster.getAvatarLink())
+                    .name(poster.getName())
+                    .id(poster.getUserId())
                     .build();
             List<String> images = imageRepo.findAllImageValueByPost(post);
-            ModelGetPostResponse modelGetPostResponse = ModelGetPostResponse.builder()
-                    .data(modelGetPostBody)
+            List<String> encodedImgs = images.stream().map(image -> {
+                String base64 = null;
+                base64 = this.loadAndConvertImageToBase64(image);
+                return base64;
+            }).collect(Collectors.toList());
+            ModelGetListPostBody modelGetPostBody = ModelGetListPostBody.builder()
+                    .author(modelAuthor)
+                    .id(post.getPostId())
+                    .createAt(post.getCreatedDate())
+                    .describe(post.getContent())
+                    .numComment(post.getComments().size())
+                    .like(post.getLikers().size())
+                    .image(encodedImgs)
                     .build();
-            modelGetPostResponseArrayList.add(modelGetPostResponse);
+
+
+            modelGetPostResponseArrayList.add(modelGetPostBody);
         });
 
-       ModelGetListPostResponse modelGetListPostResponse = ModelGetListPostResponse.builder()
-//               .data(modelGetPostResponseArrayList)
-               .code(ZaloStatus.OK.getCode())
-               .message(ZaloStatus.OK.getMessage())
-               .build();
-       return modelGetListPostResponse;
+        ModelGetListPostResponse modelGetListPostResponse = ModelGetListPostResponse.builder()
+
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .data(modelGetPostResponseArrayList)
+                .build();
+        return modelGetListPostResponse;
     }
 
     @Override
@@ -438,7 +456,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelStatusResponse reportPost(ModelReportPost modelReportPost, String phoneNumber) {
         User user = userRepo.findUserByPhoneNumber(phoneNumber);
         Post post = postRepo.findPostByPostId(modelReportPost.getId());
-        if(post == null){
+        if (post == null) {
 //            return ZaloStatus.POST_NOT_EXISTED;
             return ModelStatusResponse.builder()
                     .code(ZaloStatus.POST_NOT_EXISTED.getCode())
@@ -480,7 +498,7 @@ public class ZaloServiceImpl implements ZaloService {
     public ModelGetCommentPagingResponse getCommentPaging(Pageable pageable, String postId) {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp").ascending());
         Post post = postRepo.findPostByPostId(postId);
-        Page<Comment> commentPage = commentPagingAndSortingRepo.findAllByPost(post,pageable);
+        Page<Comment> commentPage = commentPagingAndSortingRepo.findAllByPost(post, pageable);
         List<ModelGetCommentResponse> list = new ArrayList<>();
         commentPage.forEach(comment -> {
             ModelCommenterResponse modelCommenterResponse = ModelCommenterResponse.builder()
@@ -511,17 +529,17 @@ public class ZaloServiceImpl implements ZaloService {
         return ModelStatusResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
-                .build();    }
+                .build();
+    }
 
     @Override
     public ModelLikePostResponse likePost(String phoneNumber, String postId) {
         Post post = postRepo.findPostByPostId(postId);
         User u = userRepo.findUserByPhoneNumber(phoneNumber);
-        if(post.getLikers().contains(u)){
+        if (post.getLikers().contains(u)) {
 
             post.getLikers().remove(u);
-        }
-        else{
+        } else {
             post.getLikers().add(u);
         }
 
@@ -531,7 +549,6 @@ public class ZaloServiceImpl implements ZaloService {
                 .build();
         return modelLikePostResponse;
     }
-
 
 
 }

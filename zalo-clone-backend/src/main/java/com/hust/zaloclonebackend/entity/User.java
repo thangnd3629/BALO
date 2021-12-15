@@ -47,7 +47,7 @@ public class User {
 
     private boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "poster") // User possess many Posts
+    @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY) // User possess many Posts
     List<Post> post;
     
     // List of relationship of user B adding this user as a friend, there'll be a better solution for this but idk

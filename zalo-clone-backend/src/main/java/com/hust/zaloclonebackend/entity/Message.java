@@ -37,6 +37,7 @@ public class Message {
 
     int seen;
 
+    Long relationShipId;
 
     boolean isDeleted = false;
 }
