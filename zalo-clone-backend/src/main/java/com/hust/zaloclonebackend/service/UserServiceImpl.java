@@ -1,6 +1,7 @@
 package com.hust.zaloclonebackend.service;
 
 import com.hust.zaloclonebackend.entity.Relationship;
+import com.hust.zaloclonebackend.entity.Role;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.response.GetUserFriendResponse;
@@ -10,6 +11,7 @@ import com.hust.zaloclonebackend.repo.RelationshipPagingAndSortingRepo;
 import com.hust.zaloclonebackend.repo.UserRepo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -134,6 +136,18 @@ public class UserServiceImpl implements UserService {
                 .zaloStatus(ZaloStatus.OK)
                 .data(new GetUserFriendResponse.DataBuilder(friends))
                 .build();
+    }
+
+    @Override
+    public boolean hasAdminRole(User user) {
+        if (user == null) {
+            return false;
+        }
+
+        List<Role> adminRole = user.getRoles().stream()
+                .filter(c -> StringUtils.compare(c.getName(), User.SYSTEM_ADMIN) == 0)
+                .collect(Collectors.toList());
+        return !CollectionUtils.isEmpty(adminRole);
     }
 
     private boolean validateModelUserRegister(ModelUserRegister modelUserRegister){
