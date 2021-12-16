@@ -46,7 +46,7 @@ public interface ZaloService {
 
     ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId);
 
-    ModelGetListConservation getListConservationByUser(Pageable pageable, String phoneNumber);
 
-    ModelGetListMessage getListMessagePaging(Pageable pageable, ModelGetMessageRequest request, String phoneNumber);
+
+
 }

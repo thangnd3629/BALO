@@ -57,11 +57,14 @@ public class User {
     @OneToMany(mappedBy = "userB")
     List<Relationship> beFriendWith;
 
-    @OneToMany(mappedBy = "sender")
-    List<Message> sentMess;
-    
-    @OneToMany(mappedBy = "receiver")
-    List<Message> receivedMess;
+
+
+
+
+    @ManyToMany(mappedBy = "users")
+    private List<Conversation> conversations;
+
+
 
     @OneToMany(mappedBy = "user")
     List<Block> blockedUsers;

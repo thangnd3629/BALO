@@ -1,81 +1,62 @@
 package com.hust.zaloclonebackend.service;
 
-import com.hust.zaloclonebackend.constant.Constant;
 import com.hust.zaloclonebackend.dto.InputTransportDTO;
-import com.hust.zaloclonebackend.dto.MessageDto;
-import com.hust.zaloclonebackend.dto.WrapperMessageDto;
+import com.hust.zaloclonebackend.entity.Conversation;
+import com.hust.zaloclonebackend.entity.ConversationType;
 import com.hust.zaloclonebackend.entity.Message;
 import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.repo.ConversationRepo;
 import com.hust.zaloclonebackend.repo.MessageRepo;
 import com.hust.zaloclonebackend.repo.MessageSortingAndPagingRepo;
 import com.hust.zaloclonebackend.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Component
 @Slf4j
-public class ZaloChatServiceImpl implements ZaloChatService{
+public class ZaloChatServiceImpl implements ZaloChatService {
     private final MessageRepo messageRepo;
 
     private final UserRepo userRepo;
 
     private final MessageSortingAndPagingRepo messageSortingAndPagingRepo;
 
-    public ZaloChatServiceImpl(MessageRepo messageRepo, UserRepo userRepo, MessageSortingAndPagingRepo messageSortingAndPagingRepo) {
+    private final ConversationRepo conversationRepo;
+
+    public ZaloChatServiceImpl(MessageRepo messageRepo, UserRepo userRepo, MessageSortingAndPagingRepo messageSortingAndPagingRepo, ConversationRepo conversationRepo) {
         this.messageRepo = messageRepo;
         this.userRepo = userRepo;
         this.messageSortingAndPagingRepo = messageSortingAndPagingRepo;
+        this.conversationRepo = conversationRepo;
     }
 
+
     @Override
-    public void getAndSaveMessage(InputTransportDTO dto) {
-        User sender = userRepo.findUserByPhoneNumber(dto.getFromUser());
-        User receiver = userRepo.findUserByPhoneNumber(dto.getToUser());
-        Message message = Message.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .content(dto.getContent())
-                .timestamp(new Date())
-                .build();
-        messageRepo.save(message);
+    public Conversation initializePrivateConversation(List<User> users) {
+        assert users.size() == 2;
+        Conversation conversation = Conversation.builder().conversationType(ConversationType.PRIVATE_CHAT).users(users).build();
+        conversationRepo.save(conversation);
+        return conversation;
     }
 
-    @Override
-    public WrapperMessageDto getConversationMessage(String conservationId, Pageable pageable, Constant.TransportActionEnum action) {
 
-        List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, conservationId);
-        Long lastMessageId = list != null && list.size() != 0 ? list.get(0).getMessageId() : 0;
-        if(list != null){
-            List<MessageDto> list1 = list.stream().map(message -> convertMessageToMessageDto(message, conservationId, action)).collect(Collectors.toList());
-            return WrapperMessageDto.builder()
-                    .isLastMessage(list.size() != 0)
-                    .messages(list1)
-                    .build();
+    @Override
+    public void sendPrivateMessage(InputTransportDTO dto) {
+        User receiver = userRepo.getUserByUserId(dto.getToUser());
+        User sender = userRepo.getUserByUserId(dto.getFromUser());
+        Conversation existingConv = conversationRepo.getPrivateConversationByMembers(sender, receiver);
+        if (existingConv == null) {
+            List<User> conversationMember = new ArrayList<>(Arrays.asList(sender, receiver));
+            existingConv = initializePrivateConversation(conversationMember);
         }
-        List<MessageDto> messageDTOS = new ArrayList<>();
-        return WrapperMessageDto.builder()
-                .messages(messageDTOS)
-                .build();
+        Message message = Message.builder().content(dto.getContent()).conversation(existingConv).sender(sender).timestamp(new Date()).build();
+        messageRepo.save(message);
 
     }
-
-    private MessageDto convertMessageToMessageDto(Message message, String conservationId, Constant.TransportActionEnum action){
-        return MessageDto.builder()
-                .toUserId(message.getReceiver().getUserId())
-                .fromUserID(message.getSender().getUserId())
-                .conservationId(conservationId)
-                .message(message.getContent())
-                .action(action)
-                .object(null)
-                .build();
-    }
-
-
 }

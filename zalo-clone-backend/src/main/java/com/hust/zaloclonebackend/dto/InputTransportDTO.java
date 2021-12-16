@@ -1,6 +1,6 @@
 package com.hust.zaloclonebackend.dto;
 
-import com.hust.zaloclonebackend.constant.Constant;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,13 +13,5 @@ public class InputTransportDTO {
 
     private String content;
 
-    private Constant.TransportActionEnum action;
 
-    private String conservationId;
-
-    private int pageNumber;
-
-    private int pageSize;
-
-    private int messageId;
 }

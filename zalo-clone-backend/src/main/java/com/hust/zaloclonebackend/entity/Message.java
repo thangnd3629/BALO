@@ -1,15 +1,13 @@
 package com.hust.zaloclonebackend.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import lombok.*;
 
 @Data
 @Builder
@@ -19,25 +17,32 @@ import lombok.*;
 @Table(name = "messages")
 public class Message {
 
-    @ManyToOne
-    User sender;
-
-    @ManyToOne
-    User receiver;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long messageId;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "uuid2"
+    )
+    @Column(name = "id")
+    String messageId;
+
+    @ManyToOne
+    @JoinColumn(name = "conversation_id")
+    private Conversation conversation;
+
+
+    @OneToOne
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
     String content;
 
     Date timestamp;
 
-    String conservationId;
 
     int seen;
 
-    Long relationShipId;
 
     boolean isDeleted = false;
 }

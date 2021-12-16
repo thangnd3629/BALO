@@ -43,8 +43,8 @@ public class ZaloServiceImpl implements ZaloService {
     private FriendRequestRepo friendRequestRepo;
     private FriendRequestPagingAndSortingRepo friendRequestPagingAndSortingRepo;
     private RelationShipRepo relationShipRepo;
-    private MessageRepo messageRepo;
-    private MessageSortingAndPagingRepo messageSortingAndPagingRepo;
+//    private MessageRepo messageRepo;
+//    private MessageSortingAndPagingRepo messageSortingAndPagingRepo;
 
     @Override
     public Post save(Post post) {
@@ -315,70 +315,70 @@ public class ZaloServiceImpl implements ZaloService {
                 .message(ZaloStatus.OK.getMessage())
                 .build();
     }
-
-    @Override
-    public ModelGetListConservation getListConservationByUser(Pageable pageable, String phoneNumber) {
-        User user = userRepo.findUserByPhoneNumber(phoneNumber);
-        List<Message> list = messageSortingAndPagingRepo.getListMessageWithConservationId(pageable, user);
-        List<ModelConservation> data = new ArrayList<>();
-        int numNewMessage = 0;
-        for (Message message : list) {
-            ModelLastMessage lastMessage = ModelLastMessage.builder()
-                    .message(message.getContent())
-                    .createdAt(message.getTimestamp())
-                    .unread(message.getSeen())
-                    .build();
-            ModelAuthor author = ModelAuthor.builder()
-                    .id(message.getSender().getUserId())
-                    .name(message.getSender().getName())
-                    .avartar(message.getSender().getAvatarLink())
-                    .build();
-            ModelConservation conservation = ModelConservation.builder()
-                    .id(message.getConservationId())
-                    .lastMessage(lastMessage)
-                    .partner(author)
-                    .build();
-            numNewMessage += 1 - (message.getSeen() == 0 ? 0 : 1);
-            data.add(conservation);
-        }
-        return ModelGetListConservation.builder()
-                .numNewMessage(numNewMessage)
-                .code(ZaloStatus.OK.getCode())
-                .message(ZaloStatus.OK.getMessage())
-                .data(data)
-                .build();
-
-    }
-
-    @Override
-    public ModelGetListMessage getListMessagePaging(Pageable pageable, ModelGetMessageRequest request, String phoneNumber) {
-        List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, request.getConservationId());
-        List<ModelMessageConservation> data = new ArrayList<>();
-        for (Message message : list) {
-            ModelAuthor author = ModelAuthor.builder()
-                    .id(message.getSender().getUserId())
-                    .name(message.getSender().getName())
-                    .avartar(message.getSender().getAvatarLink())
-                    .build();
-            ModelMessage modelMessage = ModelMessage.builder()
-                    .message(message.getContent())
-                    .messageId(message.getMessageId())
-                    .unread(1 - message.getSeen())
-                    .created(message.getTimestamp())
-                    .sender(author)
-                    .build();
-            ModelMessageConservation modelMessageConservation = ModelMessageConservation.builder()
-                    .conversation(modelMessage)
-                    .isBlocked(0)
-                    .build();
-            data.add(modelMessageConservation);
-        }
-        return ModelGetListMessage.builder()
-                .code(ZaloStatus.OK.getCode())
-                .message(ZaloStatus.OK.getMessage())
-                .data(data)
-                .build();
-    }
+//
+//    @Override
+//    public ModelGetListConservation getListConservationByUser(Pageable pageable, String phoneNumber) {
+//        User user = userRepo.findUserByPhoneNumber(phoneNumber);
+//        List<Message> list = messageSortingAndPagingRepo.getListMessageWithConservationId(pageable, user);
+//        List<ModelConservation> data = new ArrayList<>();
+//        int numNewMessage = 0;
+//        for (Message message : list) {
+//            ModelLastMessage lastMessage = ModelLastMessage.builder()
+//                    .message(message.getContent())
+//                    .createdAt(message.getTimestamp())
+//                    .unread(message.getSeen())
+//                    .build();
+//            ModelAuthor author = ModelAuthor.builder()
+//                    .id(message.getSender().getUserId())
+//                    .name(message.getSender().getName())
+//                    .avartar(message.getSender().getAvatarLink())
+//                    .build();
+//            ModelConservation conservation = ModelConservation.builder()
+//                    .id(message.getConservationId())
+//                    .lastMessage(lastMessage)
+//                    .partner(author)
+//                    .build();
+//            numNewMessage += 1 - (message.getSeen() == 0 ? 0 : 1);
+//            data.add(conservation);
+//        }
+//        return ModelGetListConservation.builder()
+//                .numNewMessage(numNewMessage)
+//                .code(ZaloStatus.OK.getCode())
+//                .message(ZaloStatus.OK.getMessage())
+//                .data(data)
+//                .build();
+//
+//    }
+//
+//    @Override
+//    public ModelGetListMessage getListMessagePaging(Pageable pageable, ModelGetMessageRequest request, String phoneNumber) {
+//        List<Message> list = messageSortingAndPagingRepo.findAllByConservationId(pageable, request.getConservationId());
+//        List<ModelMessageConservation> data = new ArrayList<>();
+//        for (Message message : list) {
+//            ModelAuthor author = ModelAuthor.builder()
+//                    .id(message.getSender().getUserId())
+//                    .name(message.getSender().getName())
+//                    .avartar(message.getSender().getAvatarLink())
+//                    .build();
+//            ModelMessage modelMessage = ModelMessage.builder()
+//                    .message(message.getContent())
+//                    .messageId(message.getMessageId())
+//                    .unread(1 - message.getSeen())
+//                    .created(message.getTimestamp())
+//                    .sender(author)
+//                    .build();
+//            ModelMessageConservation modelMessageConservation = ModelMessageConservation.builder()
+//                    .conversation(modelMessage)
+//                    .isBlocked(0)
+//                    .build();
+//            data.add(modelMessageConservation);
+//        }
+//        return ModelGetListMessage.builder()
+//                .code(ZaloStatus.OK.getCode())
+//                .message(ZaloStatus.OK.getMessage())
+//                .data(data)
+//                .build();
+//    }
 
 
     private ModelGetFriendRequest convertUserInfoToModelGetFriendRequest(User user, Date date) {

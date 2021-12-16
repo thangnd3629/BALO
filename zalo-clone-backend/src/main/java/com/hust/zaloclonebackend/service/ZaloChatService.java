@@ -3,10 +3,17 @@ package com.hust.zaloclonebackend.service;
 import com.hust.zaloclonebackend.constant.Constant;
 import com.hust.zaloclonebackend.dto.InputTransportDTO;
 import com.hust.zaloclonebackend.dto.WrapperMessageDto;
+import com.hust.zaloclonebackend.entity.Conversation;
+import com.hust.zaloclonebackend.entity.User;
 import org.springframework.data.domain.Pageable;
 
-public interface ZaloChatService {
-    void getAndSaveMessage(InputTransportDTO dto);
+import java.util.List;
 
-    WrapperMessageDto getConversationMessage(String conservationId, Pageable pageable, Constant.TransportActionEnum action);
+public interface ZaloChatService {
+    Conversation initializePrivateConversation(List<User> users);
+
+    void sendPrivateMessage(InputTransportDTO dto);
+
+
+
 }

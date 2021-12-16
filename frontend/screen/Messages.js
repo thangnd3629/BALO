@@ -16,9 +16,8 @@ const getOffsetTime = (date) => {
 
 export default function Messages({ navigation }) {
   const authToken = useSelector((state) => state.authReducer.token)
-  console.log(authToken)
-  var stompClient = null
 
+  var stompClient = null
   useEffect(() => {
     connect()
   }, [])
@@ -26,18 +25,13 @@ export default function Messages({ navigation }) {
   const connect = () => {
     sockJS = new SockJS(`${API_URL}/messenger`)
     stompClient = Stomp.over(sockJS)
-
     stompClient.connect(
       { "X-Auth-Token": `${authToken}` },
       onConnected,
       onError
     )
   }
-
-  const onConnected = () => {
-    const userID = 1
-    console.log("connected")
-  }
+  const onConnected = () => {}
 
   const onError = (err) => {
     console.log(err)
@@ -185,7 +179,7 @@ export default function Messages({ navigation }) {
       <Divider />
       <FlatList
         data={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.partner.id}
         renderItem={({ item }) => {
           return (
             <UserMessageBar

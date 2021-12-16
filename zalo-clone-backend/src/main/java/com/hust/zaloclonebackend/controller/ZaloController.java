@@ -52,16 +52,7 @@ public class ZaloController {
         ModelDeletePostResponse modelDeletePostResponse = zaloService.deletePostById(id);
         return ResponseEntity.ok(modelDeletePostResponse);
     }
-//
-//    @PostMapping("/post/get-user-list-post")
-//    public ResponseEntity<?> getUserListPost(Principal principal, @RequestBody ModelGetUserListPostRequest modelGetUserListPostRequest ){
-//        log.info("get user list post {}", modelGetUserListPostRequest);
-//        Pageable pageable = PageRequest.of((modelGetUserListPostRequest.getLastId()+1)/modelGetUserListPostRequest.getCount(), modelGetUserListPostRequest.getCount(), Sort.by("createdDate").descending());
-//        String phoneNumber = principal.getName();
-//
-//        ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPosts(pageable, phoneNumber);
-//        return ResponseEntity.status(200).body(modelGetListPostResponse);
-//    }
+
 
     @GetMapping("/post/get-user-list-post")
     public ResponseEntity<?> getUserPosts(Principal principal, Pageable pageable){
@@ -144,19 +135,19 @@ public class ZaloController {
         return ResponseEntity.status(200).body(resp);
     }
 
-    @GetMapping("/get-list-conservation")
-    public ResponseEntity<?> getListConservation(Principal principal, Pageable pageable){
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
-        ModelGetListConservation listConservation = zaloService.getListConservationByUser(pageable,principal.getName());
-        return ResponseEntity.status(200).body(listConservation);
-    }
-
-    @PostMapping("/get-message-paging")
-    public ResponseEntity<?> getMessagePaging(Principal principal, @RequestBody ModelGetMessageRequest request, Pageable pageable){
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
-        ModelGetListMessage response = zaloService.getListMessagePaging(pageable, request, principal.getName());
-        return ResponseEntity.status(200).body(response);
-    }
+//    @GetMapping("/get-list-conservation")
+//    public ResponseEntity<?> getListConservation(Principal principal, Pageable pageable){
+//        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+//        ModelGetListConservation listConservation = zaloService.getListConservationByUser(pageable,principal.getName());
+//        return ResponseEntity.status(200).body(listConservation);
+//    }
+//
+//    @PostMapping("/get-message-paging")
+//    public ResponseEntity<?> getMessagePaging(Principal principal, @RequestBody ModelGetMessageRequest request, Pageable pageable){
+//        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+//        ModelGetListMessage response = zaloService.getListMessagePaging(pageable, request, principal.getName());
+//        return ResponseEntity.status(200).body(response);
+//    }
 
 
 
