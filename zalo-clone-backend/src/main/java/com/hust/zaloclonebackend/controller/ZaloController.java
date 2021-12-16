@@ -5,7 +5,8 @@ import java.security.Principal;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
-import com.hust.zaloclonebackend.model.response.ModelGetListConservation;
+
+import com.hust.zaloclonebackend.service.ZaloChatService;
 import com.hust.zaloclonebackend.service.ZaloService;
 import com.hust.zaloclonebackend.service.UserService;
 
@@ -28,6 +29,7 @@ import lombok.AllArgsConstructor;
 public class ZaloController {
     ZaloService zaloService;
     UserService userService;
+    ZaloChatService zaloChatService;
 
     //
     @PostMapping("/post/add")
@@ -148,6 +150,16 @@ public class ZaloController {
 //        ModelGetListMessage response = zaloService.getListMessagePaging(pageable, request, principal.getName());
 //        return ResponseEntity.status(200).body(response);
 //    }
+
+
+
+    @GetMapping("/conversation")
+    public ResponseEntity<?> getPageConversation(Principal principal, Pageable pageable)
+    {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+        ModelGetListConversation listConversation = zaloChatService.getListConversation(principal.getName(),pageable);
+        return ResponseEntity.status(200).body(listConversation);
+    }
 
 
 

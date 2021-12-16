@@ -1,5 +1,6 @@
 package com.hust.zaloclonebackend.repo;
 
+import com.hust.zaloclonebackend.entity.Conversation;
 import com.hust.zaloclonebackend.entity.Message;
 import com.hust.zaloclonebackend.entity.User;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -12,9 +13,10 @@ import java.util.List;
 
 public interface MessageSortingAndPagingRepo extends PagingAndSortingRepository<Message, String> {
 
+    @Query("select m from Message m where m.conversation = :conversation order by m.timestamp desc ")
+    Message getLastMessageByConversation(@Param("conv")Conversation conversation);
 
-
-
+    Message findFirstByConversationOrderByTimestampDesc(Conversation conversation);
 
     String SEARCH_BY_KEYWORD_CONDITION = "WHERE LOWER(mess.content) LIKE %:keyword% AND mess.isDeleted = false";
     @Query(value = "SELECT mess FROM Message mess " + SEARCH_BY_KEYWORD_CONDITION,

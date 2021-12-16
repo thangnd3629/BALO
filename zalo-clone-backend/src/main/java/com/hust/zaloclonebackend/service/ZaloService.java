@@ -7,7 +7,7 @@ import com.hust.zaloclonebackend.entity.Post;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.*;
-import com.hust.zaloclonebackend.model.response.ModelGetListConservation;
+
 import org.springframework.data.domain.Pageable;
 
 public interface ZaloService {

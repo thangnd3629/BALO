@@ -5,11 +5,16 @@ import com.hust.zaloclonebackend.entity.Conversation;
 import com.hust.zaloclonebackend.entity.ConversationType;
 import com.hust.zaloclonebackend.entity.Message;
 import com.hust.zaloclonebackend.entity.User;
+import com.hust.zaloclonebackend.model.ModelConversationPartner;
+import com.hust.zaloclonebackend.model.ModelGetListConversation;
+import com.hust.zaloclonebackend.model.ModelGetListConversationItem;
+import com.hust.zaloclonebackend.model.ModelLastMessage;
 import com.hust.zaloclonebackend.repo.ConversationRepo;
 import com.hust.zaloclonebackend.repo.MessageRepo;
 import com.hust.zaloclonebackend.repo.MessageSortingAndPagingRepo;
 import com.hust.zaloclonebackend.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -55,8 +60,33 @@ public class ZaloChatServiceImpl implements ZaloChatService {
             List<User> conversationMember = new ArrayList<>(Arrays.asList(sender, receiver));
             existingConv = initializePrivateConversation(conversationMember);
         }
-        Message message = Message.builder().content(dto.getContent()).conversation(existingConv).sender(sender).timestamp(new Date()).build();
+        Message message = Message.builder().content(dto.getContent()).conversation(existingConv).sender(sender).seen(1).timestamp(new Date()).build();
         messageRepo.save(message);
 
     }
+
+    @Override
+    public ModelGetListConversation getListConversation(String name, Pageable pageable) {
+        User user = userRepo.findUserByPhoneNumber(name);
+        List<Conversation> conversations = conversationRepo.findAllByUser(user);
+        List<ModelGetListConversationItem> conversationItems = new ArrayList<>();
+        int numNewBox = 0;
+        for (Conversation conversation : conversations){
+            User partner = userRepo.findConversationPartner(conversation, user);
+            ModelConversationPartner modelConversationPartner = ModelConversationPartner.builder().id(partner.getUserId()).username(partner.getName()).avatar(partner.getAvatarLink()).build();
+            //get last message
+            Message lastMsg = messageSortingAndPagingRepo.findFirstByConversationOrderByTimestampDesc(conversation);
+            if(lastMsg.getSeen() == 1){
+                numNewBox++;
+            }
+            ModelLastMessage modelLastMessage = ModelLastMessage.builder().message(lastMsg.getContent()).unread(lastMsg.getSeen()).created(lastMsg.getTimestamp()).build();
+            ModelGetListConversationItem conversationItem = ModelGetListConversationItem.builder().id(conversation.getId()).partner(modelConversationPartner).lastMessage(modelLastMessage).build();
+            conversationItems.add(conversationItem);
+        }
+        return ModelGetListConversation.builder().data(conversationItems).numNewMessage(numNewBox).build();
+
+    }
+
+
+
 }
