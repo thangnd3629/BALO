@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class ModelMessage {
     private String message;
-    private Long messageId;
+    private String message_id;
     private int unread;
     private Date created;
     private ModelAuthor sender;

@@ -14,5 +14,6 @@ public interface ConversationRepo extends CrudRepository<Conversation, String> {
     @Query("select  c from Conversation c inner join c.users u on u = :user")
     List<Conversation> findAllByUser(@Param("user") User user);
 
+    Conversation getConversationById(String id);
 
 }

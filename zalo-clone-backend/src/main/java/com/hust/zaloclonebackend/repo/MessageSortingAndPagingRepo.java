@@ -18,6 +18,8 @@ public interface MessageSortingAndPagingRepo extends PagingAndSortingRepository<
 
     Message findFirstByConversationOrderByTimestampDesc(Conversation conversation);
 
+    List<Message> getMessagesByConversationIdOrderByTimestampDesc(Pageable pageable, String convId);
+
     String SEARCH_BY_KEYWORD_CONDITION = "WHERE LOWER(mess.content) LIKE %:keyword% AND mess.isDeleted = false";
     @Query(value = "SELECT mess FROM Message mess " + SEARCH_BY_KEYWORD_CONDITION,
     countQuery = "SELECT COUNT (mess) FROM Message mess WHERE " + SEARCH_BY_KEYWORD_CONDITION)

@@ -13,6 +13,7 @@ import com.hust.zaloclonebackend.service.UserService;
 import io.swagger.models.Model;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -159,6 +160,15 @@ public class ZaloController {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
         ModelGetListConversation listConversation = zaloChatService.getListConversation(principal.getName(),pageable);
         return ResponseEntity.status(200).body(listConversation);
+    }
+
+    @GetMapping("/conversation/{id}")
+    public ResponseEntity<?> getConversationMessages(Principal principal, Pageable pageable, @PathVariable("id") String convId)
+    {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("timestamp"));
+        ModelGetConversation conversation = zaloChatService.getConversationMessages(principal.getName(), pageable, convId);
+
+        return ResponseEntity.status(200).body(conversation);
     }
 
 

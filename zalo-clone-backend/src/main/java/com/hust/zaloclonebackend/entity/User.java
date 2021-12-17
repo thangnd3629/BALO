@@ -36,8 +36,7 @@ public class User {
     @JsonIgnore
     private String password;
 
-//    @Column(name = "phone_number", unique = true)
-//    @NotNull
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
     
     //Duc anh
