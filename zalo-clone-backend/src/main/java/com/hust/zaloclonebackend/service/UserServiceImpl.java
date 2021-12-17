@@ -2,6 +2,7 @@ package com.hust.zaloclonebackend.service;
 
 import com.hust.zaloclonebackend.entity.Relationship;
 import com.hust.zaloclonebackend.entity.Role;
+import com.hust.zaloclonebackend.entity.RoleEnum;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
 import com.hust.zaloclonebackend.model.response.GetUserFriendResponse;
@@ -145,7 +146,7 @@ public class UserServiceImpl implements UserService {
         }
 
         List<Role> adminRole = user.getRoles().stream()
-                .filter(c -> StringUtils.compare(c.getName(), User.SYSTEM_ADMIN) == 0)
+                .filter(c -> c.getName() == RoleEnum.SYSTEM_ADMIN)
                 .collect(Collectors.toList());
         return !CollectionUtils.isEmpty(adminRole);
     }
