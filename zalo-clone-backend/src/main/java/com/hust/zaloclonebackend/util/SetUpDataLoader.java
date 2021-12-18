@@ -1,6 +1,7 @@
 package com.hust.zaloclonebackend.util;
 
 import com.hust.zaloclonebackend.entity.Role;
+import com.hust.zaloclonebackend.entity.RoleEnum;
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.repo.RoleRepo;
 import com.hust.zaloclonebackend.repo.UserRepo;
@@ -35,8 +36,8 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
 
-        Role adminRole = createRoleIfNotFound("SYSTEM_ADMIN");
-        Role userRole = createRoleIfNotFound("USER");
+        Role adminRole = createRoleIfNotFound(RoleEnum.SYSTEM_ADMIN);
+        Role userRole = createRoleIfNotFound(RoleEnum.USER);
 
         if (userRepo.findUserByPhoneNumber("admin") == null) {
             User admin = User.builder()
@@ -53,7 +54,7 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    Role createRoleIfNotFound(String name) {
+    Role createRoleIfNotFound(RoleEnum name) {
         Role role = roleRepo.findRoleByName(name);
 
         if (role == null) {
