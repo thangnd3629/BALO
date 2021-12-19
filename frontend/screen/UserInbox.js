@@ -17,7 +17,7 @@ import CustomHeader from "../components/CustomHeader"
 import { Ionicons, Feather } from "@expo/vector-icons"
 import { navigate } from "../RouteNavigation"
 import { FontAwesome } from "@expo/vector-icons"
-import { LinearGradient } from "expo-linear-gradient"
+
 import Emoji from "../utils/Emoji"
 import { toArray } from "react-emoji-render"
 

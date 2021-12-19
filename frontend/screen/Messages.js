@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import UserMessageBar from "../components/UserMessageBar"
 import { Divider } from "react-native-paper"
@@ -6,17 +6,22 @@ import Avatar2 from "../components/Avatar2"
 import { AntDesign } from "@expo/vector-icons"
 import CustomHeader from "../components/CustomHeader"
 import { API_URL } from "../config"
-import { useEffect } from "react"
+
 import { useSelector } from "react-redux"
+
 import SockJS from "sockjs-client" // Note this line
 import Stomp from "stompjs"
+import useFetch from "../hook/useFetch"
 const getOffsetTime = (date) => {
   return "9 mins"
 }
 
 export default function Messages({ navigation }) {
   const authToken = useSelector((state) => state.authReducer.token)
-
+  const send = useFetch()
+  const inboxFetchSize = 5
+  const [page, setpage] = useState(0)
+  const [data, setdata] = useState([])
   var stompClient = null
   useEffect(() => {
     connect()
@@ -46,84 +51,56 @@ export default function Messages({ navigation }) {
 
   const friends = [
     {
-      id: "0",
-    },
-    {
       id: "15",
       name: "this user name",
       userImg: require("../assets/user1.jpg"),
     },
-    {
-      id: "25",
-      name: "this user namer",
-      userImg: require("../assets/user1.jpg"),
-    },
-    {
-      id: "35",
-      name: "this user namer",
-      userImg: require("../assets/user1.jpg"),
-    },
-    {
-      id: "45",
-      name: "this user namer",
-      userImg: require("../assets/user1.jpg"),
-    },
-    {
-      id: "55",
-      name: "user namer",
-      userImg: require("../assets/user1.jpg"),
-    },
-    {
-      id: "65",
-      name: "user namer",
-      userImg: require("../assets/user1.jpg"),
-    },
   ]
 
-  const data = [
-    {
-      id: "1",
-      partner: {
-        id: "11",
-        username: "A",
-        avatar: require("../assets/user1.jpg"),
-      },
-      lastmessage: {
-        message: "Hey this is my latest text",
-        created: "01/01/2021 01:01:01",
-        unread: 0,
-        senderId: "11",
-      },
-    },
-    {
-      id: "2",
-      partner: {
-        id: "21",
-        username: "B",
-        avatar: require("../assets/user1.jpg"),
-      },
-      lastmessage: {
-        message: "Hey this is my latest text",
-        created: "01/01/2021 01:01:01",
-        unread: 1,
-        senderId: "0",
-      },
-    },
-    {
-      id: "3",
-      partner: {
-        id: "33",
-        username: "C",
-        avatar: require("../assets/user1.jpg"),
-      },
-      lastmessage: {
-        message: "Hey this is my latest text",
-        created: "01/01/2021 01:01:01",
-        unread: 0,
-        senderId: "33",
-      },
-    },
-  ]
+  const fetchInbox = async () => {
+    try {
+      const response = await send(
+        `${API_URL}/conversation?size${inboxFetchSize}&page=${page}`,
+        { method: "GET" },
+        10000,
+        true
+      )
+      setdata((prev) => [...prev, ...response.body.data])
+    } catch (e) {}
+  }
+
+  useEffect(() => {
+    fetchInbox()
+  }, [])
+
+  const inboxList =
+    data.length !== 0 ? (
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
+          return (
+            <UserMessageBar
+              navigation={navigation}
+              userName={item.partner.username}
+              userImg={item.partner.avatar}
+              messageTime={getOffsetTime(item.lastMessage.created)}
+              messageText={item.lastMessage.message}
+              fromMe={item.lastMessage.senderId === userId}
+              seen={
+                item.lastMessage.senderId === userId &&
+                item.lastMessage.unread == 1
+              }
+              read={
+                item.lastMessage.senderId === userId &&
+                item.lastMessage.unread == 0
+              }
+              user={item} // you can remove these props above and only use this
+            />
+          )
+        }}
+      />
+    ) : null
 
   return (
     <View style={styles.container}>
@@ -177,31 +154,7 @@ export default function Messages({ navigation }) {
         />
       </View>
       <Divider />
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.partner.id}
-        renderItem={({ item }) => {
-          return (
-            <UserMessageBar
-              navigation={navigation}
-              userName={item.partner.username}
-              userImg={item.partner.avatar}
-              messageTime={getOffsetTime(item.lastmessage.created)}
-              messageText={item.lastmessage.message}
-              fromMe={item.lastmessage.senderId === userId}
-              seen={
-                item.lastmessage.senderId === userId &&
-                item.lastmessage.unread == 1
-              }
-              read={
-                item.lastmessage.senderId === userId &&
-                item.lastmessage.unread == 0
-              }
-              user={item} // you can remove these props above and only use this
-            />
-          )
-        }}
-      />
+      {inboxList}
     </View>
   )
 }

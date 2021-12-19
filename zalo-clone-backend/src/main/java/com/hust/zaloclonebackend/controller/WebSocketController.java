@@ -33,10 +33,7 @@ public class WebSocketController {
     public void chattingChannel(InputTransportDTO dto, @Header("simpSessionId") String sessionId) {
 
         zaloChatService.sendPrivateMessage(dto);
-
-
-
-//        this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser(), dto);
+        this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser(), dto);
 
     }
 }
