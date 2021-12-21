@@ -46,7 +46,7 @@ public class ZaloChatServiceImpl implements ZaloChatService {
 
 
     @Override
-    public void sendPrivateMessage(InputTransportDTO dto) {
+    public ModelSendPrivateMessage sendPrivateMessage(InputTransportDTO dto) {
         User receiver = userRepo.getUserByUserId(dto.getToUser());
         User sender = userRepo.getUserByUserId(dto.getFromUser());
         Conversation existingConv = conversationRepo.getPrivateConversationByMembers(sender, receiver);
@@ -56,6 +56,8 @@ public class ZaloChatServiceImpl implements ZaloChatService {
         }
         Message message = Message.builder().content(dto.getContent()).conversation(existingConv).sender(sender).seen(1).timestamp(new Date()).build();
         messageRepo.save(message);
+        ModelAuthor msgSenderJson = ModelAuthor.builder().id(sender.getUserId()).name(sender.getName()).avartar(sender.getAvatarLink()).build();
+        return ModelSendPrivateMessage.builder().message(dto.getContent()).conversationId(existingConv.getId()).message_id(message.getMessageId()).created(message.getTimestamp()).unread(1).sender(msgSenderJson).build();
 
     }
 

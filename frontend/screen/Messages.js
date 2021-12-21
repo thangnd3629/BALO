@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import UserMessageBar from "../components/UserMessageBar"
 import { Divider } from "react-native-paper"
@@ -7,24 +7,88 @@ import { AntDesign } from "@expo/vector-icons"
 import CustomHeader from "../components/CustomHeader"
 import { API_URL } from "../config"
 
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 import SockJS from "sockjs-client" // Note this line
 import Stomp from "stompjs"
 import useFetch from "../hook/useFetch"
+import { ADD_MESSAGE, EXIT_CHAT } from "../action/types"
 const getOffsetTime = (date) => {
   return "9 mins"
 }
 
 export default function Messages({ navigation }) {
   const authToken = useSelector((state) => state.authReducer.token)
+  const userId = useSelector((state) => state.authReducer.user.id)
+  const currentConversation = useSelector((state) => state.messageReducer)
   const send = useFetch()
+  const dispatch = useDispatch()
   const inboxFetchSize = 5
   const [page, setpage] = useState(0)
-  const [data, setdata] = useState([])
+  const [inbox, setInbox] = useState([])
   var stompClient = null
+
   useEffect(() => {
+    dispatch({ type: EXIT_CHAT })
+  }, [])
+
+  const onMessageReceived = useCallback(
+    (msg) => {
+      const notification = JSON.parse(msg.body)
+
+      const conversationId = notification.conversationId
+      console.log("TAG in container", conversationId)
+      const newMessages = convertMsgToGiftedChatFormat([notification])
+      console.log("TAG in container", currentConversation)
+      //update inner chat , if active
+      if (conversationId === currentConversation.conversationId) {
+        dispatch({
+          type: ADD_MESSAGE,
+          payload: {
+            messages: newMessages,
+          },
+        })
+      }
+      //update lastest messages
+      const updatedInbox = [...inbox]
+
+      inbox.forEach((ib, index) => {
+        if (ib.id === conversationId) {
+          updatedInbox[index].lastMessage = {
+            message: notification.message,
+            created: notification.created,
+            unread: 1,
+          }
+          return
+        }
+      })
+
+      setInbox(updatedInbox)
+    },
+    [inbox, currentConversation]
+  )
+
+  useEffect(() => {
+    console.log(
+      "Run the effect================================================"
+    )
     connect()
+
+    return () => {
+      try {
+        console.log("on disconnect===============================")
+        stompClient.disconnect()
+      } catch (e) {}
+    }
+  }, [onMessageReceived])
+
+  useEffect(() => {
+    const x = async () => {
+      console.log("On fetch post")
+      await fetchInbox()
+      console.log("Done fetch post")
+    }
+    x()
   }, [])
 
   const connect = () => {
@@ -36,18 +100,58 @@ export default function Messages({ navigation }) {
       onError
     )
   }
-  const onConnected = () => {}
+
+  const convertMsgToGiftedChatFormat = (msgList) => {
+    if (msgList.length === 0) return []
+    const processedMsgs = msgList.map((message, idx) => ({
+      _id: message.message_id,
+      text: message.message,
+      createdAt: message.created,
+      user: {
+        _id: message.sender.id,
+        name: message.sender.name,
+        avatar: message.sender.avartar,
+      },
+    }))
+    return processedMsgs
+  }
+
+  const onConnected = () => {
+    stompClient.subscribe(`/topic/user/${userId}`, onMessageReceived)
+  }
 
   const onError = (err) => {
     console.log(err)
   }
 
-  const onMessageReceived = (msg) => {
-    const notification = JSON.parse(msg.body)
-    console.log(notification)
+  const sendSocketMessage = (msg) => {
+    const raw = JSON.stringify({
+      toUser: "b7766741-1dba-41a4-8730-897ed96c2202",
+      fromUser: userId,
+      content: msg.text,
+    })
+
+    stompClient.send("/app/message", {}, raw)
+  }
+  const onSendMessage = (messages) => {
+    // sendSocketMessage(messages[0])
+    dispatch({
+      type: ADD_MESSAGE,
+      payload: {
+        messages: messages,
+      },
+    })
+    console.log(messages)
   }
 
-  const userId = "0"
+  const onEnterChat = (id, userName) => {
+    navigation.setOptions({ tabBarStyle: { display: "none" } })
+    navigation.navigate("Inbox", {
+      name: userName,
+      onSendMessage: onSendMessage,
+      id: id,
+    })
+  }
 
   const friends = [
     {
@@ -65,22 +169,23 @@ export default function Messages({ navigation }) {
         10000,
         true
       )
-      setdata((prev) => [...prev, ...response.body.data])
+      setInbox((prev) => {
+        return [...prev, ...response.body.data]
+      })
+      console.log("done set state inbox")
     } catch (e) {}
   }
 
-  useEffect(() => {
-    fetchInbox()
-  }, [])
-
   const inboxList =
-    data.length !== 0 ? (
+    inbox.length !== 0 ? (
       <FlatList
-        data={data}
+        data={inbox}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           return (
             <UserMessageBar
+              onPress={onEnterChat}
+              id={item.id}
               navigation={navigation}
               userName={item.partner.username}
               userImg={item.partner.avatar}

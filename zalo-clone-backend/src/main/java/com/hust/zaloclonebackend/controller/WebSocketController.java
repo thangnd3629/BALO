@@ -5,6 +5,8 @@ import com.hust.zaloclonebackend.dto.InputTransportDTO;
 import com.hust.zaloclonebackend.dto.MessageDto;
 import com.hust.zaloclonebackend.dto.OutputTransportDTO;
 import com.hust.zaloclonebackend.dto.WrapperMessageDto;
+import com.hust.zaloclonebackend.model.ModelMessage;
+import com.hust.zaloclonebackend.model.ModelSendPrivateMessage;
 import com.hust.zaloclonebackend.service.ZaloChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,8 @@ public class WebSocketController {
     @MessageMapping("/message")
     public void chattingChannel(InputTransportDTO dto, @Header("simpSessionId") String sessionId) {
 
-        zaloChatService.sendPrivateMessage(dto);
-        this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser(), dto);
+        ModelSendPrivateMessage msgJson = zaloChatService.sendPrivateMessage(dto);
+        this.messagingTemplate.convertAndSend("/topic/user/"+dto.getToUser(), msgJson);
 
     }
 }

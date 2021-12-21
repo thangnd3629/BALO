@@ -6,5 +6,9 @@ export const PERFORM_GLOBAL_QUERY = "GLOBAL_QUERY"
 export const CANCEL_GLOBAL_QUERY = "CANCEL_QUERY"
 
 export const SHOW_MODAL = "SHOW_MODAL"
-
 export const HIDE_MODAL = "HIDE_MODAL"
+
+export const INIT_CONVERSATION = "INIT_CONVERSATION"
+export const EXIT_CHAT = "EXIT_CHAT"
+export const ADD_MESSAGE = "ADD_MESSAGE"
+export const FETCH_OLD_MESSAGES = "FETCH_OLD_MESSAGES"

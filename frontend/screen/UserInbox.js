@@ -1,18 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react"
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Button,
-} from "react-native"
-import {
-  GiftedChat,
-  InputToolbar,
-  Send,
-  Composer,
-} from "react-native-gifted-chat"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
+import { GiftedChat, Composer } from "react-native-gifted-chat"
 import CustomHeader from "../components/CustomHeader"
 import { Ionicons, Feather } from "@expo/vector-icons"
 import { navigate } from "../RouteNavigation"
@@ -20,13 +8,105 @@ import { FontAwesome } from "@expo/vector-icons"
 
 import Emoji from "../utils/Emoji"
 import { toArray } from "react-emoji-render"
-
+import useFetch from "../hook/useFetch"
+import { API_URL } from "../config"
+import { useSelector, useDispatch } from "react-redux"
+import {
+  ADD_MESSAGE,
+  EXIT_CHAT,
+  FETCH_OLD_MESSAGES,
+  INIT_CONVERSATION,
+} from "../action/types"
 const emoji = new Emoji()
 
 const UserInbox = (props) => {
-  const [messages, setMessages] = useState([])
   const [text, setText] = useState("")
 
+  const { id, onSendMessage } = props.route.params
+  const dispatch = useDispatch()
+  const { conversationId, messages, page, partner } = useSelector((state) => {
+    return state.messageReducer
+  })
+
+  const send = useFetch()
+
+  const initConversation = async () => {
+    const lastestMessages = await fetchMessages()
+    console.log("TAG init conversation", lastestMessages.partner)
+
+    if (lastestMessages) {
+      dispatch({
+        type: INIT_CONVERSATION,
+        payload: {
+          conversationId: id,
+          messages: lastestMessages.messages,
+          partner: lastestMessages.partner,
+        },
+      })
+    }
+  }
+  const loadMoreMessages = async () => {
+    const oldMessages = await fetchMessages()
+    if (oldMessages) {
+      dispatch({
+        type: ADD_MESSAGE,
+        payload: {
+          messages: oldMessages,
+        },
+      })
+    }
+  }
+  const onLoadMore = () => {
+    dispatch({
+      type: FETCH_OLD_MESSAGES,
+    })
+  }
+
+  const convertMsgToGiftedChatFormat = (msgList) => {
+    if (msgList.length === 0) return []
+    const processedMsgs = msgList.map((message, idx) => ({
+      _id: message.message_id,
+      text: message.message,
+      createdAt: message.created,
+      user: {
+        _id: message.sender.id,
+        name: message.sender.name,
+        avatar: message.sender.avartar,
+      },
+    }))
+    return processedMsgs
+  }
+
+  const fetchMessages = async () => {
+    try {
+      const response = await send(
+        `${API_URL}/conversation/${id}?size=5&page=${page}`,
+        { method: "GET" },
+        10000,
+        true
+      )
+
+      return {
+        messages: convertMsgToGiftedChatFormat(response.body.messageList),
+        partner: response.body.partner,
+      }
+    } catch (e) {
+      return null
+    }
+  }
+  useEffect(() => {
+    initConversation()
+  }, [])
+
+  // useEffect(() => {
+  //   loadMoreMessages()
+  // }, [page])
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: EXIT_CHAT })
+    }
+  }, [])
   const onChangeTextHandle = (string) => {
     let rawString = emoji.reverseParse(string)
     setText(rawString)
@@ -75,26 +155,12 @@ const UserInbox = (props) => {
     )
   }
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ])
-  }, [])
-
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    )
-  }, [])
+  const onSend = useCallback(
+    (messages = []) => {
+      onSendMessage(messages)
+    },
+    [partner]
+  )
 
   const onPressOption = () => {
     navigate("InboxOption", {
