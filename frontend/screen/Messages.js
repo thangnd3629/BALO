@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { StyleSheet, Text, View, FlatList } from "react-native"
+import { StyleSheet, Text, View, FlatList, LogBox, Button } from "react-native"
 import UserMessageBar from "../components/UserMessageBar"
 import { Divider } from "react-native-paper"
 import Avatar2 from "../components/Avatar2"
@@ -13,6 +13,10 @@ import SockJS from "sockjs-client" // Note this line
 import Stomp from "stompjs"
 import useFetch from "../hook/useFetch"
 import { ADD_MESSAGE, EXIT_CHAT } from "../action/types"
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+])
+
 const getOffsetTime = (date) => {
   return "9 mins"
 }
@@ -24,14 +28,19 @@ export default function Messages({ navigation }) {
   const send = useFetch()
   const dispatch = useDispatch()
   const inboxFetchSize = 5
-  const [page, setpage] = useState(0)
+  const [page, setPage] = useState(0)
   const [inbox, setInbox] = useState([])
+  const [connection, setConnection] = useState(null)
+
+  var temp = null
   var stompClient = null
 
   useEffect(() => {
     dispatch({ type: EXIT_CHAT })
+    temp = "OKLA"
   }, [])
 
+  //connect to socket
   const onMessageReceived = useCallback(
     (msg) => {
       const notification = JSON.parse(msg.body)
@@ -65,31 +74,15 @@ export default function Messages({ navigation }) {
 
       setInbox(updatedInbox)
     },
-    [inbox, currentConversation]
+    [inbox, currentConversation.id]
   )
+  const onConnected = () => {
+    stompClient.subscribe(`/topic/user/${userId}`, onMessageReceived)
+  }
 
-  useEffect(() => {
-    console.log(
-      "Run the effect================================================"
-    )
-    connect()
-
-    return () => {
-      try {
-        console.log("on disconnect===============================")
-        stompClient.disconnect()
-      } catch (e) {}
-    }
-  }, [onMessageReceived])
-
-  useEffect(() => {
-    const x = async () => {
-      console.log("On fetch post")
-      await fetchInbox()
-      console.log("Done fetch post")
-    }
-    x()
-  }, [])
+  const onError = (err) => {
+    console.log(err)
+  }
 
   const connect = () => {
     sockJS = new SockJS(`${API_URL}/messenger`)
@@ -99,8 +92,40 @@ export default function Messages({ navigation }) {
       onConnected,
       onError
     )
+    setConnection(stompClient)
   }
 
+  useEffect(() => {
+    connect()
+    return () => {
+      try {
+        // useEffect scoped this stompClient var
+        stompClient.disconnect()
+      } catch (e) {}
+    }
+  }, [onMessageReceived])
+  //socket connected
+
+  //fetch  inboxes
+  const fetchInbox = async () => {
+    try {
+      const response = await send(
+        `${API_URL}/conversation?size${inboxFetchSize}&page=${page}`,
+        { method: "GET" },
+        10000,
+        true
+      )
+      setInbox((prev) => {
+        return [...prev, ...response.body.data]
+      })
+    } catch (e) {}
+  }
+
+  useEffect(() => {
+    fetchInbox()
+  }, [])
+
+  //utils
   const convertMsgToGiftedChatFormat = (msgList) => {
     if (msgList.length === 0) return []
     const processedMsgs = msgList.map((message, idx) => ({
@@ -116,41 +141,33 @@ export default function Messages({ navigation }) {
     return processedMsgs
   }
 
-  const onConnected = () => {
-    stompClient.subscribe(`/topic/user/${userId}`, onMessageReceived)
-  }
-
-  const onError = (err) => {
-    console.log(err)
-  }
-
-  const sendSocketMessage = (msg) => {
+  //send socket messages
+  const onSendMessage = (messages, partnerId) => {
     const raw = JSON.stringify({
-      toUser: "b7766741-1dba-41a4-8730-897ed96c2202",
+      toUser: partnerId,
       fromUser: userId,
-      content: msg.text,
+      content: messages[0].text,
     })
-
-    stompClient.send("/app/message", {}, raw)
-  }
-  const onSendMessage = (messages) => {
-    // sendSocketMessage(messages[0])
+    connection.send("/app/message", {}, raw)
     dispatch({
       type: ADD_MESSAGE,
       payload: {
         messages: messages,
       },
     })
-    console.log(messages)
   }
 
-  const onEnterChat = (id, userName) => {
+  const onEnterChat = (id, partnerId, userName) => {
     navigation.setOptions({ tabBarStyle: { display: "none" } })
     navigation.navigate("Inbox", {
       name: userName,
       onSendMessage: onSendMessage,
       id: id,
+      partnerId: partnerId,
     })
+  }
+  const testHandler = () => {
+    console.log("IN test handler=====================", temp)
   }
 
   const friends = [
@@ -160,21 +177,6 @@ export default function Messages({ navigation }) {
       userImg: require("../assets/user1.jpg"),
     },
   ]
-
-  const fetchInbox = async () => {
-    try {
-      const response = await send(
-        `${API_URL}/conversation?size${inboxFetchSize}&page=${page}`,
-        { method: "GET" },
-        10000,
-        true
-      )
-      setInbox((prev) => {
-        return [...prev, ...response.body.data]
-      })
-      console.log("done set state inbox")
-    } catch (e) {}
-  }
 
   const inboxList =
     inbox.length !== 0 ? (
@@ -189,6 +191,7 @@ export default function Messages({ navigation }) {
               navigation={navigation}
               userName={item.partner.username}
               userImg={item.partner.avatar}
+              partnerId={item.partner.id}
               messageTime={getOffsetTime(item.lastMessage.created)}
               messageText={item.lastMessage.message}
               fromMe={item.lastMessage.senderId === userId}
@@ -211,6 +214,7 @@ export default function Messages({ navigation }) {
     <View style={styles.container}>
       <CustomHeader label={"Messages"} navigation={navigation} />
       <View style={styles.friendListContainer}>
+        <Button onPress={testHandler} title="TEST" />
         <FlatList /* horizontal flat list showing friend list*/
           data={friends}
           style={styles.scrollContent}

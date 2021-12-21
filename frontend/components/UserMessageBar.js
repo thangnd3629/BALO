@@ -19,6 +19,7 @@ const UserMessageBar = ({
   fromMe,
   seen,
   read,
+  partnerId,
   user,
   onPress,
 }) => {
@@ -27,7 +28,7 @@ const UserMessageBar = ({
   return (
     <TouchableOpacity
       onPress={() => {
-        onPress(id, userName)
+        onPress(id, partnerId, userName)
       }}
     >
       <View style={styles.container}>

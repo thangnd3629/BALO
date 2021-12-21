@@ -22,7 +22,8 @@ const emoji = new Emoji()
 const UserInbox = (props) => {
   const [text, setText] = useState("")
 
-  const { id, onSendMessage } = props.route.params
+  const { id, partnerId, onSendMessage } = props.route.params
+  const userId = useSelector((state) => state.authReducer.user.id)
   const dispatch = useDispatch()
   const { conversationId, messages, page, partner } = useSelector((state) => {
     return state.messageReducer
@@ -30,9 +31,10 @@ const UserInbox = (props) => {
 
   const send = useFetch()
 
+  const [test, settest] = useState(0)
+
   const initConversation = async () => {
     const lastestMessages = await fetchMessages()
-    console.log("TAG init conversation", lastestMessages.partner)
 
     if (lastestMessages) {
       dispatch({
@@ -40,7 +42,6 @@ const UserInbox = (props) => {
         payload: {
           conversationId: id,
           messages: lastestMessages.messages,
-          partner: lastestMessages.partner,
         },
       })
     }
@@ -155,12 +156,9 @@ const UserInbox = (props) => {
     )
   }
 
-  const onSend = useCallback(
-    (messages = []) => {
-      onSendMessage(messages)
-    },
-    [partner]
-  )
+  const onSend = useCallback((messages = []) => {
+    onSendMessage(messages, partnerId)
+  }, [])
 
   const onPressOption = () => {
     navigate("InboxOption", {
@@ -215,7 +213,7 @@ const UserInbox = (props) => {
         onSend={(messages) => onSend(messages)}
         alwaysShowSend
         user={{
-          _id: 1,
+          _id: userId,
         }}
         text={emoji.parse(text)}
         onInputTextChanged={onChangeTextHandle}
