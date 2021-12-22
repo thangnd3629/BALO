@@ -23,7 +23,7 @@ public class FriendRepoImpl implements FriendRepo {
                 "where posts_likers.post_post_id = posts.post_id " +
                 "and posts.poster_user_id = (:userId) "  +
                 "group by likers_user_id " +
-                "order by numlikecount desc limit 10 " +
+                "order by numlikecount desc limit 10 " + // TODO: hard code
                 ") as A " +
                 "inner join user on A.likers_user_id = user.user_id ";
 
