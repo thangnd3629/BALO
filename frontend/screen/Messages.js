@@ -43,6 +43,7 @@ export default function Messages({ navigation }) {
   //connect to socket
   const onMessageReceived = useCallback(
     (msg) => {
+      console.log("RECEIVE MÉG+++++++++++++++++++++++++++++++++++++")
       const notification = JSON.parse(msg.body)
 
       const conversationId = notification.conversationId
@@ -98,10 +99,8 @@ export default function Messages({ navigation }) {
   useEffect(() => {
     connect()
     return () => {
-      try {
-        // useEffect scoped this stompClient var
-        stompClient.disconnect()
-      } catch (e) {}
+      // useEffect scoped this stompClient var
+      stompClient.disconnect()
     }
   }, [onMessageReceived])
   //socket connected
