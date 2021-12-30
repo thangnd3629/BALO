@@ -303,7 +303,7 @@ public class ZaloServiceImpl implements ZaloService {
                     .message("They are friend")
                     .build();
         }
-        friendRequestRepo.save(FriendRequest.builder()
+        FriendRequest friendRequest = friendRequestRepo.save(FriendRequest.builder()
                 .fromUser(fromUser)
                 .toUser(toUser)
                 .createdDate(new Date())
@@ -311,6 +311,7 @@ public class ZaloServiceImpl implements ZaloService {
         return ModelSendFriendRequestResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
+                .id(friendRequest.getId())
                 .build();
     }
 

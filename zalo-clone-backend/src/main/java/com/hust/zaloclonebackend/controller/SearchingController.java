@@ -26,7 +26,9 @@ public class SearchingController {
     public ResponseEntity<UserSearchingResponse> searchUsersByKeyword(Pageable pageable,
                                                                      @RequestBody SearchingRequest request) {
         log.info("Start search users by keyword controller");
-        return ResponseEntity.ok(searchingService.searchUserByKeyword(pageable, request));
+        UserSearchingResponse userSearchingResponse = searchingService.searchUserByKeyword(pageable, request);
+        log.info("userSearchingResponse {}", userSearchingResponse.getData());
+        return ResponseEntity.ok(userSearchingResponse);
     }
 
     @PostMapping(path = "/search-messages")
