@@ -10,12 +10,40 @@ import {
 import { AntDesign } from "@expo/vector-icons"
 import { API_URL } from "../config"
 import { Entypo } from "@expo/vector-icons"
+import useFetch from "../hook/useFetch";
+import {a} from "react-emoji-render/data/aliases";
+import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
+import {useDispatch} from "react-redux";
+import {useNavigation} from "@react-navigation/native";
+import { Controller, useForm } from "react-hook-form";
+
+
+
+
 export default function Signup({}) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
-  const onSubmit = () => {
+  const send = useFetch()
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
+
+  const { register, handleSubmit, control, errors, reset, watch } = useForm({
+    defaultValues: {
+      userLoginId: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      roles: [],
+    },
+  });
+
+
+  const onSubmit = async () => {
     var myHeaders = new Headers()
     myHeaders.append("Content-Type", "application/json")
 
@@ -31,11 +59,28 @@ export default function Signup({}) {
       body: raw,
       redirect: "follow",
     }
+    try {
+      const response = await fetchWithErrHandler(
+          `${API_URL}/user/register`,
+          requestOptions,
+          3000,
+          dispatch
+      )
+      console.log("response ", response);
+      if(response.body.code === 1000){
+        // successNoti("You have registered successful", true)
+        navigation.goBack();
+      }else{
+        // errNoti(response.body.message, true);
+      }
 
-    fetch("http://34.70.67.66:8080/api/user/register", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error))
+    }catch (e) {
+      console.log(e);
+    }
+    // fetch("http://34.70.67.66:8080/api/user/register", requestOptions)
+    //   .then((response) => response.text())
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.log("error", error))
   }
 
   return (
@@ -45,35 +90,85 @@ export default function Signup({}) {
         source={require("../assets/background-blue-pattern-geometric-style-blue-geometric-pattern-135451784.jpg")}
       ></Image>
 
-      <View style={styles.groupInput}>
-        <AntDesign name="phone" size={24} color="black" />
-        <TextInput
-          placeholder={"Phone number"}
-          onChangeText={(input) => {
-            setPhoneNumber(input)
+      <Controller
+          render={({
+                     field: { onChange, onBlur, value, name, ref },
+                     fieldState: { invalid, isTouched, isDirty, error },
+                   }) => (
+              <View style={styles.groupInput}>
+                <AntDesign name="phone" size={24} color="black" />
+
+                <TextInput
+                    placeholder={"Phone number"}
+                    onChangeText={(input) => {
+                      setPhoneNumber(input)
+                    }}
+                    value={phoneNumber}
+                    style={styles.input}
+                />
+
+                <View>
+                  <Entypo
+                      name="cross"
+                      size={24}
+                      color="black"
+                      onPress={() => {
+                        setPhoneNumber("")
+                      }}
+                  />
+                </View>
+              </View>
+
+          )}
+          name="TextField"
+          control={control}
+          rules={{
+            required: "Trường này được yêu cầu",
+            maxLength: {
+              value: 12,
+              message:
+                  "Vui lòng chọn số điệm thoại không vượt quá 12 kí tự",
+            },
+            minLength:{
+              value: 9,
+              message:
+                  "Vui lòng chọn tên đăng nhập không dưới 9 kí tự",
+            }
           }}
-          value={phoneNumber}
-          style={styles.input}
-        />
-        <View>
-          <Entypo
-            name="cross"
-            size={24}
-            color="black"
-            onPress={() => {
-              setPhoneNumber("")
-            }}
-          />
-        </View>
-      </View>
+      />
+
+      {/*<View style={styles.groupInput}>*/}
+
+
+
+      {/*  <AntDesign name="phone" size={24} color="black" />*/}
+      {/*  <TextInput*/}
+      {/*    placeholder={"Phone number"}*/}
+      {/*    onChangeText={(input) => {*/}
+      {/*      setPhoneNumber(input)*/}
+      {/*    }}*/}
+      {/*    value={phoneNumber}*/}
+      {/*    style={styles.input}*/}
+      {/*  />*/}
+      {/*  <View>*/}
+      {/*    <Entypo*/}
+      {/*      name="cross"*/}
+      {/*      size={24}*/}
+      {/*      color="black"*/}
+      {/*      onPress={() => {*/}
+      {/*        setPhoneNumber("")*/}
+      {/*      }}*/}
+      {/*    />*/}
+      {/*  </View>*/}
+      {/*</View>*/}
       <View style={styles.groupInput}>
-        <AntDesign name="phone" size={24} color="black" />
+        <AntDesign name="name" size={24} color="black" />
         <TextInput
           placeholder={"Name"}
           onChangeText={(input) => {
             setName(input)
           }}
-          value={password}
+          value={name}
           style={styles.input}
         />
         <View>
@@ -88,7 +183,7 @@ export default function Signup({}) {
         </View>
       </View>
       <View style={styles.groupInput}>
-        <AntDesign name="phone" size={24} color="black" />
+        <AntDesign name="password" size={24} color="black" />
         <TextInput
           placeholder={"Password"}
           onChangeText={(input) => {
@@ -103,7 +198,7 @@ export default function Signup({}) {
             size={24}
             color="black"
             onPress={() => {
-              setPhoneNumber("")
+              setPassword("")
             }}
           />
         </View>
