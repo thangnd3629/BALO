@@ -8,4 +8,5 @@ import lombok.Data;
 public class ModelSendFriendRequestResponse {
     private String message;
     private int code;
+    private Long id;
 }

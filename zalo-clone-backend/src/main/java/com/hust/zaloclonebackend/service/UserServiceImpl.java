@@ -61,15 +61,17 @@ public class UserServiceImpl implements UserService {
         log.info("exist {}", exist);
         if(Optional.ofNullable(exist).isPresent()){
             return ModelUserRegisterResponse.builder()
-                    .zaloStatus(ZaloStatus.USER_EXISTED)
+                    .code(ZaloStatus.USER_EXISTED.getCode())
+                    .message(ZaloStatus.USER_EXISTED.getMessage())
 //                    .user(null)
                     .build();
         }
 
         if(!validateModelUserRegister(modelUserRegister)){
             return ModelUserRegisterResponse.builder()
-                    .zaloStatus(ZaloStatus.PARAMETER_VALUE_IS_INVALID)
+                    .code(ZaloStatus.PARAMETER_VALUE_IS_INVALID.getCode())
 //                    .user(null)
+                    .message(ZaloStatus.PARAMETER_VALUE_IS_INVALID.getMessage())
                     .build();
         }
 
@@ -78,16 +80,11 @@ public class UserServiceImpl implements UserService {
                 .password(User.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()))
                 .name(modelUserRegister.getName())
                 .build();
-        User u;
-        try {
-            u = userRepo.save(user);
-            return ModelUserRegisterResponse.builder()
-//                    .user(user)
-                    .zaloStatus(ZaloStatus.OK)
-                    .build();
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
-        }
+        userRepo.save(user);
+        return ModelUserRegisterResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.hust.zaloclonebackend.service;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +12,6 @@ import com.hust.zaloclonebackend.model.*;
 
 import com.hust.zaloclonebackend.repo.*;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,7 +303,7 @@ public class ZaloServiceImpl implements ZaloService {
                     .message("They are friend")
                     .build();
         }
-        friendRequestRepo.save(FriendRequest.builder()
+        FriendRequest friendRequest = friendRequestRepo.save(FriendRequest.builder()
                 .fromUser(fromUser)
                 .toUser(toUser)
                 .createdDate(new Date())
@@ -313,6 +311,22 @@ public class ZaloServiceImpl implements ZaloService {
         return ModelSendFriendRequestResponse.builder()
                 .code(ZaloStatus.OK.getCode())
                 .message(ZaloStatus.OK.getMessage())
+                .id(friendRequest.getId())
+                .build();
+    }
+
+    @Override
+    public List<ModelGetFriend> getFriend(String userName) {
+        User userA = userRepo.findUserByPhoneNumber(userName);
+        List<User> users = relationShipRepo.getFriendByUser(userA);
+        users.add(userA);
+        return users.stream().map(this::convertUserToFriend).collect(Collectors.toList());
+    }
+
+    private ModelGetFriend convertUserToFriend(User user){
+        return ModelGetFriend.builder()
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
                 .build();
     }
 //
