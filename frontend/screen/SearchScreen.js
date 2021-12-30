@@ -5,11 +5,8 @@ import { TabView, SceneMap } from "react-native-tab-view"
 import UserContactCard from "../components/UserContactCard"
 import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
 import {API_URL} from "../config";
-
-
-
-
-
+import {SHOW_MODAL} from "../action/types";
+import SearchFriendCard from "../components/SearchFriendCard";
 
 
 export default function SearchScreen() {
@@ -17,6 +14,7 @@ export default function SearchScreen() {
     const dispatch = useDispatch();
 
     const [friend, setFriend] = useState([]);
+    const [searchUser, setSearchUse] = useState([]);
     const FriendRoute = () => (
 
         <View style={{ flex: 1 }}>
@@ -40,19 +38,34 @@ export default function SearchScreen() {
 
 
 
-    const MsgRoute = () => <View style={{ flex: 1, backgroundColor: "#673ab7" }} />
+    const SearchRoute = () => (
+        <View style={{ flex: 1 }}>
+
+            {
+                searchUser.map((s) => {
+                    return(
+                        <SearchFriendCard
+                            userName={s.userName}
+                            userId={s.userId}
+                        />
+                    );
+                })
+            }
+        </View>
+    );
 
     const renderScene = SceneMap({
-        first: FriendRoute,
-        second: MsgRoute,
+        first:  SearchRoute,
+        second: FriendRoute,
     })
 
     const layout = useWindowDimensions()
 
     const [index, setIndex] = React.useState(0)
     const [routes] = React.useState([
-        { key: "first", title: "Bạn bè" },
-        { key: "second", title: "Tin nhắn" },
+        { key: "first", title: "Tìm kiếm" },
+        { key: "second", title: "Bạn bè" },
+
     ])
 
     const { query } = useSelector((state) => state.globalQueryReducer)
@@ -79,9 +92,41 @@ export default function SearchScreen() {
         setFriend(response.body);
     }
 
+    const search = async () =>{
+        let myHeaders = new Headers();
+        myHeaders.append("X-Auth-Token", `${auth.token}`)
+        myHeaders.append("Content-Type", "application/json")
+        let raw = JSON.stringify({
+            keyword: query,
+        });
+        let requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+        };
+        const response = await fetchWithErrHandler(
+            `${API_URL}/search-users`,
+            requestOptions,
+            10000,
+            dispatch
+        );
+        if (response.body.code === 1000) {
+            setSearchUse(response.body.data);
+        }else{
+            dispatch({
+                type: SHOW_MODAL,
+                payload: {
+                    status: "Unknown error",
+                    content: response.body.message,
+                },
+            });
+        }
+    }
+
     useEffect(() => {
         getFriend();
-    }, [])
+        search();
+    }, [query])
 
 
     return (
