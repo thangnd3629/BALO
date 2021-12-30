@@ -5,7 +5,7 @@ import {
   TextInput,
   StyleSheet,
   Image,
-  TouchableOpacity,
+  TouchableOpacity, Button,
 } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
 import { API_URL } from "../config"
@@ -182,17 +182,23 @@ export default function Signup({}) {
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.submit} onPress={onSubmit}>
-        <View>
-          <View style={styles.circle}>
-            <AntDesign
-              style={styles.arrow}
-              name="arrowright"
-              size={24}
-              color="black"
-            />
-          </View>
-        </View>
+      {/*<TouchableOpacity style={styles.submit} onPress={onSubmit}>*/}
+      {/*  <View>*/}
+      {/*    <View style={styles.circle}>*/}
+      {/*      <AntDesign*/}
+      {/*        style={styles.arrow}*/}
+      {/*        name="arrowright"*/}
+      {/*        size={24}*/}
+      {/*        color="black"*/}
+      {/*      />*/}
+      {/*    </View>*/}
+      {/*  </View>*/}
+      {/*</TouchableOpacity>*/}
+      <TouchableOpacity style={styles.submit}>
+        <Button
+            title="Đăng ký"
+            onPress={onSubmit}
+        />
       </TouchableOpacity>
     </View>
   )
