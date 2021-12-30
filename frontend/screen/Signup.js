@@ -10,15 +10,69 @@ import {
 import { AntDesign } from "@expo/vector-icons"
 import { API_URL } from "../config"
 import { Entypo } from "@expo/vector-icons"
+import {useDispatch} from "react-redux";
+import {useNavigation} from "@react-navigation/native";
+import {SHOW_MODAL} from "../action/types";
+import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
+import * as navigation from "../RouteNavigation";
 export default function Signup({}) {
   const [selectedRegion, setRegion] = useState("VN")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
-  const onSubmit = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const onSubmit = async () => {
     var myHeaders = new Headers()
     myHeaders.append("Content-Type", "application/json")
 
+    if(phoneNumber.length > 15 || phoneNumber < 7){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "phone number length from 7 to 15",
+        },
+      });
+      return;
+    }
+
+    let a = Number(phoneNumber);
+    console.log("a", a)
+    if(isNaN(a)){
+      console.log("xxxxxxxxxx")
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "phone number require from 0 to 9",
+        },
+      });
+      return;
+    }
+
+
+    if(password.length < 6){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "password length require >= 6",
+        },
+      });
+      return;
+    }
+
+    if(name.length > 100 || name.length < 5){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "name length from 5 to 100",
+        },
+      });
+      return;
+    }
     var raw = JSON.stringify({
       phoneNumber: phoneNumber,
       password: password,
@@ -29,13 +83,33 @@ export default function Signup({}) {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow",
+      // redirect: "follow",
     }
 
-    fetch("http://34.70.67.66:8080/api/user/register", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error))
+    // fetch("http://34.70.67.66:8080/api/user/register", requestOptions)
+    //   .then((response) => response.text())
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.log("error", error))
+    try {
+      const response = await fetchWithErrHandler(
+          `${API_URL}/user/register`,
+          requestOptions,
+          10000,
+          dispatch
+      )
+      console.log("response ", response);
+      if(response.body.code === 1000){
+        // successNoti("You have registered successful", true)
+        console.log("2222222222222222222222222222222222222222222");
+        navigation.navigate("Login");
+      }else{
+        console.log("1111111111111111111111111111111111111111111");
+        // errNoti(response.body.message, true);
+      }
+
+    }catch (e) {
+      console.log(e);
+    }
   }
 
   return (
@@ -73,7 +147,7 @@ export default function Signup({}) {
           onChangeText={(input) => {
             setName(input)
           }}
-          value={password}
+          value={name}
           style={styles.input}
         />
         <View>
