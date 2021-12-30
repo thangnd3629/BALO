@@ -122,7 +122,9 @@ public class ZaloController {
 
     @GetMapping("/friend-request-list")
     public ResponseEntity<?> getFriendRequestList(Pageable pageable, Principal principal){
+        log.info("/friend-request-list");
         ModelGetListFriendRequest modelGetListFriendRequest = zaloService.getListFriendRequest(principal.getName(), pageable);
+        log.info("modelGetListFriendRequest {}", modelGetListFriendRequest);
         return ResponseEntity.status(200).body(modelGetListFriendRequest);
     }
 

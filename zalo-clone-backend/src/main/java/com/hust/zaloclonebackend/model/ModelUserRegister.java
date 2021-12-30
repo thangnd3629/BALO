@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Setter
 public class ModelUserRegister {
     @NotBlank(message = "Được yêu cầu")
-    @Size(max = 12, min = 9, message = "Độ dài từ 9 đến 12")
+    @Size(max = 15, min = 7, message = "Độ dài từ 7 đến 15")
     String phoneNumber;
 
     @NotBlank(message = "Được yêu cầu")
@@ -18,7 +18,7 @@ public class ModelUserRegister {
     String password;
 
     @NotBlank(message = "Được yêu cầu")
-    @Size(min = 10, max = 100, message = "Độ dài từ 10 đến 100")
+    @Size(min = 5, max = 100, message = "Độ dài từ 10 đến 100")
 
     String name;
 }

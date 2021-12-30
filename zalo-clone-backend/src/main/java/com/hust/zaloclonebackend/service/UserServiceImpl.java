@@ -80,17 +80,11 @@ public class UserServiceImpl implements UserService {
                 .password(User.PASSWORD_ENCODER.encode(modelUserRegister.getPassword()))
                 .name(modelUserRegister.getName())
                 .build();
-        User u;
-        try {
-            u = userRepo.save(user);
-            return ModelUserRegisterResponse.builder()
-//                    .user(user)
-                    .code(ZaloStatus.OK.getCode())
-                    .message(ZaloStatus.OK.getMessage())
-                    .build();
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
-        }
+        userRepo.save(user);
+        return ModelUserRegisterResponse.builder()
+                .code(ZaloStatus.OK.getCode())
+                .message(ZaloStatus.OK.getMessage())
+                .build();
     }
 
     @Override

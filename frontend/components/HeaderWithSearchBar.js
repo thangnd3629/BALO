@@ -37,6 +37,10 @@ export default function HeaderWithSearchBar() {
     if (!isQuerying) navigation.navigate("Search")
   }
 
+  const search = () => {
+    console.log("11111111");
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchIcon}>
@@ -59,6 +63,9 @@ export default function HeaderWithSearchBar() {
       <View style={styles.qrIcon}>
         <AntDesign name="qrcode" size={24} color="black" />
       </View>
+      <TouchableOpacity onPress={search}>
+        <AntDesign name="arrowright" size={24} color="black" />
+      </TouchableOpacity>
     </SafeAreaView>
   )
 }

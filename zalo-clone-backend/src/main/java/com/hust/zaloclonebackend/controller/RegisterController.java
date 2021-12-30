@@ -27,6 +27,7 @@ public class RegisterController {
     public ResponseEntity<?> register(@RequestBody @Valid ModelUserRegister modelUserRegister) throws Exception {
         log.info("modelUserRegister {}", modelUserRegister);
         ModelUserRegisterResponse modelUserRegisterResponse = userService.register(modelUserRegister);
+        log.info("modelUserRegisterResponse {}", modelUserRegisterResponse);
         return ResponseEntity.status(HttpStatus.OK).body(modelUserRegisterResponse);
     }
 }
