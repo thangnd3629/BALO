@@ -16,6 +16,8 @@ import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
 import {useDispatch} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
+import {SHOW_MODAL} from "../action/types";
+import apiError from "../util/errorConstant";
 
 
 
@@ -43,15 +45,65 @@ export default function Signup({}) {
   });
 
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     var myHeaders = new Headers()
     myHeaders.append("Content-Type", "application/json")
+
+    if(phoneNumber.length > 12 || phoneNumber < 9){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "phone number length from 9 to 12",
+        },
+      });
+      return;
+    }
+
+    let a = Number(phoneNumber);
+    console.log("a", a)
+    if(isNaN(a)){
+      console.log("xxxxxxxxxx")
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "phone number require from 0 to 9",
+        },
+      });
+      return;
+    }
+
+
+    if(password.length < 6){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "password length require >= 6",
+        },
+      });
+      return;
+    }
+
+    if(name.length > 100 || name.length < 20){
+      dispatch({
+        type: SHOW_MODAL,
+        payload: {
+          status: "Unknown error",
+          content: "name length from 20 to 100",
+        },
+      });
+      return;
+    }
 
     var raw = JSON.stringify({
       phoneNumber: phoneNumber,
       password: password,
       name: name,
     })
+
+
 
     var requestOptions = {
       method: "POST",
@@ -60,7 +112,7 @@ export default function Signup({}) {
       redirect: "follow",
     }
     try {
-      const response = await fetchWithErrHandler(
+      const response = fetchWithErrHandler(
           `${API_URL}/user/register`,
           requestOptions,
           3000,
@@ -90,77 +142,28 @@ export default function Signup({}) {
         source={require("../assets/background-blue-pattern-geometric-style-blue-geometric-pattern-135451784.jpg")}
       ></Image>
 
-      <Controller
-          render={({
-                     field: { onChange, onBlur, value, name, ref },
-                     fieldState: { invalid, isTouched, isDirty, error },
-                   }) => (
-              <View style={styles.groupInput}>
-                <AntDesign name="phone" size={24} color="black" />
 
-                <TextInput
-                    placeholder={"Phone number"}
-                    onChangeText={(input) => {
-                      setPhoneNumber(input)
-                    }}
-                    value={phoneNumber}
-                    style={styles.input}
-                />
-
-                <View>
-                  <Entypo
-                      name="cross"
-                      size={24}
-                      color="black"
-                      onPress={() => {
-                        setPhoneNumber("")
-                      }}
-                  />
-                </View>
-              </View>
-
-          )}
-          name="TextField"
-          control={control}
-          rules={{
-            required: "Trường này được yêu cầu",
-            maxLength: {
-              value: 12,
-              message:
-                  "Vui lòng chọn số điệm thoại không vượt quá 12 kí tự",
-            },
-            minLength:{
-              value: 9,
-              message:
-                  "Vui lòng chọn tên đăng nhập không dưới 9 kí tự",
-            }
+      <View style={styles.groupInput}>
+        <AntDesign name="phone" size={24} color="black" />
+        <TextInput
+          placeholder={"Phone number"}
+          onChangeText={(input) => {
+            setPhoneNumber(input)
           }}
-      />
-
-      {/*<View style={styles.groupInput}>*/}
-
-
-
-      {/*  <AntDesign name="phone" size={24} color="black" />*/}
-      {/*  <TextInput*/}
-      {/*    placeholder={"Phone number"}*/}
-      {/*    onChangeText={(input) => {*/}
-      {/*      setPhoneNumber(input)*/}
-      {/*    }}*/}
-      {/*    value={phoneNumber}*/}
-      {/*    style={styles.input}*/}
-      {/*  />*/}
-      {/*  <View>*/}
-      {/*    <Entypo*/}
-      {/*      name="cross"*/}
-      {/*      size={24}*/}
-      {/*      color="black"*/}
-      {/*      onPress={() => {*/}
-      {/*        setPhoneNumber("")*/}
-      {/*      }}*/}
-      {/*    />*/}
-      {/*  </View>*/}
-      {/*</View>*/}
+          value={phoneNumber}
+          style={styles.input}
+        />
+        <View>
+          <Entypo
+            name="cross"
+            size={24}
+            color="black"
+            onPress={() => {
+              setPhoneNumber("")
+            }}
+          />
+        </View>
+      </View>
       <View style={styles.groupInput}>
         <AntDesign name="name" size={24} color="black" />
         <TextInput
