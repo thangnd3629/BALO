@@ -1,6 +1,7 @@
 package com.hust.zaloclonebackend.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import com.hust.zaloclonebackend.entity.User;
 import com.hust.zaloclonebackend.exception.ZaloStatus;
@@ -126,6 +127,14 @@ public class ZaloController {
         ModelGetListFriendRequest modelGetListFriendRequest = zaloService.getListFriendRequest(principal.getName(), pageable);
         log.info("modelGetListFriendRequest {}", modelGetListFriendRequest);
         return ResponseEntity.status(200).body(modelGetListFriendRequest);
+    }
+
+    @GetMapping("/get-friend")
+    public ResponseEntity<?> getFriend(Pageable pageable, Principal principal){
+        log.info("phone {}", principal.getName());
+        List<ModelGetFriend> list = zaloService.getFriend(principal.getName());
+        log.info("list {}", list);
+        return ResponseEntity.status(200).body(list);
     }
 
     @PostMapping("/handle-friend-request")
