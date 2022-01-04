@@ -30,53 +30,55 @@ export default function Messages({ navigation }) {
   const inboxFetchSize = 5
   const [page, setPage] = useState(0)
   const [inbox, setInbox] = useState([])
+  const [newestMessage, setNewestMessage] = useState(null)
   const [connection, setConnection] = useState(null)
 
-  var temp = null
   var stompClient = null
 
   useEffect(() => {
     dispatch({ type: EXIT_CHAT })
-    temp = "OKLA"
   }, [])
 
-  //connect to socket
-  const onMessageReceived = useCallback(
-    (msg) => {
-      console.log("RECEIVE MÉG+++++++++++++++++++++++++++++++++++++")
-      const notification = JSON.parse(msg.body)
+  useEffect(() => {
+    if (newestMessage === null) return
 
-      const conversationId = notification.conversationId
-      console.log("TAG in container", conversationId)
-      const newMessages = convertMsgToGiftedChatFormat([notification])
-      console.log("TAG in container", currentConversation)
-      //update inner chat , if active
-      if (conversationId === currentConversation.conversationId) {
-        dispatch({
-          type: ADD_MESSAGE,
-          payload: {
-            messages: newMessages,
-          },
-        })
-      }
-      //update lastest messages
-      const updatedInbox = [...inbox]
+    const notification = JSON.parse(newestMessage.body)
 
-      inbox.forEach((ib, index) => {
-        if (ib.id === conversationId) {
-          updatedInbox[index].lastMessage = {
-            message: notification.message,
-            created: notification.created,
-            unread: 1,
-          }
-          return
-        }
+    const conversationId = notification.conversationId
+    console.log("TAG in container", conversationId)
+    const newMessages = convertMsgToGiftedChatFormat([notification])
+    console.log("TAG in container", currentConversation)
+    //update inner chat , if active
+    if (conversationId === currentConversation.conversationId) {
+      dispatch({
+        type: ADD_MESSAGE,
+        payload: {
+          messages: newMessages,
+        },
       })
+    }
+    //update lastest messages
+    const updatedInbox = [...inbox]
 
-      setInbox(updatedInbox)
-    },
-    [inbox, currentConversation.id]
-  )
+    inbox.forEach((ib, index) => {
+      if (ib.id === conversationId) {
+        updatedInbox[index].lastMessage = {
+          message: notification.message,
+          created: notification.created,
+          unread: 1,
+        }
+        return
+      }
+    })
+
+    setInbox(updatedInbox)
+  }, [newestMessage])
+
+  //connect to socket
+  const onMessageReceived = (msg) => {
+    setNewestMessage(msg)
+  }
+
   const onConnected = () => {
     stompClient.subscribe(`/topic/user/${userId}`, onMessageReceived)
   }
@@ -86,7 +88,7 @@ export default function Messages({ navigation }) {
   }
 
   const connect = () => {
-    sockJS = new SockJS(`${API_URL}/messenger`)
+    let sockJS = new SockJS(`${API_URL}/messenger`)
     stompClient = Stomp.over(sockJS)
     stompClient.connect(
       { "X-Auth-Token": `${authToken}` },
@@ -102,7 +104,7 @@ export default function Messages({ navigation }) {
       // useEffect scoped this stompClient var
       stompClient.disconnect()
     }
-  }, [onMessageReceived])
+  }, [])
   //socket connected
 
   //fetch  inboxes
@@ -165,9 +167,6 @@ export default function Messages({ navigation }) {
       partnerId: partnerId,
     })
   }
-  const testHandler = () => {
-    console.log("IN test handler=====================", temp)
-  }
 
   const friends = [
     {
@@ -213,7 +212,6 @@ export default function Messages({ navigation }) {
     <View style={styles.container}>
       <CustomHeader label={"Messages"} navigation={navigation} />
       <View style={styles.friendListContainer}>
-        <Button onPress={testHandler} title="TEST" />
         <FlatList /* horizontal flat list showing friend list*/
           data={friends}
           style={styles.scrollContent}

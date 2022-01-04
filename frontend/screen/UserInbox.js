@@ -31,8 +31,6 @@ const UserInbox = (props) => {
 
   const send = useFetch()
 
-  const [test, settest] = useState(0)
-
   const initConversation = async () => {
     const lastestMessages = await fetchMessages()
 
