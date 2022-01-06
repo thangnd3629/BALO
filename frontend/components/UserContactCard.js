@@ -2,14 +2,15 @@ import React from "react"
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Avatar from "./Avatar"
-export default function UserContactCard() {
+export default function UserContactCard(props) {
+  const userName = props.userName;
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.avatar}>
         <Avatar source={require("../assets/user1.jpg")} />
       </View>
       <View style={styles.contact}>
-        <Text style={styles.name}>Thang pro</Text>
+        <Text style={styles.name}> {userName} </Text>
         <View style={styles.moreTools}>
           <Feather
             style={{ marginRight: 20 }}

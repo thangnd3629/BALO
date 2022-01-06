@@ -46,6 +46,7 @@ public interface ZaloService {
 
     ModelSendFriendRequestResponse sendFriendRequest(String phoneNumber, String userId);
 
+    List<ModelGetFriend> getFriend(String userName);
 
 
 

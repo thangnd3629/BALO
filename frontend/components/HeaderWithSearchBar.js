@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { CANCEL_GLOBAL_QUERY, PERFORM_GLOBAL_QUERY } from "../action/types"
 
 import { useNavigation } from "@react-navigation/native"
+import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
+import {API_URL} from "../config";
 
 export default function HeaderWithSearchBar() {
   const navigation = useNavigation()
@@ -26,15 +28,42 @@ export default function HeaderWithSearchBar() {
   const { query, isQuerying } = useSelector((state) => {
     return state.globalQueryReducer
   })
+  const auth = useSelector((state) => state.authReducer)
+  // const getFriend = async () => {
+  //   console.log("get friend");
+  //   let myHeaders = new Headers();
+  //   myHeaders.append("X-Auth-Token", `${auth.token}`);
+  //   myHeaders.append("Content-Type", "application/json");
+  //   let requestOptions = {
+  //     method: "GET",
+  //     headers: myHeaders,
+  //
+  //     // redirect: "follow",
+  //   }
+  //   const response = await fetchWithErrHandler(
+  //       `${API_URL}/get-friend`,
+  //       requestOptions,
+  //       10000,
+  //       dispatch
+  //   );
+  //   console.log("response {}", response.body);
+  // }
+
   const onChangeText = (text) => {
     dispatch({
+
       type: PERFORM_GLOBAL_QUERY,
       payload: text,
     })
+    // getFriend();
   }
   const onPressSearchBar = () => {
     console.log("object")
     if (!isQuerying) navigation.navigate("Search")
+  }
+
+  const search = () => {
+    console.log("11111111");
   }
 
   return (
@@ -59,6 +88,9 @@ export default function HeaderWithSearchBar() {
       <View style={styles.qrIcon}>
         <AntDesign name="qrcode" size={24} color="black" />
       </View>
+      <TouchableOpacity onPress={search}>
+        <AntDesign name="arrowright" size={24} color="black" />
+      </TouchableOpacity>
     </SafeAreaView>
   )
 }

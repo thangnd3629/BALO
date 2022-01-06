@@ -1,45 +1,142 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
-import { useSelector } from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import { TabView, SceneMap } from "react-native-tab-view"
 import UserContactCard from "../components/UserContactCard"
+import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
+import {API_URL} from "../config";
+import {SHOW_MODAL} from "../action/types";
+import SearchFriendCard from "../components/SearchFriendCard";
 
-const FriendRoute = () => (
-  <View style={{ flex: 1 }}>
-    <UserContactCard />
-    <UserContactCard />
-    <UserContactCard />
-    <UserContactCard />
-    <UserContactCard />
-    <UserContactCard />
-  </View>
-)
 
-const MsgRoute = () => <View style={{ flex: 1, backgroundColor: "#673ab7" }} />
-
-const renderScene = SceneMap({
-  first: FriendRoute,
-  second: MsgRoute,
-})
 export default function SearchScreen() {
-  const layout = useWindowDimensions()
 
-  const [index, setIndex] = React.useState(0)
-  const [routes] = React.useState([
-    { key: "first", title: "Bạn bè" },
-    { key: "second", title: "Tin nhắn" },
-  ])
+    const dispatch = useDispatch();
 
-  const { query } = useSelector((state) => state.globalQueryReducer)
+    const [friend, setFriend] = useState([]);
+    const [searchUser, setSearchUse] = useState([]);
+    const FriendRoute = () => (
 
-  return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-    />
-  )
+        <View style={{ flex: 1 }}>
+            {/*<UserContactCard />*/}
+            {/*<UserContactCard />*/}
+            {/*<UserContactCard />*/}
+            {/*<UserContactCard />*/}
+            {/*<UserContactCard />*/}
+            {/*<UserContactCard />*/}
+            {
+                friend.map(f => {
+                    return(
+                        <UserContactCard
+                            userName={f.name}
+                        />
+                    );
+                })
+            }
+        </View>
+    ) ;
+
+
+
+    const SearchRoute = () => (
+        <View style={{ flex: 1 }}>
+
+            {
+                searchUser.map((s) => {
+                    return(
+                        <SearchFriendCard
+                            userName={s.userName}
+                            userId={s.userId}
+                        />
+                    );
+                })
+            }
+        </View>
+    );
+
+    const renderScene = SceneMap({
+        first:  SearchRoute,
+        second: FriendRoute,
+    })
+
+    const layout = useWindowDimensions()
+
+    const [index, setIndex] = React.useState(0)
+    const [routes] = React.useState([
+        { key: "first", title: "Tìm kiếm" },
+        { key: "second", title: "Bạn bè" },
+
+    ])
+
+    const { query } = useSelector((state) => state.globalQueryReducer)
+    const auth = useSelector((state) => state.authReducer)
+
+
+    const getFriend = async () => {
+        console.log("get friend");
+        let myHeaders = new Headers();
+        myHeaders.append("X-Auth-Token", `${auth.token}`)
+        myHeaders.append("Content-Type", "application/json")
+        let requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            // redirect: "follow",
+        }
+        const response = await fetchWithErrHandler(
+            `${API_URL}/get-friend`,
+            requestOptions,
+            10000,
+            dispatch
+        );
+        console.log("response {}", response.body);
+        setFriend(response.body);
+    }
+
+    const search = async () =>{
+        let myHeaders = new Headers();
+        myHeaders.append("X-Auth-Token", `${auth.token}`)
+        myHeaders.append("Content-Type", "application/json")
+        let raw = JSON.stringify({
+            keyword: query,
+        });
+        let requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+        };
+        const response = await fetchWithErrHandler(
+            `${API_URL}/search-users`,
+            requestOptions,
+            10000,
+            dispatch
+        );
+        if (response.body.code === 1000) {
+            setSearchUse(response.body.data);
+        }else{
+            dispatch({
+                type: SHOW_MODAL,
+                payload: {
+                    status: "Unknown error",
+                    content: response.body.message,
+                },
+            });
+        }
+    }
+
+    useEffect(() => {
+        getFriend();
+        search();
+    }, [query])
+
+
+    return (
+        <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={{ width: layout.width }}
+        />
+    )
 }
 
 const styles = StyleSheet.create({})
