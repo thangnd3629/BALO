@@ -28,6 +28,7 @@ const UserInbox = (props) => {
   const { conversationId, messages, page, partner } = useSelector((state) => {
     return state.messageReducer
   })
+  console.log("TAGGG", conversationId)
 
   const send = useFetch()
 
@@ -154,9 +155,12 @@ const UserInbox = (props) => {
     )
   }
 
-  const onSend = useCallback((messages = []) => {
-    onSendMessage(messages, partnerId)
-  }, [])
+  const onSend = useCallback(
+    (messages = []) => {
+      onSendMessage(messages, partnerId, conversationId)
+    },
+    [conversationId]
+  )
 
   const onPressOption = () => {
     navigate("InboxOption", {

@@ -42,12 +42,10 @@ export default function Messages({ navigation }) {
   useEffect(() => {
     if (newestMessage === null) return
 
-    const notification = JSON.parse(newestMessage.body)
+    const conversationId = newestMessage.conversationId
 
-    const conversationId = notification.conversationId
-    console.log("TAG in container", conversationId)
-    const newMessages = convertMsgToGiftedChatFormat([notification])
-    console.log("TAG in container", currentConversation)
+    const newMessages = convertMsgToGiftedChatFormat([newestMessage])
+
     //update inner chat , if active
     if (conversationId === currentConversation.conversationId) {
       dispatch({
@@ -63,8 +61,8 @@ export default function Messages({ navigation }) {
     inbox.forEach((ib, index) => {
       if (ib.id === conversationId) {
         updatedInbox[index].lastMessage = {
-          message: notification.message,
-          created: notification.created,
+          message: newestMessage.message,
+          created: newestMessage.created,
           unread: 1,
         }
         return
@@ -76,7 +74,7 @@ export default function Messages({ navigation }) {
 
   //connect to socket
   const onMessageReceived = (msg) => {
-    setNewestMessage(msg)
+    setNewestMessage(JSON.parse(msg.body))
   }
 
   const onConnected = () => {
@@ -143,18 +141,25 @@ export default function Messages({ navigation }) {
   }
 
   //send socket messages
-  const onSendMessage = (messages, partnerId) => {
+  const onSendMessage = (messages, partnerId, cid) => {
     const raw = JSON.stringify({
       toUser: partnerId,
       fromUser: userId,
       content: messages[0].text,
     })
     connection.send("/app/message", {}, raw)
-    dispatch({
-      type: ADD_MESSAGE,
-      payload: {
-        messages: messages,
+
+    setNewestMessage({
+      conversationId: cid,
+      created: Date.now(),
+      message: messages[0].text,
+      message_id: "",
+      sender: {
+        avartar: null,
+        id: userId,
+        name: "",
       },
+      unread: 1,
     })
   }
 
