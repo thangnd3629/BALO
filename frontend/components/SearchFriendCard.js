@@ -1,11 +1,12 @@
-import React, {useState} from "react"
-import {StyleSheet, Text, View, TouchableOpacity, Button} from "react-native"
+import React, { useState } from "react"
+import { StyleSheet, Text, View, TouchableOpacity, Button } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Avatar from "./Avatar"
-import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
-import {API_URL} from "../config";
-import {useDispatch, useSelector} from "react-redux";
-import {SHOW_MODAL} from "../action/types";
+import { fetchWithErrHandler } from "../util/fetchWithErrNotification";
+import { API_URL } from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import { SHOW_MODAL } from "../action/types";
+import { LinearGradient } from "expo-linear-gradient";
 export default function SearchFriendCard(props) {
     const userName = props.userName;
     const userId = props.userId;
@@ -13,7 +14,7 @@ export default function SearchFriendCard(props) {
     const auth = useSelector((state) => state.authReducer);
     const dispatch = useDispatch();
     const [friendRequestId, setFriendRequestId] = useState();
-    const onSubmit = async () =>{
+    const onSubmit = async () => {
         let myHeaders = new Headers()
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("X-Auth-Token", `${auth.token}`);
@@ -24,16 +25,16 @@ export default function SearchFriendCard(props) {
             // redirect: "follow",
         }
         const response = await fetchWithErrHandler(
-            `${API_URL}/send-friend-request/`+userId,
+            `${API_URL}/send-friend-request/` + userId,
             requestOptions,
             10000,
             dispatch
         );
         console.log("send friend request response ", response)
-        if(response.body.code === 1000){
+        if (response.body.code === 1000) {
             setIsSend(true);
             setFriendRequestId(response.body.id);
-        }else{
+        } else {
             dispatch({
                 type: SHOW_MODAL,
                 payload: {
@@ -45,7 +46,7 @@ export default function SearchFriendCard(props) {
     }
 
     const onCancel = () => {
-      console.log("cancel");
+        console.log("cancel");
     }
     return (
         <TouchableOpacity style={styles.container}>
@@ -56,18 +57,34 @@ export default function SearchFriendCard(props) {
                 <Text style={styles.name}> {userName} </Text>
                 <View style={styles.moreTools}>
                     {!isSend ?
-                        <TouchableOpacity >
-                            <Button
+                        <TouchableOpacity onPress={onSubmit}>
+                            <LinearGradient
+                                colors={["#2980b9", "#6dd5fa"]}
+                                start={{ x: 1.0, y: 0.0 }}
+                                end={{ x: 0.0, y: 0.0 }}
+                                style={styles.buttonStyle}
+                            >
+                                <Text style={styles.buttonTextStyle}>Kết Bạn</Text>
+                            </LinearGradient>
+                            {/* <Button
                                 title="Kết Bạn"
                                 onPress={onSubmit}
-                            />
+                            /> */}
                         </TouchableOpacity>
-                    :
-                        <TouchableOpacity >
-                            <Button
-                                title="Hủy"
-                                onPress={onCancel}
-                            />
+                        :
+                        <TouchableOpacity onPress={onCancel }>
+                            <LinearGradient
+                                colors={["#2980b9", "#6dd5fa"]}
+                                start={{ x: 1.0, y: 0.0 }}
+                                end={{ x: 0.0, y: 0.0 }}
+                                style={styles.buttonStyle}
+                            >
+                                <Text style={styles.buttonTextStyle}>Hủy</Text>
+                            </LinearGradient>
+                            {/* <Button
+                                title="Kết Bạn"
+                                onPress={onSubmit}
+                            /> */}
                         </TouchableOpacity>
                     }
                 </View>
@@ -81,6 +98,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         padding: 10,
+        backgroundColor: "white",
+        marginTop: 5
     },
     avatar: {
         height: 40,
@@ -105,4 +124,18 @@ const styles = StyleSheet.create({
         bottom: 50,
         right: 50,
     },
+    buttonStyle: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 14,
+        height: 28,
+        width: 80,
+        padding: 5,
+        marginLeft: 80
+      },
+      buttonTextStyle: {
+        color: "white",
+        textAlign: "center"
+      }
 })

@@ -10,11 +10,13 @@ import Avatar from "./Avatar"
 
 const Container = styled.View``
 const Header = styled.View`
+  background:white
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   margin-top: 6px;
   padding: 0 11px;
+  marginBottom:0.8px;
 `
 const Row = styled.View`
   align-items: center;
@@ -30,6 +32,7 @@ const Time = styled.Text`
   color: #747476;
 `
 const Post = styled.Text`
+  background:white
   font-size: 12px;
   color: #222121;
   line-height: 16px;
@@ -41,6 +44,7 @@ const Photo = styled.View`
   height: 200px;
 `
 const Footer = styled.View`
+  background:white
   padding: 0 11px;
 `
 const FooterCount = styled.View`

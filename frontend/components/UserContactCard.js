@@ -35,6 +35,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     padding: 10,
+    backgroundColor:"white",
+    marginTop:5
   },
   avatar: {
     height: 40,

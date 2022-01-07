@@ -13,6 +13,7 @@ import SockJS from "sockjs-client" // Note this line
 import Stomp from "stompjs"
 import useFetch from "../hook/useFetch"
 import { ADD_MESSAGE, EXIT_CHAT } from "../action/types"
+
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ])
@@ -24,6 +25,7 @@ const getOffsetTime = (date) => {
 export default function Messages({ navigation }) {
   const authToken = useSelector((state) => state.authReducer.token)
   const userId = useSelector((state) => state.authReducer.user.id)
+  
   const currentConversation = useSelector((state) => state.messageReducer)
   const send = useFetch()
   const dispatch = useDispatch()
@@ -114,6 +116,7 @@ export default function Messages({ navigation }) {
         10000,
         true
       )
+      console.log(response.body.data)
       setInbox((prev) => {
         return [...prev, ...response.body.data]
       })

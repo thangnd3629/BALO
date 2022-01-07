@@ -11,14 +11,6 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Button
-          title="Logout"
-          onPress={() => {
-            dispatch({
-              type: AUTH_LOGOUT,
-            })
-          }}
-        />
         <UserFeed />
       </ScrollView>
     </View>
