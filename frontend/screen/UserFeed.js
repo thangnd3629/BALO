@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux"
 import useFetch from "../hook/useFetch"
 import { API_URL } from "../config"
 import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
-export default function UserFeed() {
+export default function UserFeed(props) {
   const fetchSize = 2
   const [refreshing, setRefreshing] = useState(false)
   const [page, setPage] = useState(0)
@@ -35,7 +35,7 @@ export default function UserFeed() {
   // ! still need to call api from sv to get user
   const user = {
     id: "id",
-    name: "This is name section",
+    name: props.name,
     bio: "This is bio section",
     avatar: require("../assets/user2.jpg"),
     background: require("../assets/story2.jpg"),

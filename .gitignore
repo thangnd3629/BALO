@@ -11,3 +11,6 @@ frontend/web-build/
 
 # macOS
 frontend/*.DS_Store
+
+#linux
+zalo-clone-backend/src/main/java/com/hust/zaloclonebackend/run.sh

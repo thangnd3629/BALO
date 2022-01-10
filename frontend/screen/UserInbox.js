@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   composer: {
     borderRadius: 25,
     borderWidth: 0.5,
-    borderColor: "#ddddd1",
+    borderColor: "#dddddd",
     marginTop: 10,
     marginBottom: 10,
     paddingLeft: 10,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     paddingRight: 10,
     fontSize: 16,
-    backgroundColor: "#ddddd1",
+    backgroundColor: "#dddddd",
   },
   phone: {},
 })

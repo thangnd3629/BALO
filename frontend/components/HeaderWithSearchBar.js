@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native"
 import {fetchWithErrHandler} from "../util/fetchWithErrNotification";
 import {API_URL} from "../config";
 
-export default function HeaderWithSearchBar() {
+export default function HeaderWithSearchBar({props}) {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const cancelQuery = () => {
@@ -59,7 +59,7 @@ export default function HeaderWithSearchBar() {
   }
   const onPressSearchBar = () => {
     console.log("object")
-    if (!isQuerying) navigation.navigate("Search")
+    if (!isQuerying) navigation.navigate("DirectoryStack",{screen:"SearchNested"})
   }
 
   const search = () => {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingTop: 10,
+    paddingTop: 10
   },
 
   searchIcon: {

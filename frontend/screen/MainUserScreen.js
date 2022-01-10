@@ -1,19 +1,43 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import Avatar2 from '../components/Avatar2'
 import { StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { AUTH_LOGOUT } from "../action/types"
+import { API_URL } from '../constants/ApiConstant'
+import axios from 'axios'
 
-const MainUserScreen = ({navigation}) => {
-    const user = useSelector((state) => state.authReducer.user)
+const MainUserScreen = ({navigation}) => {  
+    const auth = useSelector((state) => state.authReducer)
+    const user  = auth.user
     const dispatch = useDispatch()
+    const [name, setName] = useState()
+    
+    const getUser = () =>{
+        axios.post(API_URL + '/search-users', { keyword: user["phoneNumber"] }, {
+            headers: {
+              "X-Auth-Token": `${auth.token}`
+            }})
+            .then(res=>{
+                setName(res.data["data"][0]["userName"])
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    }
+
+    useEffect(() => {
+        getUser()
+    }, [])
 
     return (
         <View>
-            <TouchableOpacity
+            {name && <TouchableOpacity
             onPress={() => {
-                navigation.navigate("Profile")
+                navigation.navigate("Profile",{
+                    "name":name
+                })
             }}>
                 <View style={styles.mainBar}>
                     <Avatar2 source={user.avatar ? user.avatar : require("../assets/user2.jpg")} size={70} />
@@ -22,7 +46,7 @@ const MainUserScreen = ({navigation}) => {
                             fontWeight: "bold",
                             fontSize: 17
                         }}>
-                            {user.userName}
+                            {name}
                         </Text>
                         <Text style={{
                             fontSize: 15,
@@ -32,7 +56,7 @@ const MainUserScreen = ({navigation}) => {
                         </Text>
                     </View>
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity>}
             <TouchableOpacity
                 onPress={() => {
                     dispatch({

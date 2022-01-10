@@ -6,9 +6,10 @@ import MessageStack from "./MessageStack"
 import DirStack from "./DirectoryStack"
 import ProfileStack from "./ProfileStack"
 import { AntDesign } from '@expo/vector-icons'
-
+import { useNavigation } from "@react-navigation/native"
 const Tab = createBottomTabNavigator()
 export default function MainTabs() {
+  const navigation = useNavigation()
   return (
     <Tab.Navigator>
       <Tab.Screen name="HomeStack" component={HomeStack}
@@ -28,12 +29,25 @@ export default function MainTabs() {
         options={{
           headerShown: false,
           tabBarIcon: () => (<AntDesign name="appstore-o" size={20}/>)
+        }}
+        listeners={{
+          tabPress:(e) => {
+            navigation.navigate("DirectoryStack",{screen:"Directory"})
+            e.preventDefault()
+          }
         }} />
       <Tab.Screen name="ProfileStack" component={ProfileStack}
         options={{
           headerShown: false,
           tabBarIcon: () => (<AntDesign name="user" size={20} />)
-        }} />
+        }}
+        listeners={{
+          tabPress:(e) => {
+            navigation.navigate("ProfileStack",{screen:"MainUser"})
+            e.preventDefault()
+          }
+        }} 
+        />
     </Tab.Navigator>
   )
 }

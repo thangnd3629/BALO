@@ -65,10 +65,11 @@ public class ZaloController {
         return ResponseEntity.status(200).body(modelGetListPostResponse);
     }
 
-
-
-
-
+    @GetMapping("/post/get-user-list-post-by-phone-num/{phoneNumber}")
+    public ResponseEntity<?> getUserPostsByPhoneNum(Principal principal,@PathVariable("phoneNumber") String phoneNumber, Pageable pageable){
+        ModelGetListPostResponse modelGetListPostResponse = zaloService.getUserListPosts(pageable, phoneNumber);
+        return ResponseEntity.status(200).body(modelGetListPostResponse);
+    }
 
 //
     @PostMapping("/post/edit")

@@ -9,14 +9,15 @@ import {SHOW_MODAL} from "../action/types";
 import SearchFriendCard from "../components/SearchFriendCard";
 
 
-export default function SearchScreen() {
+export default function SearchScreen({navigation}) {
 
     const dispatch = useDispatch();
 
     const [friend, setFriend] = useState([]);
     const [searchUser, setSearchUse] = useState([]);
     const FriendRoute = () => (
-
+        
+        
         <View style={{ flex: 1 }}>
             {/*<UserContactCard />*/}
             {/*<UserContactCard />*/}
@@ -24,11 +25,14 @@ export default function SearchScreen() {
             {/*<UserContactCard />*/}
             {/*<UserContactCard />*/}
             {/*<UserContactCard />*/}
+            {console.log(friend)}
             {
                 friend.map(f => {
                     return(
                         <UserContactCard
+                            navigation = {navigation}
                             userName={f.name}
+                            phoneNumber = {f.phoneNumber}
                         />
                     );
                 })
@@ -111,6 +115,7 @@ export default function SearchScreen() {
             dispatch
         );
         if (response.body.code === 1000) {
+            
             setSearchUse(response.body.data);
         }else{
             dispatch({

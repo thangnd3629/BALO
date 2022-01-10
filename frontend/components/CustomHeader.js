@@ -2,8 +2,10 @@ import React from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { AntDesign } from "@expo/vector-icons"
+import { useNavigation } from "@react-navigation/native"
 
-const CustomHeader = (props) => {
+const CustomHeader =props => {
+  const navigation = useNavigation()
   return (
     <LinearGradient
       colors={["#00B4DB", "#0083B0"]}
@@ -11,7 +13,7 @@ const CustomHeader = (props) => {
       start={{ x: 1.0, y: 0.0 }}
       end={{ x: 0.0, y: 0.0 }}
     >
-      <TouchableOpacity onPress={() => props.navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
         <View>
           <AntDesign
             style={{ alignSelf: "center" }}

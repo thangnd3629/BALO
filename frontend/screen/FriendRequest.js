@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
 import { API_URL } from "../config"
 import { FlatList } from "react-native-gesture-handler"
 import FriendRequestCard from "../components/FriendRequestCard"
+import AltDiscoverFriendView from "../components/AltDiscoverFriendView"
+
 export default function FriendRequest() {
   const [requests, setRequest] = useState([])
   const dispatch = useDispatch()
+
   const auth = useSelector((state) => state.authReducer)
   const fetchFriendRequests = async () => {
     var myHeaders = new Headers()
@@ -25,7 +28,7 @@ export default function FriendRequest() {
         dispatch
       )
       setRequest(response.body.data)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const onFriendRequestAction = async (isAccept, id, index) => {
@@ -65,18 +68,21 @@ export default function FriendRequest() {
   return (
     <View style={styles.container}>
       {requests && (
-        <FlatList
-          data={requests}
-          renderItem={({ item, index }) => (
-            <FriendRequestCard
-              avatar={item.avatar}
-              id={item.id}
-              username={item.userName}
-              onAccept={(id) => onFriendRequestAction(1, id, index)}
-              onDecline={(id) => onFriendRequestAction(0, id, index)}
-            />
-          )}
-        />
+        requests.length !== 0 ?
+          (<FlatList
+            data={requests}
+            renderItem={({ item, index }) => (
+              <FriendRequestCard
+                avatar={item.avatar}
+                id={item.id}
+                username={item.userName}
+                onAccept={(id) => onFriendRequestAction(1, id, index)}
+                onDecline={(id) => onFriendRequestAction(0, id, index)}
+              />
+            )}
+          />)
+          :
+          <AltDiscoverFriendView/>
       )}
     </View>
   )
@@ -87,4 +93,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
+  buttonStyle: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    height: 30,
+    width: 80,
+    padding: 5,
+    marginTop: 20
+  }
 })

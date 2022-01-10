@@ -5,6 +5,7 @@ import SearchScreen from "../screen/SearchScreen"
 import AuthStack from "./AuthStack"
 import HeaderWithSearchBar from "../components/HeaderWithSearchBar"
 import MainTabs from "./MainTabs"
+import PeerProfile from "../screen/PeerProfile"
 const RootStackScreen = () => {
   const RootStack = createNativeStackNavigator()
   const authInfo = useSelector((state) => state.authReducer)
@@ -23,7 +24,8 @@ const RootStackScreen = () => {
               animationEnabled: false,
             }}
           />
-          <RootStack.Screen name="Search" component={SearchScreen} />
+          <RootStack.Screen name="Search" component={SearchScreen}/>
+          
         </RootStack.Group>
       ) : (
         <RootStack.Screen

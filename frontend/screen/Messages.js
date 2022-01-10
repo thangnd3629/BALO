@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { StyleSheet, Text, View, FlatList, LogBox, Button } from "react-native"
+import { StyleSheet, Text, View, FlatList, LogBox, Button, TouchableOpacity } from "react-native"
 import UserMessageBar from "../components/UserMessageBar"
 import { Divider } from "react-native-paper"
 import Avatar2 from "../components/Avatar2"
@@ -13,20 +13,38 @@ import SockJS from "sockjs-client" // Note this line
 import Stomp from "stompjs"
 import useFetch from "../hook/useFetch"
 import { ADD_MESSAGE, EXIT_CHAT } from "../action/types"
+import { fetchWithErrHandler } from "../util/fetchWithErrNotification"
+import AltDiscoverFriendView from "../components/AltDiscoverFriendView"
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ])
 
 const getOffsetTime = (date) => {
-  return "9 mins"
+  let msgDate = new Date(date)
+  let offSet = Math.floor(new Date().getTime() / 1000) - Math.floor(msgDate.getTime() / 1000)
+  let hrs = Math.floor(offSet / 3600)
+  let mins = Math.floor((offSet - hrs * 3600) / 60)
+  let secs = Math.floor((offSet - hrs * 3600 - mins * 60))
+  let re = ""
+  if (hrs !== 0 && hrs <= 24) {
+    re = `${hrs} hrs`
+  }
+  else if (mins !== 0) {
+    re = `${mins} mins`
+  }
+  else{
+    re = `${secs} secs`
+  }
+  return re
 }
 
 export default function Messages({ navigation }) {
   const authToken = useSelector((state) => state.authReducer.token)
   const userId = useSelector((state) => state.authReducer.user.id)
-  
+  const auth = useSelector((state) => state.authReducer)
   const currentConversation = useSelector((state) => state.messageReducer)
+
   const send = useFetch()
   const dispatch = useDispatch()
   const inboxFetchSize = 5
@@ -34,10 +52,42 @@ export default function Messages({ navigation }) {
   const [inbox, setInbox] = useState([])
   const [newestMessage, setNewestMessage] = useState(null)
   const [connection, setConnection] = useState(null)
-
+  const [friend, setFriend] = useState()
   var stompClient = null
 
+
+
+  const getFriend = async () => {
+    console.log("get friend");
+    let myHeaders = new Headers();
+    myHeaders.append("X-Auth-Token", `${auth.token}`)
+    myHeaders.append("Content-Type", "application/json")
+    let requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      // redirect: "follow",
+    }
+    const response = await fetchWithErrHandler(
+      `${API_URL}/get-friend`,
+      requestOptions,
+      10000,
+      dispatch
+    );
+    let tmpFriends = response.body.map((item, idx) => ({ ...item, id: "" + (idx + 1), userImg: require("../assets/user1.jpg") }))
+    let addContact = [{
+      id: "0",
+      name: "",
+      userImg: ""
+    }]
+    tmpFriends = addContact.concat(tmpFriends)
+
+    console.log("response {}", response.body);
+
+    setFriend(tmpFriends.filter((item) => item.phoneNumber !== auth.user.phoneNumber));
+  }
+
   useEffect(() => {
+    getFriend()
     dispatch({ type: EXIT_CHAT })
   }, [])
 
@@ -120,7 +170,7 @@ export default function Messages({ navigation }) {
       setInbox((prev) => {
         return [...prev, ...response.body.data]
       })
-    } catch (e) {}
+    } catch (e) { }
   }
 
   useEffect(() => {
@@ -187,6 +237,7 @@ export default function Messages({ navigation }) {
   const inboxList =
     inbox.length !== 0 ? (
       <FlatList
+        style={{ backgroundColor: "white" }}
         data={inbox}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
@@ -196,17 +247,17 @@ export default function Messages({ navigation }) {
               id={item.id}
               navigation={navigation}
               userName={item.partner.username}
-              userImg={item.partner.avatar}
+              userImg={require("../assets/user1.jpg")}
               partnerId={item.partner.id}
               messageTime={getOffsetTime(item.lastMessage.created)}
               messageText={item.lastMessage.message}
               fromMe={item.lastMessage.senderId === userId}
               seen={
                 item.lastMessage.senderId === userId &&
-                item.lastMessage.unread == 1
+                item.lastMessage.unread == 0
               }
               read={
-                item.lastMessage.senderId === userId &&
+                item.lastMessage.senderId !== userId &&
                 item.lastMessage.unread == 0
               }
               user={item} // you can remove these props above and only use this
@@ -214,14 +265,15 @@ export default function Messages({ navigation }) {
           )
         }}
       />
-    ) : null
+    ) :
+      <AltDiscoverFriendView/>
 
   return (
     <View style={styles.container}>
       <CustomHeader label={"Messages"} navigation={navigation} />
       <View style={styles.friendListContainer}>
         <FlatList /* horizontal flat list showing friend list*/
-          data={friends}
+          data={friend}
           style={styles.scrollContent}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -246,23 +298,25 @@ export default function Messages({ navigation }) {
                 </Text>
               </View>
             ) : (
-              <View style={styles.friendContainer}>
-                <AntDesign
-                  name="pluscircle"
-                  size={55}
-                  color="darkgrey" /* touch opacity to navigate to User Profile*/
-                />
+              <TouchableOpacity onPress={() => (navigation.navigate("DirectoryStack", { screen: "SearchNested" }))}>
+                <View style={styles.friendContainer}>
+                  <AntDesign
+                    name="pluscircle"
+                    size={55}
+                    color="darkgrey" /* touch opacity to navigate to User Profile*/
+                  />
 
-                <Text
-                  numberOfLines={2}
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  {" "}
-                  Add {"\n"} contact
-                </Text>
-              </View>
+                  <Text
+                    numberOfLines={2}
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    {" "}
+                    Add {"\n"} contact
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )
           }}
         />
@@ -276,6 +330,8 @@ export default function Messages({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
+    backgroundColor: "white",
+    height: "100%"
   },
   friendListContainer: {
     width: "100%",
